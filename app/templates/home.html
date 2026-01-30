@@ -17,12 +17,12 @@
             </div>
             
             <div class="nav-grid">
-                <div class="nav-item">
+                <a href="{{ url_for('views.forum') }}" class="nav-item" style="text-decoration: none; color: inherit;">
                     <div class="nav-square">
                         <div class="nav-icon" style="-webkit-mask-image: url({{ url_for('static', filename='icons/users.svg') }}); mask-image: url({{ url_for('static', filename='icons/users.svg') }});"></div>
                     </div>
                     <span class="nav-label">Forum</span>
-                </div>
+                </a>
                 <!-- ... other nav items ... -->
                 <div class="nav-item">
                     <div class="nav-square">
@@ -49,12 +49,24 @@
             </div>
             
             <div class="events-container">
-                <div class="events-header">
+                <a href="{{ url_for('views.events') }}" class="events-header" style="text-decoration: none; color: inherit;">
                     Events
-                    <img src="{{ url_for('static', filename='icons/chevron-right.svg') }}" alt=">">
-                </div>
+                    <img src="{{ url_for('static', filename='icons/chevron-right.svg') }}" alt="Arrow">
+                </a>
                 
                 <div class="event-card">
+                    <div class="event-logo-placeholder"></div>
+                    <div class="event-info">
+                        <div class="event-org">Organization</div>
+                        <div class="event-title">Event Title</div>
+                        <div class="event-loc">Location</div>
+                    </div>
+                    <div class="event-action">
+                        participate
+                    </div>
+                </div>
+                
+                <div class="event-card-2">
                     <div class="event-logo-placeholder"></div>
                     <div class="event-info">
                         <div class="event-org">Organization</div>
@@ -80,24 +92,24 @@
             <div class="services-container">
                 <div class="events-header">
                     EcoServices
-                    <img src="{{ url_for('static', filename='icons/chevron-right.svg') }}" alt=">">
+                    <img src="{{ url_for('static', filename='icons/chevron-right.svg') }}" alt="Arrow">
                 </div>
                 
-                <div class="service-card">
+                <a href="{{ url_for('views.request_seeds') }}" class="service-card" style="text-decoration: none; color: inherit;">
                     <div class="event-logo-placeholder"></div>
                     <div class="service-info">
                         <div class="service-title">Request for Seeds</div>
                         <div class="service-dept">Department of Argriculture</div>
                     </div>
-                </div>
+                </a>
                 
-                <div class="service-card">
+                <a href="{{ url_for('views.request_seedlings') }}" class="service-card" style="text-decoration: none; color: inherit;">
                     <div class="event-logo-placeholder"></div>
                     <div class="service-info">
                         <div class="service-title">Request for Seedlings</div>
                         <div class="service-dept">Department of Environment and Natural Resources</div>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
         
