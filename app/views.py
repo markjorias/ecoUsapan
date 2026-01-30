@@ -1,15 +1,15 @@
 from flask import Blueprint, render_template
 
-bp = Blueprint('main', __name__)
+views = Blueprint('views', __name__)
 
-@bp.route('/')
+@views.route('/')
 def home():
     return render_template('home.html')
 
-@bp.route('/launch-initiative1')
+@views.route('/launch-initiative-1')
 def launch_initiative1():
     return render_template('launch_initiative1.html')
 
-@bp.route('/launch-initiative2')
+@views.route('/launch-initiative-2')
 def launch_initiative2():
     return render_template('launch_initiative2.html')
