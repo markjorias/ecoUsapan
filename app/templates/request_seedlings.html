@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Need for Seedlings</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/request_services.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <div class="scroll-content" style="padding-bottom: 40px;">
+            
+            <!-- Header -->
+            <div class="request-for-seedlings-header">
+                <a href="{{ url_for('views.home') }}" class="close-btn">
+                    <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
+                </a>
+                <h1>Need for Seedlings</h1>
+            </div>
+
+            <!-- Search Container -->
+            <div class="search-container">
+                <div class="search-icon-container">
+                    <img src="{{ url_for('static', filename='icons/search.svg') }}" alt="Search" class="search-icon">
+                </div>
+                <div class="search-text-container">
+                    <input type="text" class="search-input" placeholder="Search for plants...">
+                </div>
+            </div>
+
+            <!-- Seedlings Grid -->
+            <div class="seedlings-grid">
+                <!-- Pechay -->
+                <div class="seedlings-card">
+                    <div class="seedlings-image-container">
+                        <img src="{{ url_for('static', filename='images/seeds/pechay.jpg') }}" alt="Pechay" class="seedlings-image">
+                    </div>
+                    <div class="seedlings-info">
+                        <div class="seedlings-name">Pechay</div>
+                        <div class="seedlings-availability">Available: 20 Pots</div>
+                    </div>
+                </div>
+
+                <!-- Eggplant -->
+                <div class="seedlings-card">
+                    <div class="seedlings-image-container">
+                        <img src="{{ url_for('static', filename='images/seeds/eggplant.jpg') }}" alt="Eggplant" class="seedlings-image">
+                    </div>
+                    <div class="seedlings-info">
+                        <div class="seedlings-name">Eggplant</div>
+                        <div class="seedlings-availability">Available: 20 Pots</div>
+                    </div>
+                </div>
+
+                <!-- Ampalaya -->
+                <div class="seedlings-card">
+                    <div class="seedlings-image-container">
+                        <img src="{{ url_for('static', filename='images/seeds/ampalaya.jpg') }}" alt="Ampalaya" class="seedlings-image">
+                    </div>
+                    <div class="seedlings-info">
+                        <div class="seedlings-name">Ampalaya</div>
+                        <div class="seedlings-availability">Available: 20 Pots</div>
+                    </div>
+                </div>
+
+                <!-- Saluyot -->
+                <div class="seedlings-card">
+                    <div class="seedlings-image-container">
+                        <img src="{{ url_for('static', filename='images/seeds/saluyot.jpg') }}" alt="Saluyot" class="seedlings-image">
+                    </div>
+                    <div class="seedlings-info">
+                        <div class="seedlings-name">Saluyot</div>
+                        <div class="seedlings-availability">Available: 20 Pots</div>
+                    </div>
+                </div>
+
+                <!-- Okra -->
+                <div class="seedlings-card">
+                    <div class="seedlings-image-container">
+                        <img src="{{ url_for('static', filename='images/seeds/okra.jpg') }}" alt="Okra" class="seedlings-image">
+                    </div>
+                    <div class="seedlings-info">
+                        <div class="seedlings-name">Okra</div>
+                        <div class="seedlings-availability">Available: 20 Pots</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

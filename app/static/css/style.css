@@ -149,10 +149,12 @@ body {
     position: absolute;
     bottom: 0;
     left: 0;
-    padding: 16px;
+
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    gap: 4px;
+    padding: 16px;
     z-index: 10;
 }
 
@@ -177,14 +179,12 @@ body {
     justify-content: center;
     align-items: center;
     border-radius: 4px;
-    margin-bottom: 8px;
 }
 
 .featured-title {
     font-size: 16px;
     font-weight: 700;
     color: #F8F7FA;
-    margin-bottom: 4px;
 }
 
 .featured-user {
@@ -242,11 +242,11 @@ body {
     height: 75px;
     padding: 12px 8px; /* Top/Bottom 12, Left/Right 8 */
     background-color: #FFFFFF;
-    margin: 0 auto 12px; /* Centered, with spacing bottom for next items */
+    margin: 0 auto 8px; /* Centered, with spacing bottom for next items */
     display: flex;
     align-items: center;
-    gap: 12px;
-    border-radius: 10px; /* Consistent radius */
+    gap: 8px;
+    border-radius: 12px; /* Consistent radius */
 }
 
 .event-logo-placeholder {
@@ -262,7 +262,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 2px;
+    gap: 4px;
 }
 
 .event-org {
@@ -287,7 +287,7 @@ body {
     width: 60px;
     height: 28px;
     background-color: #000;
-    border-radius: 14px; /* Pill shape */
+    border-radius: 4px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -297,6 +297,18 @@ body {
     color: #FFF;
     cursor: pointer;
     flex-shrink: 0;
+}
+
+.event-card-2 {
+    width: 326px;
+    height: 75px;
+    padding: 12px 8px; /* Top/Bottom 12, Left/Right 8 */
+    background-color: #FFFFFF;
+    margin: 0 auto 8px; /* Centered, with spacing bottom for next items */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 12px; /* Consistent radius */
 }
 
 .separator-container {
@@ -343,20 +355,20 @@ body {
 
 .service-card {
     width: 326px;
-    padding: 12px 16px; /* Similar padding but arguably larger? I'll use 16px horizontal */
+    padding: 12px 14px; /* Similar padding but arguably larger? I'll use 16px horizontal */
     background-color: #FFFFFF;
     margin: 0 auto;
     display: flex;
     align-items: center;
-    gap: 12px;
-    border-radius: 10px;
+    gap: 8px;
+    border-radius: 12px;
 }
 
 .service-info {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 2px;
+    gap: 4px;
 }
 
 .service-title {

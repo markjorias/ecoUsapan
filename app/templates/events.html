@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Events</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/events.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <div class="scroll-content" style="padding-bottom: 40px;">
+            
+            <!-- Header -->
+            <div class="events-header">
+                <div class="header-close-container">
+                    <a href="{{ url_for('views.home') }}" class="close-btn">
+                        <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
+                    </a>
+                </div>
+                <div class="header-title-container">
+                    <h1>Events</h1>
+                </div>
+                <div class="header-filter-container">
+                    <button class="filter-btn">
+                        <img src="{{ url_for('static', filename='icons/list.svg') }}" alt="Filter">
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search and Add Event Row -->
+            <div class="search-add-row">
+                <div class="search-container">
+                    <div class="search-icon-container">
+                        <img src="{{ url_for('static', filename='icons/search.svg') }}" alt="Search" class="search-icon">
+                    </div>
+                    <div class="search-text-container">
+                        <input type="text" class="search-input" placeholder="Search for events...">
+                    </div>
+                </div>
+                <div class="add-event-container">
+                    <img src="{{ url_for('static', filename='icons/plus.svg') }}" alt="Add Event" class="add-event-icon">
+                </div>
+            </div>
+
+            <!-- Event Cards -->
+            <div class="events-list">
+                <div class="event-card">
+                    <div class="event-logo-placeholder"></div>
+                    <div class="event-info">
+                        <div class="event-org">Organization</div>
+                        <div class="event-title">Event Title</div>
+                        <div class="event-loc">Location</div>
+                    </div>
+                    <div class="event-action">  
+                        participate
+                    </div>
+                </div>
+
+                <div class="event-card-2">
+                    <div class="event-logo-placeholder"></div>
+                    <div class="event-info">
+                        <div class="event-org">Organization</div>
+                        <div class="event-title">Event Title</div>
+                        <div class="event-loc">Location</div>
+                    </div>
+                    <div class="event-action">
+                        participate
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

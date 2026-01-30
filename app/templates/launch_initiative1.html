@@ -7,8 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/launch_initiative1.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/launch_initiative.css') }}">
 </head>
 <body>
     <div class="app-container">
@@ -46,11 +45,10 @@
                     <label class="form-label">Date and time</label>
                     <div class="flex-row gap-12">
                         <div class="input-with-icon">
-                            <!-- Calendar icon placeholder if not available, using simple border box for now as per design implies input field -->
-                            <input type="text" class="form-input" placeholder="Date">
+                            <input type="date" class="form-input" placeholder="Date">
                         </div>
                         <div class="input-with-icon">
-                            <input type="text" class="form-input" placeholder="Time">
+                            <input type="time" class="form-input" placeholder="Time">
                         </div>
                     </div>
                 </div>
