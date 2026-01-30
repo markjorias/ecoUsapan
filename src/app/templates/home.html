@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EcoUsapan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <div class="scroll-content">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='images/ecoUsapan_logo.png') }}" alt="EcoUsapan Logo" class="app-logo">
+            </div>
+            
+            <div class="nav-grid">
+                <div class="nav-item">
+                    <div class="nav-square">
+                        <div class="nav-icon" style="-webkit-mask-image: url({{ url_for('static', filename='icons/users.svg') }}); mask-image: url({{ url_for('static', filename='icons/users.svg') }});"></div>
+                    </div>
+                    <span class="nav-label">Forum</span>
+                </div>
+                <!-- ... other nav items ... -->
+                <div class="nav-item">
+                    <div class="nav-square">
+                        <div class="nav-icon" style="-webkit-mask-image: url({{ url_for('static', filename='icons/map-pin.svg') }}); mask-image: url({{ url_for('static', filename='icons/map-pin.svg') }});"></div>
+                    </div>
+                    <span class="nav-label">Event Map</span>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-square">
+                        <div class="nav-icon" style="-webkit-mask-image: url({{ url_for('static', filename='icons/bar-chart-2.svg') }}); mask-image: url({{ url_for('static', filename='icons/bar-chart-2.svg') }});"></div>
+                    </div>
+                    <span class="nav-label">Analytics</span>
+                </div>
+            </div>
+            
+            <div class="featured-card">
+                <img src="{{ url_for('static', filename='images/sample-image1.png') }}" alt="Featured Image" class="featured-image">
+                <div class="featured-gradient-overlay"></div>
+                <div class="featured-info-overlay">
+                    <div class="featured-tag">tag</div>
+                    <div class="featured-title">Featured Title</div>
+                    <div class="featured-user">@username</div>
+                </div>
+            </div>
+            
+            <div class="events-container">
+                <div class="events-header">
+                    Events
+                    <img src="{{ url_for('static', filename='icons/chevron-right.svg') }}" alt=">">
+                </div>
+                
+                <div class="event-card">
+                    <div class="event-logo-placeholder"></div>
+                    <div class="event-info">
+                        <div class="event-org">Organization</div>
+                        <div class="event-title">Event Title</div>
+                        <div class="event-loc">Location</div>
+                    </div>
+                    <div class="event-action">
+                        participate
+                    </div>
+                </div>
+                
+                <div class="separator-container">
+                    <div class="separator-line"></div>
+                    <div class="separator-text">or you might want to</div>
+                    <div class="separator-line"></div>
+                </div>
+                
+                <a href="{{ url_for('main.launch_initiative1') }}" class="launch-initiative-btn" style="text-decoration: none;">
+                    Launch your Initiative
+                </a>
+            </div>
+            
+            <div class="services-container">
+                <div class="events-header">
+                    EcoServices
+                    <img src="{{ url_for('static', filename='icons/chevron-right.svg') }}" alt=">">
+                </div>
+                
+                <div class="service-card">
+                    <div class="event-logo-placeholder"></div>
+                    <div class="service-info">
+                        <div class="service-title">Request for Seeds</div>
+                        <div class="service-dept">Department of Argriculture</div>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <div class="event-logo-placeholder"></div>
+                    <div class="service-info">
+                        <div class="service-title">Request for Seedlings</div>
+                        <div class="service-dept">Department of Environment and Natural Resources</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% include 'components/navbar.html' %}
+    </div>
+</body>
+</html>
