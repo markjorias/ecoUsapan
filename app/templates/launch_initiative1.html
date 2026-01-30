@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Launch Your Initiative</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/launch_initiative1.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <div class="scroll-content" style="padding-bottom: 40px;">
+            
+            <!-- Header -->
+            <div class="launch-header">
+                <a href="{{ url_for('views.home') }}" class="close-btn">
+                    <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
+                </a>
+                <h1>Launch Your Iniative</h1>
+            </div>
+
+            <div class="launch-form-container">
+                <!-- Title -->
+                <div class="form-group">
+                    <label class="form-label">Title</label>
+                    <input type="text" class="form-input" placeholder="Give your initiative a catchy title.">
+                </div>
+
+                <!-- Event Type -->
+                <div class="form-group">
+                    <label class="form-label">Event Type</label>
+                    <div class="chips-container">
+                        <div class="chip">Cleanup Drive</div>
+                        <div class="chip">Tree Planting</div>
+                        <div class="chip">Waste<br>Management</div>
+                        <div class="chip">Environment<br>Education</div>
+                        <div class="chip">Others</div>
+                    </div>
+                </div>
+
+                <!-- Date and time -->
+                <div class="form-group">
+                    <label class="form-label">Date and time</label>
+                    <div class="flex-row gap-12">
+                        <div class="input-with-icon">
+                            <!-- Calendar icon placeholder if not available, using simple border box for now as per design implies input field -->
+                            <input type="text" class="form-input" placeholder="Date">
+                        </div>
+                        <div class="input-with-icon">
+                            <input type="text" class="form-input" placeholder="Time">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Address -->
+                <div class="form-group">
+                    <label class="form-label">Address</label>
+                    <div class="flex-row gap-12 mb-8">
+                        <input type="text" class="form-input" placeholder="Province">
+                        <input type="text" class="form-input" placeholder="City">
+                    </div>
+                    <input type="text" class="form-input mb-8" placeholder="Address line 1">
+                    <input type="text" class="form-input mb-8" placeholder="Address line 2">
+                    <input type="text" class="form-input" placeholder="Postal Code">
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-textarea" placeholder="Tell us more about your event..."></textarea>
+                </div>
+            </div>
+
+            <!-- Next Button -->
+            <div class="bottom-action-container">
+                <a href="{{ url_for('views.launch_initiative2') }}" class="next-btn" style="text-decoration: none;">NEXT</a>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const eventChips = document.querySelectorAll('.chip');
+            
+            eventChips.forEach(chip => {
+                chip.addEventListener('click', function() {
+                    // Remove active class from all chips
+                    eventChips.forEach(c => c.classList.remove('active'));
+                    // Add active class to clicked chip
+                    this.classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
