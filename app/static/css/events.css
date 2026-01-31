@@ -66,53 +66,31 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
     width: 100%;
     padding: 16px 0;
     margin-bottom: 12px;
+    gap: 16px;
 }
 
-.header-close-container {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    flex: 1;
-}
-
-.header-title-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 2;
-}
-
-.header-title-container h1 {
-    font-size: 24px;
-    font-weight: 700;
-    margin: 0;
-    font-family: 'Montserrat', sans-serif;
-}
-
-.header-filter-container {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    flex: 1;
-}
-
-.close-btn {
+.back-btn {
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    background: none;
-    border: none;
-    padding: 0;
+    text-decoration: none;
 }
 
-.close-btn img {
+.back-btn img {
     width: 24px;
     height: 24px;
+}
+
+.header-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    color: #000;
+    flex: 1; /* Allow title to push filter button to the right */
 }
 
 .filter-btn {
@@ -177,6 +155,15 @@ body {
 
 .search-input::placeholder {
     color: #9E9E9E;
+}
+
+/* Add Event Link Wrapper */
+.add-event-link {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Add Event Container */

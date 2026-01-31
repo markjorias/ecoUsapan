@@ -29,3 +29,11 @@ def events():
 @views.route('/forum')
 def forum():
     return render_template('forum.html')
+
+@views.route('/event-view')
+def event_view():
+    return render_template('event-view.html')
+
+@views.route('/forum-view')
+def forum_view():
+    return render_template('forum-view.html')

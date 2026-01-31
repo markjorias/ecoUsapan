@@ -15,19 +15,13 @@
             
             <!-- Header -->
             <div class="forum-header">
-                <div class="header-close-container">
-                    <a href="{{ url_for('views.home') }}" class="close-btn">
-                        <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
-                    </a>
-                </div>
-                <div class="header-title-container">
-                    <h1>Forum</h1>
-                </div>
-                <div class="header-filter-container">
-                    <button class="filter-btn">
-                        <img src="{{ url_for('static', filename='icons/list.svg') }}" alt="Filter">
-                    </button>
-                </div>
+                <a href="{{ url_for('views.home') }}" class="back-btn">
+                    <img src="{{ url_for('static', filename='icons/chevron-left.svg') }}" alt="Back">
+                </a>
+                <h1 class="header-title">Forum</h1>
+                <button class="filter-btn">
+                    <img src="{{ url_for('static', filename='icons/list.svg') }}" alt="Filter">
+                </button>
             </div>
 
             <!-- Search and Add Event Row -->
@@ -52,28 +46,38 @@
                 <div class="forum-section-container">
                     <h2 class="section-title">Trending</h2>
                     <div class="forum-card-list">
-                        <div class="forum-card">
-                            <div class="forum-logo-placeholder"></div>
-                            <div class="forum-info">
-                                <div class="forum-username">@username</div>
-                                <div class="forum-title">Trending Topic 1</div>
-                                <div class="forum-comments">2.5k comments</div>
+                        <a href="{{ url_for('views.forum_view') }}" style="text-decoration: none; color: inherit; display: block;">
+                            <div class="forum-card1">
+                                <div class="forum-info">
+                                    <div class="forum-tag">News</div>
+                                    <div class="forum-title">Trending Topic 1</div>
+                                    <div class="forum-meta">
+                                        <div class="forum-username">@username</div>
+                                        <div class="forum-comments">2.5k comments</div>
+                                    </div>
+                                </div>
+                                <div class="forum-action">  
+                                    <div class="vote-controls">
+                                        <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" alt="Upvote" class="vote-icon">
+                                        <img src="{{ url_for('static', filename='icons/arrow-down.svg') }}" alt="Downvote" class="vote-icon">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="forum-action">  
-                                <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" alt="Upvote" class="vote-icon">
-                                <img src="{{ url_for('static', filename='icons/arrow-down.svg') }}" alt="Downvote" class="vote-icon">
-                            </div>
-                        </div>
-                        <div class="forum-card">
-                            <div class="forum-logo-placeholder"></div>
+                        </a>
+                        <div class="forum-card2">
                             <div class="forum-info">
-                                <div class="forum-username">@username</div>
+                                <div class="forum-tag">Discussion</div>
                                 <div class="forum-title">Trending Topic 2</div>
-                                <div class="forum-comments">2.5k comments</div>
+                                <div class="forum-meta">
+                                    <div class="forum-username">@username</div>
+                                    <div class="forum-comments">2.5k comments</div>
+                                </div>
                             </div>
                             <div class="forum-action">  
-                                <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" alt="Upvote" class="vote-icon">
-                                <img src="{{ url_for('static', filename='icons/arrow-down.svg') }}" alt="Downvote" class="vote-icon">
+                                <div class="vote-controls">
+                                    <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" alt="Upvote" class="vote-icon">
+                                    <img src="{{ url_for('static', filename='icons/arrow-down.svg') }}" alt="Downvote" class="vote-icon">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -83,28 +87,36 @@
                 <div class="forum-section-container">
                     <h2 class="section-title">Discussions</h2>
                     <div class="forum-card-list">
-                        <div class="forum-card-2">
-                            <div class="forum-logo-placeholder"></div>
+                        <div class="forum-card3">
                             <div class="forum-info">
-                                <div class="forum-username">@username</div>
+                                <div class="forum-tag">Suggestion</div>
                                 <div class="forum-title">Discussion Topic 1</div>
-                                <div class="forum-comments">2.5k comments</div>
+                                <div class="forum-meta">
+                                    <div class="forum-username">@username</div>
+                                    <div class="forum-comments">2.5k comments</div>
+                                </div>
                             </div>
                             <div class="forum-action">  
-                                <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" alt="Upvote" class="vote-icon">
-                                <img src="{{ url_for('static', filename='icons/arrow-down.svg') }}" alt="Downvote" class="vote-icon">
+                                <div class="vote-controls">
+                                    <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" alt="Upvote" class="vote-icon">
+                                    <img src="{{ url_for('static', filename='icons/arrow-down.svg') }}" alt="Downvote" class="vote-icon">
+                                </div>
                             </div>
                         </div>
-                        <div class="forum-card-2">
-                            <div class="forum-logo-placeholder"></div>
+                        <div class="forum-card4">
                             <div class="forum-info">
-                                <div class="forum-username">@username</div>
+                                <div class="forum-tag">News</div>
                                 <div class="forum-title">Discussion Topic 2</div>
-                                <div class="forum-comments">2.5k comments</div>
+                                <div class="forum-meta">
+                                    <div class="forum-username">@username</div>
+                                    <div class="forum-comments">2.5k comments</div>
+                                </div>
                             </div>
                             <div class="forum-action">  
-                                <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" alt="Upvote" class="vote-icon">
-                                <img src="{{ url_for('static', filename='icons/arrow-down.svg') }}" alt="Downvote" class="vote-icon">
+                                <div class="vote-controls">
+                                    <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" alt="Upvote" class="vote-icon">
+                                    <img src="{{ url_for('static', filename='icons/arrow-down.svg') }}" alt="Downvote" class="vote-icon">
+                                </div>
                             </div>
                         </div>
                     </div>

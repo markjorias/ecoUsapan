@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Event Details</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/event-view.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <div class="scroll-content">
+            
+            <!-- Header -->
+            <div class="event-view-header">
+                <a href="{{ url_for('views.events') }}" class="close-btn">
+                    <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
+                </a>
+                <h1>About   </h1>
+            </div>
+
+            <div class="event-title-container">
+                <span class="event-username">@username</span>
+                <h2 class="event-main-title">Event Title</h2>
+            </div>
+
+            <div class="event-tags-container">
+                <span class="event-tag">3 Days Left</span>
+                <span class="event-tag">EventType</span>
+                <span class="event-tag">OrganizingTeam</span>
+                <span class="event-tag">Tree Planting</span>
+            </div>
+
+            <div class="event-details-bar">
+                <div class="event-date-time">
+                    <div class="event-detail-item">
+                        <img src="{{ url_for('static', filename='icons/calendar.svg') }}" alt="Calendar" class="detail-icon">
+                        <span class="detail-text">Mon Dec 25</span>
+                    </div>
+                    <div class="event-detail-item">
+                        <img src="{{ url_for('static', filename='icons/clock.svg') }}" alt="Clock" class="detail-icon">
+                        <span class="detail-text">12:00</span>
+                    </div>
+                </div>
+                <div class="event-location">
+                    <img src="{{ url_for('static', filename='icons/map-pin.svg') }}" alt="Location" class="detail-icon">
+                    <span class="detail-text">Camarines Sur Polytechnic Colleges</span>
+                </div>
+            </div>
+
+            <div class="event-image-container">
+                <img src="{{ url_for('static', filename='images/sample-image1.png') }}" alt="Event Image" class="event-image">
+            </div>
+
+            <div class="event-description">
+                <h3 class="description-header">Description</h3>
+                <p class="description-text">Help us bring the green back to our hillsides and watersheds! Volunteers will work together to plant native fruit-bearing and forest trees that will provide shade, clean air, and protection against landslides for years to come. No experience is needed, as our team will teach you the proper way to plant and care for a sapling. Let’s grow a forest together to protect our children’s future.</p>
+            </div>
+
+            <div class="event-author-section">
+                <div class="author-label">Author</div>
+                
+                <div class="author-card">
+                    <div class="author-info-group">
+                        <div class="author-pfp-container">
+                            <img src="{{ url_for('static', filename='images/sample-image1.png') }}" alt="Author" class="author-pfp">
+                        </div>
+                        <div class="author-content-stack">
+                            <span class="author-username">@username</span>
+                            <span class="author-name">Author Name</span>
+                            <div class="author-chips">
+                                <span class="author-chip">Author Role</span>
+                                <span class="author-chip">Organizing Team</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="author-action">
+                        <img src="{{ url_for('static', filename='icons/message-circle.svg') }}" alt="Message" class="message-icon">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <button class="floating-participate-btn">PARTICIPATE</button>
+    </div>
+</body>
+</html>

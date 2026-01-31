@@ -66,54 +66,31 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
     width: 100%;
     padding: 16px 0;
     margin-bottom: 12px;
+    gap: 16px;
 }
 
-.header-close-container {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    flex: 1;
-}
-
-.header-title-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 2;
-}
-
-.header-title-container h1 {
-    font-size: 24px;
-    font-weight: 700;
-    margin: 0;
-    font-family: 'Montserrat', sans-serif;
-    align-items: left;
-}
-
-.header-filter-container {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    flex: 1;
-}
-
-.close-btn {
+.back-btn {
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    background: none;
-    border: none;
-    padding: 0;
+    text-decoration: none;
 }
 
-.close-btn img {
+.back-btn img {
     width: 24px;
     height: 24px;
+}
+
+.header-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    color: #000;
+    flex: 1;
 }
 
 .filter-btn {
@@ -230,7 +207,7 @@ body {
     width: 100%;
 }
 
-.forum-card, .forum-card-2 {
+.forum-card1, .forum-card2, .forum-card3, .forum-card4 {
     width: 100%;
     height: 75px;
     padding: 0;
@@ -242,14 +219,7 @@ body {
     border-radius: 12px;
 }
 
-.forum-logo-placeholder {
-    width: 42.88px;
-    height: 42.88px;
-    background-color: #E2E2E2;
-    border-radius: 8px;
-    flex-shrink: 0;
-    margin-left: 8px; /* Added spacing from edge */
-}
+
 
 .forum-info {
     flex: 1;
@@ -257,6 +227,8 @@ body {
     flex-direction: column;
     justify-content: center;
     gap: 4px;
+    margin-left: 16px;
+    height: 100%;
 }
 
 .forum-username {
@@ -269,6 +241,19 @@ body {
     font-size: 16px;
     font-weight: 700;
     color: #000;
+    margin: 2px 0;
+}
+
+.forum-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.forum-username {
+    font-size: 10px;
+    font-weight: 300;
+    color: #666;
 }
 
 .forum-comments {
@@ -281,9 +266,26 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 8px; /* Space between arrows */
     margin-right: 8px;
     flex-shrink: 0;
+}
+
+.forum-tag {
+    font-size: 8px;
+    font-weight: 700;
+    color: #4CAF50; /* Green tint */
+    background-color: #E8F5E9;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    width: fit-content;
+}
+
+.vote-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
 }
 
 .vote-icon {
