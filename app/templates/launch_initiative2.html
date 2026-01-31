@@ -11,14 +11,11 @@
 </head>
 <body>
     <div class="app-container">
-        <div class="scroll-content" style="padding-bottom: 40px;">
-            
-            <!-- Header -->
-            <div class="launch-header">
+        <div class="scroll-content" style="padding-bottom: 40px;"><div class="launch-header">
                 <a href="{{ url_for('views.launch_initiative1') }}" class="close-btn">
                     <img src="{{ url_for('static', filename='icons/chevron-left.svg') }}" alt="Back">
                 </a>
-                <h1>Launch Your Iniative</h1>
+                <h1>Launch Your Initiative</h1>
             </div>
 
             <div class="launch-form-container">
@@ -43,14 +40,30 @@
                 <!-- Contact Person -->
                 <div class="form-group">
                     <label class="form-label">Contact Person</label>
-                    <input type="text" class="form-input mb-8" placeholder="Name">
+                    <div class="flex-row gap-12">
+                        <input type="text" class="form-input" placeholder="First Name">
+                        <input type="text" class="form-input" placeholder="Last Name">
+                    </div>
                     <input type="text" class="form-input" placeholder="Role">
+                    <input type="email" class="form-input" placeholder="Email Address">
                 </div>
 
                 <!-- Event Source Link -->
                 <div class="form-group">
                     <label class="form-label">Event Source Link</label>
                     <input type="text" class="form-input" placeholder="http://www.eventsourcelink.com/">
+                </div>
+
+                <!-- Event Image Upload -->
+                <div class="form-group">
+                    <label class="form-label">Event Image</label>
+                    <div class="upload-container">
+                        <input type="file" id="event-image-upload" class="file-input" accept="image/*" hidden>
+                        <div class="upload-box" onclick="document.getElementById('event-image-upload').click()">
+                            <img src="{{ url_for('static', filename='icons/plus.svg') }}" alt="Upload" class="upload-icon">
+                            <span class="upload-text">Upload Image</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 

@@ -24,7 +24,7 @@ body {
 .app-container {
     width: var(--app-width);
     height: var(--app-height);
-    background-color: var(--frame-bg);
+    background: linear-gradient(180deg, #0B9400 -100%, rgba(0, 0, 0, 0) 35%), var(--frame-bg);
     position: relative;
     overflow: hidden; /* Prevent body scroll, handle in scroll-content */
     box-shadow: var(--shadow);
@@ -53,6 +53,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 8px;
 }
 
 .scroll-content::-webkit-scrollbar {
@@ -68,7 +69,6 @@ body {
     align-items: center;
     gap: 16px;
     padding: 0; /* Text aligns with container padding now */
-    margin-bottom: 24px;
 }
 
 .close-btn {
@@ -92,10 +92,12 @@ body {
 }
 
 .launch-form-container {
-    width: 353px;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
 }
 
 .form-group {
@@ -139,11 +141,11 @@ body {
 }
 
 .chip {
-    padding: 8px 0; /* Vertical padding 8, Horizontal 0 (controlled by flex) */
+    padding: 0; 
     border: 1px solid #E5E5EA; /* Light border */
     border-radius: 20px;
     background-color: #FFFFFF;
-    font-size: 12px;
+    font-size: 11px; /* Slightly smaller for 2-line fit */
     font-weight: 400;
     color: #666;
     cursor: pointer;
@@ -151,12 +153,9 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Layout logic: 3 items in first row, 2 in second. 
-       Container width ~325px. 
-       With gap 8px, 3 items need approx 32% width each. 
-       2 items need approx 48% width each.
-       We can set flex-basis. */
-    flex: 1 0 30%; /* Grow, don't shrink below 30% */
+    height: 44px; /* Uniform height */
+    line-height: 1.1;
+    flex: 0 0 calc((100% - 16px) / 3); /* Exactly 3 per row with 8px gaps */
 }
 
 /* Force Community Group and Others to be on the second line if needed, 
@@ -215,9 +214,46 @@ body {
     border-color: #49A427;
 }
 
+/* Upload Section Styles */
+.upload-container {
+    width: 100%;
+}
+
+.upload-box {
+    width: 100%;
+    height: 120px;
+    border: 2px dashed #D1D1D6;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    background-color: #F9F9F9;
+    transition: all 0.2s ease;
+}
+
+.upload-box:hover {
+    border-color: #49A427;
+    background-color: #F0F9ED;
+}
+
+.upload-icon {
+    width: 24px;
+    height: 24px;
+    opacity: 0.5;
+}
+
+.upload-text {
+    font-size: 14px;
+    color: #8E8E93;
+    font-weight: 500;
+}
+
 .bottom-action-container {
-    width: 353px;
-    padding: 24px 14px;
+    width: 100%;
+    padding: 24px 0; /* Remove horizontal padding since container width is 100% and uses parent padding */
     margin-top: auto; /* Push to bottom if space allows */
 }
 

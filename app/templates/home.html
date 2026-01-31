@@ -24,13 +24,19 @@
                     </div>
                     <span class="nav-label">Forum</span>
                 </a>
+                <a href="{{ url_for('views.status') }}" class="nav-item" style="text-decoration: none; color: inherit;">
+                    <div class="nav-square">
+                        <div class="nav-icon" style="-webkit-mask-image: url({{ url_for('static', filename='icons/data.svg') }}); mask-image: url({{ url_for('static', filename='icons/data.svg') }});"></div>
+                    </div>
+                    <span class="nav-label">Status</span>
+                </a>
                 <!-- ... other nav items ... -->
-                <div class="nav-item">
+                <a href="{{ url_for('views.event_map') }}" class="nav-item" style="text-decoration: none; color: inherit;">
                     <div class="nav-square">
                         <div class="nav-icon" style="-webkit-mask-image: url({{ url_for('static', filename='icons/map-pin.svg') }}); mask-image: url({{ url_for('static', filename='icons/map-pin.svg') }});"></div>
                     </div>
                     <span class="nav-label">Event Map</span>
-                </div>
+                </a>
                 <div class="nav-item">
                     <div class="nav-square">
                         <div class="nav-icon" style="-webkit-mask-image: url({{ url_for('static', filename='icons/bar-chart-2.svg') }}); mask-image: url({{ url_for('static', filename='icons/bar-chart-2.svg') }});"></div>

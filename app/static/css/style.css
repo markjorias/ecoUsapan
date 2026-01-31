@@ -24,7 +24,7 @@ body {
 .app-container {
     width: var(--app-width);
     height: var(--app-height);
-    background-color: var(--frame-bg);
+    background: linear-gradient(180deg, #0B9400 -100%, rgba(0, 0, 0, 0) 35%), var(--frame-bg);
     position: relative;
     overflow: hidden; /* Prevent body scroll, handle in scroll-content */
     box-shadow: var(--shadow);
@@ -76,10 +76,10 @@ body {
 
 .nav-grid {
     display: flex;
-    justify-content: center;
-    gap: 40px;
-    padding: 16px 0; /* 16px padding top and bottom */
-    width: 288px;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 20px; /* Adjusted padding */
+    width: 354px;
     height: 118px;
     margin-left: auto; /* Center the container */
     margin-right: auto;
@@ -133,7 +133,7 @@ body {
     width: 326px;
     height: 435px;
     position: relative;
-    overflow: hidden;
+    overflow: visible; /* Changed from hidden to show the shadow */
     border-radius: 20px;
     flex-shrink: 0;
 }
@@ -156,6 +156,7 @@ body {
     overflow: hidden;
     flex-shrink: 0;
     z-index: 1;
+    box-shadow: 0 0 4px 0 rgba(73, 164, 39, 0.5); /* Added green drop shadow */
 }
 
 .featured-card.active {

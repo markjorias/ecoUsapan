@@ -37,3 +37,19 @@ def event_view():
 @views.route('/forum-view')
 def forum_view():
     return render_template('forum-view.html')
+
+@views.route('/seeds-view')
+def seeds_view():
+    return render_template('seeds-view.html')
+
+@views.route('/seedlings-view')
+def seedlings_view():
+    return render_template('seedlings-view.html')
+
+@views.route('/event-map')
+def event_map():
+    return render_template('event-map.html')
+
+@views.route('/status')
+def status():
+    return render_template('status.html')

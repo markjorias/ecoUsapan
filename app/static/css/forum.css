@@ -26,7 +26,7 @@ body {
 .app-container {
     width: var(--app-width);
     height: var(--app-height);
-    background-color: var(--frame-bg);
+    background: linear-gradient(180deg, #0B9400 -100%, rgba(0, 0, 0, 0) 35%), var(--frame-bg);
     position: relative;
     overflow: hidden;
     box-shadow: var(--shadow);
@@ -115,6 +115,7 @@ body {
     align-items: center;
     gap: 8px;
     margin-bottom: 12px;
+    width: 100%;
 }
 
 /* Search Container */
@@ -122,7 +123,8 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
-    width: 289px;
+    flex: 1;
+    width: auto;
     height: 49px;
     padding: 0 16px;
     border: 1px solid #E0E0E0;
@@ -167,6 +169,7 @@ body {
     border: 1px solid #E0E0E0;
     border-radius: 50%;
     cursor: pointer;
+    flex-shrink: 0;
 }
 
 .add-forum-icon {
