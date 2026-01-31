@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Forum Topic</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/forum-view.css') }}">
+    <script src="{{ url_for('static', filename='js/forum.js') }}" defer></script>
+</head>
+<body>
+    <div class="app-container">
+        <div class="scroll-content">
+            
+            <!-- Header -->
+            <div class="forum-view-header">
+                <a href="{{ url_for('views.forum') }}" class="close-btn">
+                    <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
+                </a>
+                <h1>Forum</h1>
+            </div>
+
+            <div class="forum-title-container">
+                <span class="forum-username">@username</span>
+                <h2 class="forum-main-title">Topic Title</h2>
+            </div>
+
+            <div class="forum-tags-container">
+                <span class="forum-tag">Category</span>
+                <span class="forum-tag">Discussion</span>
+                <span class="forum-tag">Trending</span>
+            </div>
+
+            <div class="forum-image-container">
+                <img src="{{ url_for('static', filename='images/sample-image2.png') }}" alt="Forum Image" class="forum-image">
+            </div>
+
+            <div class="forum-description">
+                <p class="forum-description-text">This is a discussion topic copied from the event view format. It maintains the same structure and styling for consistency across the application.</p>
+            </div>
+
+            <div class="forum-interaction-bar">
+                <div class="interaction-stats">
+                    <div class="vote-pill">
+                        <div class="vote-item">
+                            <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" alt="Upvote" class="stat-icon">
+                            <span class="stat-count">172</span>
+                        </div>
+                        <div class="vote-item">
+                            <img src="{{ url_for('static', filename='icons/arrow-down.svg') }}" alt="Downvote" class="stat-icon">
+                            <span class="stat-count">172</span>
+                        </div>
+                    </div>
+                    <div class="comment-pill">
+                        <span class="stat-text">2.5k comments</span>
+                    </div>
+                </div>
+                
+                <div class="comment-input-container">
+                    <img src="{{ url_for('static', filename='icons/users.svg') }}" alt="User" class="user-icon">
+                    <input type="text" placeholder="Add your comment" class="comment-input">
+                </div>
+            </div>
+
+            <div class="comments-section-header">
+                <span class="comments-title">Comments</span>
+                <button class="comments-filter-btn">
+                    <img src="{{ url_for('static', filename='icons/list.svg') }}" alt="Filter">
+                </button>
+            </div>
+
+            <div class="comment-list-container">
+                <!-- Comment 1 -->
+                <div class="comment-card">
+                    <div class="comment-header">@username</div>
+                    <div class="comment-body">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sit amet arcu placerat dui scelerisque molestie a ut diam. Etiam vitae rhoncus enim, eu tincidunt ligula. Phasellus ut purus vel justo sagittis consequat. Nulla laoreet, lacus ut interdum scelerisque, ante metus egestas ante, eu egestas lectus metus ut risus. Interdum et malesuada fames ac ante ipsum primis in faucibus. Phasellus varius convallis rutrum. Pellentesque condimentum orci sit amet posuere facilisis. In finibus, neque vel rhoncus blandit, leo diam accumsan lectus, a vehicula nulla felis ut leo. Suspendisse potenti. Morbi egestas rutrum velit eu accumsan. Curabitur aliquet fringilla nulla eu luctus.
+                    </div>
+                    <div class="comment-footer">
+                        <div class="comment-interactions">
+                            <div class="comment-interaction-item">
+                                <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" alt="Upvote" class="interaction-icon">
+                                <span>172</span>
+                            </div>
+                            <div class="comment-interaction-item">
+                                <img src="{{ url_for('static', filename='icons/arrow-down.svg') }}" alt="Downvote" class="interaction-icon">
+                                <span>172</span>
+                            </div>
+                            <button class="comment-reply-btn" onclick="showReplyInput(this)">
+                                <img src="{{ url_for('static', filename='icons/message-circle.svg') }}" alt="Reply" class="interaction-icon">
+                                <span>Reply</span>
+                            </button>
+                        </div>
+                        <span class="comment-time">6h ago</span>
+                    </div>
+
+                    <!-- Inline Reply Input -->
+                    <div class="inline-reply-container" style="display: none;">
+                        <input type="text" placeholder="Write a reply..." class="inline-reply-input">
+                        <button class="send-reply-btn">Send</button>
+                    </div>
+
+                    <!-- Nested Replies Section -->
+                    <div class="replies-wrapper">
+                        <button class="toggle-thread-btn" onclick="toggleThread(this)">
+                            <img src="{{ url_for('static', filename='icons/plus.svg') }}" alt="Collapse" class="collapse-icon">
+                            <span>Show 2 Replies</span>
+                        </button>
+                        
+                        <div class="nested-replies-container" style="display: none;">
+                            <!-- Reply 1 -->
+                            <div class="comment-card reply-card">
+                                <div class="comment-header">@replier_user</div>
+                                <div class="comment-body">
+                                    I totally agree with this! Native trees are crucial for the local ecosystem.
+                                </div>
+                                <div class="comment-footer">
+                                    <div class="comment-interactions">
+                                        <div class="comment-interaction-item">
+                                            <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" alt="Upvote" class="interaction-icon">
+                                            <span>45</span>
+                                        </div>
+                                        <div class="comment-interaction-item">
+                                            <img src="{{ url_for('static', filename='icons/arrow-down.svg') }}" alt="Downvote" class="interaction-icon">
+                                            <span>2</span>
+                                        </div>
+                                        <button class="comment-reply-btn" onclick="showReplyInput(this)">
+                                            <span>Reply</span>
+                                        </button>
+                                    </div>
+                                    <div class="footer-right">
+                                        <span class="comment-time">4h ago</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Inline Reply Input -->
+                                <div class="inline-reply-container" style="display: none;">
+                                    <input type="text" placeholder="Write a reply..." class="inline-reply-input">
+                                    <button class="send-reply-btn">Send</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comment 2 -->
+                <div class="comment-card">
+                    <div class="comment-header">@username</div>
+                    <div class="comment-body">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce condimentum lectus dictum ligula vulputate placerat. Mauris sit amet velit dui.
+                    </div>
+                    <div class="comment-footer">
+                        <div class="comment-interactions">
+                            <div class="comment-interaction-item">
+                                <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" alt="Upvote" class="interaction-icon">
+                                <span>172</span>
+                            </div>
+                            <div class="comment-interaction-item">
+                                <img src="{{ url_for('static', filename='icons/arrow-down.svg') }}" alt="Downvote" class="interaction-icon">
+                                <span>172</span>
+                            </div>
+                            <button class="comment-reply-btn" onclick="showReplyInput(this)">
+                                <img src="{{ url_for('static', filename='icons/message-circle.svg') }}" alt="Reply" class="interaction-icon">
+                                <span>Reply</span>
+                            </button>
+                        </div>
+                        <span class="comment-time">6h ago</span>
+                    </div>
+
+                    <!-- Inline Reply Input -->
+                    <div class="inline-reply-container" style="display: none;">
+                        <input type="text" placeholder="Write a reply..." class="inline-reply-input">
+                        <button class="send-reply-btn">Send</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

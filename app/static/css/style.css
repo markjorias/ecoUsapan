@@ -52,6 +52,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 8px;
 }
 
 .scroll-content::-webkit-scrollbar {
@@ -77,7 +78,6 @@ body {
     display: flex;
     justify-content: center;
     gap: 40px;
-    margin-top: 8px; /* Spacing from logo 8px */
     padding: 16px 0; /* 16px padding top and bottom */
     width: 288px;
     height: 118px;
@@ -129,14 +129,71 @@ body {
     text-align: center;
 }
 
-.featured-card {
+.featured-carousel-container {
     width: 326px;
     height: 435px;
-    margin-top: 8px; /* Spacing from nav-grid 8px */
-    border-radius: 20px;
     position: relative;
     overflow: hidden;
-    flex-shrink: 0; /* Prevent collapsing in flex column */
+    border-radius: 20px;
+    flex-shrink: 0;
+}
+
+.featured-carousel {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.featured-card {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    border-radius: 20px;
+    overflow: hidden;
+    flex-shrink: 0;
+    z-index: 1;
+}
+
+.featured-card.active {
+    opacity: 1;
+    z-index: 2;
+}
+
+.carousel-indicators {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+    z-index: 20;
+}
+
+.indicator-pill {
+    flex: 1;
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+}
+
+.indicator-pill.active {
+    background-color: rgba(255, 255, 255, 0.3); /* Base remains same, progress fills it */
+}
+
+.indicator-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0%;
+    background-color: #FFFFFF;
+    transition: width 0.1s linear;
 }
 
 .featured-image {
@@ -197,7 +254,6 @@ body {
     width: 354px;
     height: auto; /* Hug content */
     background-color: #F8F7FA;
-    margin-top: 8px;
     margin-left: auto;
     margin-right: auto;
     flex-shrink: 0; /* Prevent shrinking in flex container */
@@ -209,22 +265,19 @@ body {
     width: 354px;
     height: auto; /* Hug content */
     background-color: #F8F7FA;
-    margin-top: 8px;
     margin-left: auto;
     margin-right: auto;
     flex-shrink: 0;
     border-radius: 10px;
-    padding: 12px 14px; /* TB 12, LR 14 */
+    padding: 8px 8px;
     display: flex;
     flex-direction: column;
     align-items: center; /* Center children */
-    gap: 8px; /* Spacing of 8 between contents */
 }
 
 .events-header {
     width: 328px;
-    margin: 0 auto;
-    padding: 16px 20px; /* Top/Bottom 16, Left/Right 20 */
+    padding: 8px 8px; /* Top/Bottom 16, Left/Right 20 */
     display: flex;
     align-items: center;
     gap: 8px; /* Space between text and icon */
@@ -237,16 +290,16 @@ body {
        I will assume the *content* height or min-height logic, or just let padding dictate. */
 }
 
-.event-card {
+.event-card, .event-card-2, .service-card {
     width: 326px;
     height: 75px;
     padding: 12px 8px; /* Top/Bottom 12, Left/Right 8 */
     background-color: #FFFFFF;
-    margin: 0 auto 8px; /* Centered, with spacing bottom for next items */
     display: flex;
     align-items: center;
     gap: 8px;
     border-radius: 12px; /* Consistent radius */
+    margin-bottom: 8px;
 }
 
 .event-logo-placeholder {
@@ -299,18 +352,6 @@ body {
     flex-shrink: 0;
 }
 
-.event-card-2 {
-    width: 326px;
-    height: 75px;
-    padding: 12px 8px; /* Top/Bottom 12, Left/Right 8 */
-    background-color: #FFFFFF;
-    margin: 0 auto 8px; /* Centered, with spacing bottom for next items */
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    border-radius: 12px; /* Consistent radius */
-}
-
 .separator-container {
     width: 326px;
     height: 26px;
@@ -353,16 +394,7 @@ body {
 /* Hide scrollbar for Chrome/Safari/Opera */
 
 
-.service-card {
-    width: 326px;
-    padding: 12px 14px; /* Similar padding but arguably larger? I'll use 16px horizontal */
-    background-color: #FFFFFF;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    border-radius: 12px;
-}
+
 
 .service-info {
     display: flex;
@@ -383,9 +415,26 @@ body {
     color: #666;
 }
 
+.service-logo-container {
+    width: 42.88px;
+    height: 42.88px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    background-color: #f8f7fa;
+    border-radius: 8px;
+}
+
+.service-logo {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
 /* Bottom Navigation Bar */
 .bottom-nav {
-    width: 393px;
+    width: 100%;
     height: 99px;
     background-color: #FFFFFF;
     display: flex;
@@ -407,6 +456,7 @@ body {
     cursor: pointer;
     color: #8E8E93;
     width: 60px; /* Fixed width for touch target */
+    text-decoration: none; /* Remove underline */
 }
 
 .nav-bar-item.active {
@@ -430,6 +480,7 @@ body {
     justify-content: center;
     align-items: center;
     margin-top: -10px; /* Slight lift to emphasize? Or just center? Let's keep it aligned for now */
+    text-decoration: none;
 }
 
 .nav-center-item img {

@@ -93,7 +93,6 @@ body {
 
 .launch-form-container {
     width: 353px;
-    padding: 0 14px;
     display: flex;
     flex-direction: column;
     gap: 16px;

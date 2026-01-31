@@ -1,0 +1,360 @@
+:root {
+    --app-width: 393px;
+    --app-height: 852px;
+    --bg-color: #f5f5f7;
+    --frame-bg: #ffffff;
+    --shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.app-container {
+    width: var(--app-width);
+    height: var(--app-height);
+    background-color: var(--frame-bg);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    border-radius: 40px;
+    border: 8px solid #333;
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.scroll-content {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    
+    padding-top: max(env(safe-area-inset-top), 74px);
+    padding-bottom: 120px;
+    padding-left: 19px;
+    padding-right: 19px;
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.scroll-content::-webkit-scrollbar {
+    display: none;
+}
+
+/* Header Styles */
+.event-view-header {
+    width: 100%;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0;
+}
+
+.close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+    color: #000;
+}
+
+.close-btn img {
+    width: 24px;
+    height: 24px;
+}
+
+.event-view-header h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #000;
+    margin: 0;
+    line-height: 36px;
+}
+
+/* Event Title Container */
+.event-title-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.event-username {
+    font-size: 8px;
+    font-weight: 300;
+    color: #666;
+    text-transform: lowercase;
+}
+
+.event-main-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #000;
+    margin: 0;
+}
+
+/* Event Tags Container */
+.event-tags-container {
+    width: calc(100% + 38px); /* Account for parent padding (19px * 2) */
+    margin-left: -19px;
+    margin-right: -19px;
+    padding: 4px 19px;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 8px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.event-tags-container::-webkit-scrollbar {
+    display: none;
+}
+
+.event-tag {
+    width: auto; /* Changed to auto to fit text, but keeping user's 65x28 as base if possible */
+    min-width: 65px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+    font-size: 10px;
+    font-weight: 600;
+    border-radius: 4px;
+    background-color: #F2F2F7;
+    color: #3C3C43;
+    white-space: nowrap;
+}
+
+/* Event Details Bar */
+.event-details-bar {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.event-date-time {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+}
+
+.event-location {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 4px;
+}
+
+.event-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 4px;
+}
+
+.detail-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.detail-text {
+    font-size: 10px;
+    font-weight: 600;
+    color: #000;
+}
+
+/* Event Image Container */
+.event-image-container {
+    width: 100%;
+    height: 202px;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #F2F2F7;
+}
+
+.event-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Event Description */
+.event-description {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.description-header {
+    font-size: 16px;
+    font-weight: 700;
+    color: #000;
+    margin: 0;
+}
+
+.description-text {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #3C3C43;
+    margin: 0;
+}
+
+/* Event Author Section */
+.event-author-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.author-label {
+    font-size: 16px;
+    font-weight: 700;
+    color: #000;
+}
+
+.author-card {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px;
+    border: 1px solid #E5E5EA;
+    border-radius: 12px;
+}
+
+.author-info-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+}
+
+.author-pfp-container {
+    width: 47px;
+    height: 47px;
+    border-radius: 8px; /* Rounded square instead of circle */
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.author-pfp {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.author-content-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.author-username {
+    font-size: 10px;
+    font-weight: 300;
+    color: #666;
+}
+
+.author-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #000;
+}
+
+.author-chips {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+}
+
+.author-chip {
+    font-size: 8px;
+    font-weight: 400;
+    color: #666;
+    background-color: #F2F2F7;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.author-action {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.message-icon {
+    width: 30px;
+    height: 30px;
+}
+
+/* Floating Participate Button */
+.floating-participate-btn {
+    position: absolute;
+    bottom: 40px;
+    right: 19px;
+    padding: 12px;
+    background-color: #49A427;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(73, 164, 39, 0.3);
+    z-index: 100;
+    width: max-content;
+}
+
+.floating-participate-btn:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+}
+
+/* Mobile Responsive */
+@media (max-width: 500px) {
+    body {
+        background-color: var(--frame-bg);
+        align-items: flex-start;
+    }
+
+    .app-container {
+        width: 100%;
+        height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+        border: none;
+        padding-top: env(safe-area-inset-top, 20px);
+    }
+}

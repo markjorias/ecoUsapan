@@ -15,19 +15,13 @@
             
             <!-- Header -->
             <div class="events-header">
-                <div class="header-close-container">
-                    <a href="{{ url_for('views.home') }}" class="close-btn">
-                        <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
-                    </a>
-                </div>
-                <div class="header-title-container">
-                    <h1>Events</h1>
-                </div>
-                <div class="header-filter-container">
-                    <button class="filter-btn">
-                        <img src="{{ url_for('static', filename='icons/list.svg') }}" alt="Filter">
-                    </button>
-                </div>
+                <a href="{{ url_for('views.home') }}" class="back-btn">
+                    <img src="{{ url_for('static', filename='icons/chevron-left.svg') }}" alt="Back">
+                </a>
+                <h1 class="header-title">Events</h1>
+                <button class="filter-btn">
+                    <img src="{{ url_for('static', filename='icons/list.svg') }}" alt="Filter">
+                </button>
             </div>
 
             <!-- Search and Add Event Row -->
@@ -40,9 +34,11 @@
                         <input type="text" class="search-input" placeholder="Search for events...">
                     </div>
                 </div>
-                <div class="add-event-container">
-                    <img src="{{ url_for('static', filename='icons/plus.svg') }}" alt="Add Event" class="add-event-icon">
-                </div>
+                <a href="{{ url_for('views.launch_initiative1') }}" class="add-event-link">
+                    <div class="add-event-container">
+                        <img src="{{ url_for('static', filename='icons/plus.svg') }}" alt="Add Event" class="add-event-icon">
+                    </div>
+                </a>
             </div>
 
             <!-- Event Cards -->
