@@ -11,14 +11,11 @@
 </head>
 <body>
     <div class="app-container">
-        <div class="scroll-content" style="padding-bottom: 40px;">
-            
-            <!-- Header -->
-            <div class="launch-header">
+        <div class="scroll-content" style="padding-bottom: 40px;"><div class="launch-header">
                 <a href="{{ url_for('views.home') }}" class="close-btn">
                     <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
                 </a>
-                <h1>Launch Your Iniative</h1>
+                <h1>Launch Your Initiative</h1>
             </div>
 
             <div class="launch-form-container">
@@ -56,12 +53,12 @@
                 <!-- Address -->
                 <div class="form-group">
                     <label class="form-label">Address</label>
-                    <div class="flex-row gap-12 mb-8">
+                    <div class="flex-row gap-12">
                         <input type="text" class="form-input" placeholder="Province">
                         <input type="text" class="form-input" placeholder="City">
                     </div>
-                    <input type="text" class="form-input mb-8" placeholder="Address line 1">
-                    <input type="text" class="form-input mb-8" placeholder="Address line 2">
+                    <input type="text" class="form-input" placeholder="Address line 1">
+                    <input type="text" class="form-input" placeholder="Address line 2">
                     <input type="text" class="form-input" placeholder="Postal Code">
                 </div>
 

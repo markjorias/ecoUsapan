@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Event Map</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+     
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/event-map.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header Overlay -->
+        <div class="map-header">
+            <a href="{{ url_for('views.home') }}" class="close-btn">
+                <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
+            </a>
+            <h1>EcoEvents</h1>
+        </div>
+
+        <div id="map"></div>
+
+        <!-- Bottom Info Card Overlay -->
+        <div class="info-card-container">
+            <div class="event-card">
+                <div class="event-logo-placeholder"></div>
+                <div class="event-info">
+                    <div class="event-org">Organizing Team</div>
+                    <div class="event-title">Event Title</div>
+                    <div class="event-loc">Location</div>
+                </div>
+                <div class="event-action">
+                    participate
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+
+    <script src="{{ url_for('static', filename='js/event-map.js') }}"></script>
+</body>
+</html>

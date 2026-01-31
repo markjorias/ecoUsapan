@@ -24,7 +24,7 @@ body {
 .app-container {
     width: var(--app-width);
     height: var(--app-height);
-    background-color: var(--frame-bg);
+    background: linear-gradient(180deg, #0B9400 -100%, rgba(0, 0, 0, 0) 35%), var(--frame-bg);
     position: relative;
     overflow: hidden;
     box-shadow: var(--shadow);

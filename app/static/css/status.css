@@ -1,0 +1,141 @@
+/* Inherit basic variables and settings from style.css where possible, 
+   but define specific page styles here */
+
+.status-scroll-view {
+    padding-left: 19px;
+    padding-right: 19px;
+    gap: 16px;
+}
+
+/* Ensure children don't overflow or look weird with the new padding if they were relying on full width */
+.status-header-container,
+.section-title,
+.status-list {
+    width: 100%; /* Take full available width inside the padded container */
+    max-width: 100%; /* Safety */
+}
+
+.status-header-container {
+    /* width: 354px;  <- Removed fixed width override */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.status-header-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+}
+
+.section-title {
+    /* width: 354px; <- Removed fixed width */
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+}
+
+.status-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.status-card {
+    width: 100%;
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #000;
+}
+
+.card-date {
+    font-size: 12px;
+    color: #8E8E93;
+}
+
+.card-body {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.card-thumbnail {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    background-color: #F2F2F7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.card-thumbnail img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}
+
+.card-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.card-subtitle {
+    font-size: 14px;
+    color: #333;
+}
+
+.card-meta {
+    font-size: 12px;
+    color: #666;
+}
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    align-self: flex-start;
+}
+
+/* Status variants */
+.status-badge.pending {
+    background-color: #FFF4E5;
+    color: #FF9500;
+}
+
+.status-badge.approved {
+    background-color: #E8F5E9;
+    color: #4CAF50;
+}
+
+.status-badge.rejected {
+    background-color: #FFEBEE;
+    color: #F44336;
+}
+
+.status-badge.completed {
+    background-color: #E3F2FD;
+    color: #2196F3;
+}

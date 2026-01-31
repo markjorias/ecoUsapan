@@ -1,0 +1,190 @@
+:root {
+    --app-width: 393px;
+    --app-height: 852px;
+    --bg-color: #f5f5f7;
+    --frame-bg: #ffffff;
+    --shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.app-container {
+    width: var(--app-width);
+    height: var(--app-height);
+    background: linear-gradient(180deg, #0B9400 -100%, rgba(0, 0, 0, 0) 35%), var(--frame-bg);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    border-radius: 40px;
+    border: 8px solid #333;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Map fills the container */
+#map {
+    width: 100%;
+    height: 723px;
+    margin-top: auto;
+    border-radius: 24px;
+    z-index: 1; /* Lowest level */
+}
+
+/* Header Overlay - mimics launch-header styles but absolute */
+.map-header {
+    position: absolute;
+    top: max(env(safe-area-inset-top), 74px); /* Adjust to match events page */
+    left: 24px; /* Align with design padding */
+    right: 24px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    z-index: 10;
+    pointer-events: none; /* Let clicks pass through if not on button */
+}
+
+.close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+    color: #000;
+    pointer-events: auto; /* Re-enable clicks */
+}
+
+.close-btn img {
+    width: 24px;
+    height: 24px;
+}
+
+.map-header h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1c1c1e; /* Dark text */
+    pointer-events: auto;
+}
+
+/* Bottom Info Card Overlay */
+.info-card-container {
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    width: 100%;
+    padding: 0 20px;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    
+    /* Animation states */
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none; /* Prevent clicks when hidden */
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.info-card-container.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.event-card {
+    width: 326px;
+    height: 75px;
+    padding: 12px 8px; /* Top/Bottom 12, Left/Right 8 */
+    background-color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 12px; /* Consistent radius */
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15); /* Keep shadow for overlay visibility */
+}
+
+.event-logo-placeholder {
+    width: 42.88px;
+    height: 42.88px;
+    background-color: #E2E2E2; /* Grey placeholder */
+    border-radius: 8px; /* Slightly rounded */
+    flex-shrink: 0;
+}
+
+.event-info {
+    flex: 1; /* Takes available width */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    min-width: 0; /* Important for text truncation in flex child */
+}
+
+.event-org {
+    font-size: 10px;
+    font-weight: 300;
+    color: #666;
+}
+
+.event-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #000;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.event-loc {
+    font-size: 10px;
+    font-weight: 300;
+    color: #666;
+}
+
+.event-action {
+    width: 60px;
+    height: 28px;
+    background-color: #000;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+    font-size: 8px;
+    font-weight: 600;
+    color: #FFF;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+/* Mobile Responsive Override */
+@media (max-width: 500px) {
+    body {
+        background-color: var(--frame-bg);
+        align-items: flex-start;
+    }
+
+    .app-container {
+        width: 100%;
+        height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+        border: none;
+    }
+    
+    .map-header {
+        top: max(env(safe-area-inset-top), 20px);
+    }
+}
