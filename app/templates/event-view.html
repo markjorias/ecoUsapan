@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Event Details</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/event-view.css') }}">
 </head>
@@ -86,7 +84,68 @@
 
         </div>
 
-        <button class="floating-participate-btn">PARTICIPATE</button>
+        <button class="floating-participate-btn" id="participate-btn">PARTICIPATE</button>
+
+    <!-- Participation Form Modal Overlay -->
+    <div class="modal-overlay" id="participation-modal">
+        <div class="modal-content">
+            <div class="launch-header">
+                <div class="close-btn" id="close-modal-btn">
+                    <img src="{{ url_for('static', filename='icons/chevron-left.svg') }}" alt="Back">
+                </div>
+                <h1>Participate</h1>
+            </div>
+
+            <div class="launch-form-container" id="participation-form">
+                <!-- Name -->
+                <div class="form-group">
+                    <label class="form-label">Name</label>
+                    <input type="text" class="form-input" placeholder="Your Name">
+                </div>
+
+                <!-- Address -->
+                <div class="form-group">
+                    <label class="form-label">Address</label>
+                    <input type="text" class="form-input" placeholder="Your Address">
+                </div>
+
+                <!-- Contact Number -->
+                <div class="form-group">
+                    <label class="form-label">Contact Number</label>
+                    <input type="tel" class="form-input" placeholder="09XX XXX XXXX">
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" placeholder="email@example.com">
+                </div>
+
+                <!-- Purpose of Participation -->
+                <div class="form-group">
+                    <label class="form-label">Purpose of Participation</label>
+                    <textarea class="form-textarea" placeholder="Why do you want to join?"></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="bottom-action-container">
+                    <button class="next-btn" id="submit-participation-btn">SUBMIT</button>
+                </div>
+            </div>
+
+            <!-- Confirmation Message (Hidden by default) -->
+            <div class="confirmation-container" id="confirmation-message" style="display: none;">
+                <div class="confirmation-content">
+                    <img src="{{ url_for('static', filename='icons/users.svg') }}" alt="Success" class="success-icon">
+                    <h2>Participation Received!</h2>
+                    <p>Thank you for signing up. We'll be in touch soon.</p>
+                    <button class="next-btn" id="close-confirmation-btn">DONE</button>
+                </div>
+            </div>
+        </div>
     </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/event-view.js') }}"></script>
 </body>
 </html>

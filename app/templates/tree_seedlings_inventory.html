@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Need for Seedlings</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <title>Tree Seedlings Inventory</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/request_services.css') }}">
 </head>
@@ -16,10 +14,10 @@
             
             <!-- Header -->
             <div class="request-for-seedlings-header">
-                <a href="{{ url_for('views.home') }}" class="close-btn">
+                <a href="{{ url_for('views.about_ecoservice_seedlings') }}" class="close-btn">
                     <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
                 </a>
-                <h1>Need for Seedlings</h1>
+                <h1>Tree Seedlings Inventory</h1>
             </div>
 
             <!-- Search Container -->

@@ -358,3 +358,185 @@ body {
         padding-top: env(safe-area-inset-top, 20px);
     }
 }
+
+/* Modal Overlay Styles */
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 200;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end; /* Slide up from bottom */
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+.modal-content {
+    width: 100%;
+    height: 90%; /* Take up most of the screen */
+    background-color: #FFFFFF;
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+    padding: 24px 19px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+}
+
+/* Reuse Launch Header Styles inside Modal */
+.launch-header {
+    width: 100%;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0;
+    margin-bottom: 8px;
+}
+
+.launch-header h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #000;
+    margin: 0;
+}
+
+/* Form Styles */
+.launch-form-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px; 
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #000;
+}
+
+.form-input {
+    width: 100%;
+    height: 48px;
+    border: 1px solid #D1D1D6;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #333;
+    background-color: #FFFFFF;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #49A427;
+}
+
+.form-input::placeholder {
+    color: #8E8E93;
+    font-weight: 400;
+}
+
+.form-textarea {
+    width: 100%;
+    height: 120px;
+    border: 1px solid #D1D1D6;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #333;
+    resize: none;
+    background-color: #FFFFFF;
+}
+
+.form-textarea:focus {
+    outline: none;
+    border-color: #49A427;
+}
+
+.bottom-action-container {
+    width: 100%;
+    padding-top: 16px;
+    margin-top: auto;
+}
+
+.next-btn {
+    width: 100%;
+    height: 50px;
+    background-color: #49A427;
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Confirmation Message Styles */
+.confirmation-container {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 24px;
+    padding: 24px 0;
+}
+
+.confirmation-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+}
+
+.success-icon {
+    width: 64px;
+    height: 64px;
+    /* You might need an icon for this, or reuse one */
+}
+
+.confirmation-content h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #000;
+    margin: 0;
+}
+
+.confirmation-content p {
+    font-size: 16px;
+    color: #666;
+    margin: 0;
+    max-width: 80%;
+}

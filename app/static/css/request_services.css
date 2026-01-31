@@ -87,13 +87,21 @@ body {
     height: 24px;
 }
 
-.request-for-seeds-header h1,
-.request-for-seedlings-header h1 {
+.request-for-seeds-header h1 {
     font-size: 24px;
     font-weight: 700;
     color: #000;
     margin: 0;
     line-height: 36px;
+}
+
+.request-for-seedlings-header h1 {
+    font-size: 20px; /* Reduced to fit "Tree Seedlings Inventory" on one line */
+    font-weight: 700;
+    color: #000;
+    margin: 0;
+    line-height: 36px;
+    white-space: nowrap;
 }
 
 /* Search Container */
