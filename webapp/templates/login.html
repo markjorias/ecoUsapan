@@ -9,68 +9,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
-        .login-scroll {
-            width: 100%;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px 0;
-        }
-        .login-card {
-            width: 100%;
-            padding: 16px;
-            background: #f9f9f9;
-            border-radius: 12px;
-            text-align: left;
-            border: 1px solid #eee;
-            margin-bottom: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            flex-direction: column;
-        }
-        .login-card:hover {
-            border-color: #49A427;
-            background: #f0f9ed;
-        }
+        .login-scroll { width: 100%; overflow-y: auto; display: flex; flex-direction: column; align-items: center; padding: 20px 0; }
+        .login-card { width: 100%; padding: 16px; background: #f9f9f9; border-radius: 12px; text-align: left; border: 1px solid #eee; margin-bottom: 12px; cursor: pointer; transition: all 0.2s ease; display: flex; flex-direction: column; }
+        .login-card:hover { border-color: #49A427; background: #f0f9ed; }
         .login-card.admin { border-left: 5px solid #000; }
         .login-card.user { border-left: 5px solid #49A427; }
-        
-        .add-user-card {
-            width: 100%;
-            padding: 16px;
-            background: #fff;
-            border-radius: 12px;
-            text-align: center;
-            border: 2px dashed #49A427;
-            margin-bottom: 24px;
-            cursor: pointer;
-            color: #49A427;
-            font-weight: 700;
-            font-size: 14px;
-            transition: all 0.2s ease;
-        }
-        .add-user-card:hover {
-            background: #f0f9ed;
-        }
-
-        .role-tag {
-            font-size: 9px;
-            text-transform: uppercase;
-            font-weight: 800;
-            color: #666;
-            margin-bottom: 4px;
-        }
-        .section-label {
-            width: 100%;
-            font-size: 11px;
-            font-weight: 700;
-            color: #999;
-            text-transform: uppercase;
-            margin-bottom: 12px;
-            letter-spacing: 1px;
-        }
+        .add-user-card { width: 100%; padding: 16px; background: #fff; border-radius: 12px; text-align: center; border: 2px dashed #49A427; margin-bottom: 24px; cursor: pointer; color: #49A427; font-weight: 700; font-size: 14px; }
+        .role-tag { font-size: 9px; text-transform: uppercase; font-weight: 800; color: #666; margin-bottom: 4px; }
+        .section-label { width: 100%; font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1px; }
     </style>
 </head>
 <body>
@@ -84,19 +30,16 @@
             <form action="{{ url_for('auth.login') }}" method="POST" id="loginForm">
                 <input type="hidden" name="email" id="loginEmail">
                 
-                <!-- Admin Section -->
-                <div class="section-label">Administrator</div>
-                {% if admin %}
+                <div class="section-label">Administrators</div>
+                {% for admin in admins %}
                 <div class="login-card admin" onclick="loginAs('{{ admin.email }}')">
-                    <div class="role-tag">Full System Access</div>
-                    <div style="font-size: 16px; font-weight: 700;">{{ admin.username|capitalize }}</div>
+                    <div class="role-tag">{{ admin.role.replace('Admin_', '') }} Access</div>
+                    <div style="font-size: 16px; font-weight: 700;">{{ admin.username }}</div>
                     <div style="font-size: 11px; color: #888;">{{ admin.email }}</div>
                 </div>
-                {% endif %}
+                {% endfor %}
 
-                <!-- Users Section -->
                 <div class="section-label" style="margin-top: 12px;">Standard Users</div>
-                
                 {% for u in users %}
                 <div class="login-card user" onclick="loginAs('{{ u.email }}')">
                     <div class="role-tag" style="color: #49A427;">Standard Access</div>
@@ -106,14 +49,9 @@
                 {% endfor %}
             </form>
 
-            <!-- One-Click Add User -->
             <a href="{{ url_for('auth.add_test_user') }}" style="text-decoration: none; width: 100%;">
-                <div class="add-user-card">
-                    + Add New Test User
-                </div>
+                <div class="add-user-card">+ Add New Test User</div>
             </a>
-
-            <p style="font-size: 10px; color: #ccc; margin-top: auto;">Development Build v1.1</p>
         </div>
     </div>
 
