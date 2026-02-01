@@ -20,28 +20,27 @@ def login():
         else:
             flash('Account not found.', category='error')
 
-    # Fetch existing users for the selection list
-    users = User.query.filter_by(is_admin=False).all()
-    admin = User.query.filter_by(is_admin=True).first()
+    # FIX: We can no longer filter by 'is_admin' in SQL because it's a property.
+    # We filter by 'role' instead to populate the login list.
+    standard_users = User.query.filter_by(role='User').all()
+    admins = User.query.filter(User.role.like('Admin_%')).all()
     
-    return render_template("login.html", user=current_user, users=users, admin=admin)
+    return render_template("login.html", user=current_user, users=standard_users, admins=admins)
 
 @auth.route('/add-test-user')
 def add_test_user():
-    # Count current standard users to generate a unique name
-    user_count = User.query.filter_by(is_admin=False).count()
+    user_count = User.query.filter_by(role='User').count()
     new_index = user_count + 1
     
     new_username = f"Tester {new_index}"
     new_email = f"user{new_index}@ecousapan.com"
     
-    # Check if email exists (safety for prototype)
     if not User.query.filter_by(email=new_email).first():
         new_user = User(
             email=new_email,
             username=new_username,
             password=generate_password_hash('user', method='pbkdf2:sha256'),
-            is_admin=False
+            role='User'
         )
         db.session.add(new_user)
         db.session.commit()

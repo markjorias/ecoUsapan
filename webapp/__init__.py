@@ -39,13 +39,14 @@ def create_app():
     with app.app_context():
         db.create_all()
         
-        # SEED TEST ACCOUNTS FOR THE PROTOTYPE
+        # FIX: Changed 'is_admin=True' to 'role='Admin_LGU'' 
+        # because is_admin is now a read-only property.
         if not User.query.filter_by(email='admin@ecousapan.com').first():
             admin = User(
                 email='admin@ecousapan.com', 
                 username='admin', 
                 password=generate_password_hash('admin', method='pbkdf2:sha256'),
-                is_admin=True
+                role='Admin_LGU'
             )
             db.session.add(admin)
             
@@ -54,7 +55,7 @@ def create_app():
                 email='user@ecousapan.com', 
                 username='tester', 
                 password=generate_password_hash('user', method='pbkdf2:sha256'),
-                is_admin=False
+                role='User'
             )
             db.session.add(user)
             
