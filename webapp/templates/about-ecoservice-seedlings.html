@@ -29,7 +29,7 @@
         <div class="scroll-content" style="{% if not current_user.is_admin %}padding-bottom: 100px;{% endif %}">
             
             <div class="about-header">
-                <a href="{{ url_for('views.ecoservices') }}" class="close-btn">
+                <a href="javascript:history.back()" class="close-btn">
                     <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
                 </a>
                 <h1>About EcoService</h1>
