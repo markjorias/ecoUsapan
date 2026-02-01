@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, current_app, jsonify
 from flask_login import login_required, current_user
-from .models import Initiative, ServiceRequest, Participation, InventoryItem, Comment, ForumPost
+from .models import Initiative, ServiceRequest, Participation, InventoryItem, Comment, ForumPost, PostVote
 from . import db
 from datetime import datetime
 import os
@@ -526,18 +526,25 @@ def event_view(id):
 @views.route('/forum')
 @login_required
 def forum():
-    # Fetch posts grouped by "Trending" (most votes/comments) and "Recent Discussions"
-    trending_posts = ForumPost.query.order_by(ForumPost.votes.desc()).limit(3).all()
-    recent_posts = ForumPost.query.order_by(ForumPost.date_posted.desc()).all()
-    return render_template('forum.html', user=current_user, trending=trending_posts, recent=recent_posts)
+    trending = ForumPost.query.order_by(ForumPost.votes.desc()).limit(3).all()
+    recent = ForumPost.query.order_by(ForumPost.date_posted.desc()).all()
+    return render_template('forum.html', user=current_user, trending=trending, recent=recent)
+
 
 @views.route('/forum-view/<int:id>')
 @login_required
 def forum_view(id):
     post = ForumPost.query.get_or_404(id)
-    # Only get top-level comments; replies will be accessed via post.comments[n].replies
+    # Get current user's vote type for this post
+    user_vote = PostVote.query.filter_by(user_id=current_user.id, post_id=id).first()
+    user_vote_type = user_vote.vote_type if user_vote else None
+    
     comments = Comment.query.filter_by(post_id=id, parent_id=None).order_by(Comment.date_posted.desc()).all()
-    return render_template('forum-view.html', user=current_user, post=post, comments=comments)
+    return render_template('forum-view.html', 
+                           user=current_user, 
+                           post=post, 
+                           comments=comments, 
+                           user_vote_type=user_vote_type)
 
 @views.route('/add-comment/<int:post_id>', methods=['POST'])
 @login_required
@@ -557,6 +564,74 @@ def add_comment(post_id):
         flash('Comment posted!', category='success')
     
     return redirect(url_for('views.forum_view', id=post_id))
+
+@views.route('/create-post', methods=['POST'])
+@login_required
+def create_post():
+    title = request.form.get('title')
+    content = request.form.get('content')
+    category = request.form.get('category')
+    
+    if not title or not content:
+        flash('All fields are required!', category='error')
+    else:
+        new_post = ForumPost(
+            title=title,
+            content=content,
+            category=category,
+            user_id=current_user.id
+        )
+        db.session.add(new_post)
+        db.session.commit()
+        flash('New discussion created!', category='success')
+        
+    return redirect(url_for('views.forum'))
+
+@views.route('/vote-post/<int:post_id>', methods=['POST'])
+@login_required
+def vote_post(post_id):
+    post = ForumPost.query.get_or_404(post_id)
+    data = request.get_json()
+    vote_type = data.get('vote_type') # 'up' or 'down'
+    
+    # Check if this user has already voted on this post
+    existing_vote = PostVote.query.filter_by(user_id=current_user.id, post_id=post_id).first()
+    
+    # Logic: 
+    # 1. If no vote exists: Create new vote.
+    # 2. If same vote exists: Remove it (toggle off).
+    # 3. If opposite vote exists: Change the type and update total.
+    
+    change_in_total = 0
+    new_status = None # 'up', 'down', or None
+    
+    if not existing_vote:
+        # Create new vote
+        new_vote = PostVote(user_id=current_user.id, post_id=post_id, vote_type=vote_type)
+        db.session.add(new_vote)
+        change_in_total = 1 if vote_type == 'up' else -1
+        new_status = vote_type
+    else:
+        if existing_vote.vote_type == vote_type:
+            # Toggle off (Remove existing vote)
+            change_in_total = -1 if vote_type == 'up' else 1
+            db.session.delete(existing_vote)
+            new_status = None
+        else:
+            # Switch vote type (e.g., from up to down)
+            # If switching up -> down: total goes down by 2 (+1 becomes -1)
+            # If switching down -> up: total goes up by 2 (-1 becomes +1)
+            change_in_total = -2 if vote_type == 'down' else 2
+            existing_vote.vote_type = vote_type
+            new_status = vote_type
+
+    post.votes += change_in_total
+    db.session.commit()
+    
+    return jsonify({
+        'votes': post.votes,
+        'status': new_status
+    })
 
 @views.route('/seeds-view')
 @login_required

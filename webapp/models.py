@@ -117,19 +117,27 @@ class Participation(db.Model):
     initiative = db.relationship('Initiative', backref='participants')
     initiative = db.relationship('Initiative', backref='registrations')
 
+class PostVote(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('forum_post.id'), nullable=False)
+    # THIS IS THE MISSING COLUMN
+    vote_type = db.Column(db.String(10), nullable=False) # 'up' or 'down'
+
 class ForumPost(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    category = db.Column(db.String(50), default='Discussion') # 'News', 'Suggestion', etc.
+    category = db.Column(db.String(50), default='Discussion')
     date_posted = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    image_filename = db.Column(db.String(100))
     votes = db.Column(db.Integer, default=0)
+    
+    # Helper to check vote status in templates
+    def get_user_vote(self, user_id):
+        vote = PostVote.query.filter_by(user_id=user_id, post_id=self.id).first()
+        return vote.vote_type if vote else None
 
-    # Relationships
-    author = db.relationship('User', backref='posts')
-    comments = db.relationship('Comment', backref='post', cascade="all, delete-orphan", lazy=True)
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)

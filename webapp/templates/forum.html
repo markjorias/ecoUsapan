@@ -3,127 +3,236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Forum</title>
+    <title>Forum - EcoUsapan</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/forum.css') }}">
 </head>
 <body>
     <div class="app-container">
-        <div class="scroll-content" style="padding-bottom: 40px;">
-            
+        <div class="scroll-content">
             <!-- Header -->
             <div class="forum-header">
                 <a href="{{ url_for('views.home') }}" class="back-btn">
                     <img src="{{ url_for('static', filename='icons/chevron-left.svg') }}" alt="Back">
                 </a>
                 <h1 class="header-title">Forum</h1>
-                <button class="filter-btn">
-                    <img src="{{ url_for('static', filename='icons/list.svg') }}" alt="Filter">
-                </button>
+                
+                <div class="filter-wrapper">
+                    <button class="filter-btn" id="filterBtn">
+                        <img src="{{ url_for('static', filename='icons/list.svg') }}" alt="Filter">
+                    </button>
+                    <div class="filter-dropdown" id="filterDropdown">
+                        <div class="filter-option active" data-category="all">All Topics</div>
+                        <div class="filter-option" data-category="News">News</div>
+                        <div class="filter-option" data-category="Discussion">Discussion</div>
+                        <div class="filter-option" data-category="Question">Question</div>
+                        <div class="filter-option" data-category="Suggestion">Suggestion</div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Search and Add Event Row -->
+            <!-- Search and Add -->
             <div class="search-add-row">
                 <div class="search-container">
                     <div class="search-icon-container">
                         <img src="{{ url_for('static', filename='icons/search.svg') }}" alt="Search" class="search-icon">
                     </div>
                     <div class="search-text-container">
-                        <input type="text" class="search-input" placeholder="Search for topics...">
+                        <input type="text" id="forumSearch" class="search-input" placeholder="Search for topics...">
                     </div>
                 </div>
-                <div class="add-forum-container">
+                <div class="add-forum-container" onclick="openNewPostModal()">
                     <img src="{{ url_for('static', filename='icons/plus.svg') }}" alt="Add Topic" class="add-forum-icon">
                 </div>
             </div>
 
-            <!-- Forum Sections -->
-            <div class="forum-sections-wrapper">
-                
+            <div class="forum-sections-wrapper" id="forumContent">
                 <!-- Trending Section -->
-                <div class="forum-section-container">
+                {% if trending %}
+                <div class="forum-section-container" id="trendingSection">
                     <h2 class="section-title">Trending</h2>
                     <div class="forum-card-list">
-                        <a href="{{ url_for('views.forum_view') }}" style="text-decoration: none; color: inherit; display: block;">
+                        {% for post in trending %}
+                        <a href="{{ url_for('views.forum_view', id=post.id) }}" class="post-link" 
+                           data-category="{{ post.category }}" 
+                           data-title="{{ post.title|lower }}" 
+                           data-content="{{ post.content|lower }}">
                             <div class="forum-card1">
                                 <div class="forum-info">
-                                    <div class="forum-tag">News</div>
-                                    <div class="forum-title">Trending Topic 1</div>
+                                    <div class="forum-tag">{{ post.category }}</div>
+                                    <div class="forum-title">{{ post.title }}</div>
                                     <div class="forum-meta">
-                                        <div class="forum-username">@username</div>
-                                        <div class="forum-comments">2.5k comments</div>
+                                        <span class="forum-username">@{{ post.author.username }}</span>
+                                        <span class="forum-comments">{{ post.comments|length }} comments</span>
                                     </div>
                                 </div>
-                                <div class="forum-action">  
+                                <div class="forum-action" onclick="handleVote(event, {{ post.id }}, this)">  
+                                    <div class="forum-action" onclick="handleVote(event, {{ post.id }}, this)">  
+                                    <!-- Added 'voted' class dynamically if the user has a record in PostVote -->
+                                    <div class="vote-controls {% if post.has_user_voted(current_user.id) %}voted{% endif %}">
+                                        <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" class="vote-icon">
+                                        <span class="vote-count" data-post-id="{{ post.id }}">{{ post.votes }}</span>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Recent Discussions Section -->
+                <div class="forum-section-container" id="discussionSection">
+                    <h2 class="section-title">Discussions</h2>
+                    <div class="forum-card-list">
+                        {% for post in recent %}
+                        <a href="{{ url_for('views.forum_view', id=post.id) }}" class="post-link" 
+                           data-category="{{ post.category }}" 
+                           data-title="{{ post.title|lower }}" 
+                           data-content="{{ post.content|lower }}">
+                            <div class="forum-card3">
+                                <div class="forum-info">
+                                    <div class="forum-tag">{{ post.category }}</div>
+                                    <div class="forum-title">{{ post.title }}</div>
+                                    <div class="forum-meta">
+                                        <span class="forum-username">@{{ post.author.username }}</span>
+                                        <span class="forum-comments">{{ post.comments|length }} comments</span>
+                                    </div>
+                                </div>
+                                <div class="forum-action" onclick="handleVote(event, {{ post.id }}, this)">  
                                     <div class="vote-controls">
-                                        <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" alt="Upvote" class="vote-icon">
-                                        <img src="{{ url_for('static', filename='icons/arrow-down.svg') }}" alt="Downvote" class="vote-icon">
+                                        <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" class="vote-icon">
+                                        <span class="vote-count" data-post-id="{{ post.id }}">{{ post.votes }}</span>
                                     </div>
                                 </div>
                             </div>
                         </a>
-                        <div class="forum-card2">
-                            <div class="forum-info">
-                                <div class="forum-tag">Discussion</div>
-                                <div class="forum-title">Trending Topic 2</div>
-                                <div class="forum-meta">
-                                    <div class="forum-username">@username</div>
-                                    <div class="forum-comments">2.5k comments</div>
-                                </div>
-                            </div>
-                            <div class="forum-action">  
-                                <div class="vote-controls">
-                                    <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" alt="Upvote" class="vote-icon">
-                                    <img src="{{ url_for('static', filename='icons/arrow-down.svg') }}" alt="Downvote" class="vote-icon">
-                                </div>
-                            </div>
-                        </div>
+                        {% endfor %}
                     </div>
                 </div>
-
-                <!-- Discussions Section -->
-                <div class="forum-section-container">
-                    <h2 class="section-title">Discussions</h2>
-                    <div class="forum-card-list">
-                        <div class="forum-card3">
-                            <div class="forum-info">
-                                <div class="forum-tag">Suggestion</div>
-                                <div class="forum-title">Discussion Topic 1</div>
-                                <div class="forum-meta">
-                                    <div class="forum-username">@username</div>
-                                    <div class="forum-comments">2.5k comments</div>
-                                </div>
-                            </div>
-                            <div class="forum-action">  
-                                <div class="vote-controls">
-                                    <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" alt="Upvote" class="vote-icon">
-                                    <img src="{{ url_for('static', filename='icons/arrow-down.svg') }}" alt="Downvote" class="vote-icon">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="forum-card4">
-                            <div class="forum-info">
-                                <div class="forum-tag">News</div>
-                                <div class="forum-title">Discussion Topic 2</div>
-                                <div class="forum-meta">
-                                    <div class="forum-username">@username</div>
-                                    <div class="forum-comments">2.5k comments</div>
-                                </div>
-                            </div>
-                            <div class="forum-action">  
-                                <div class="vote-controls">
-                                    <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" alt="Upvote" class="vote-icon">
-                                    <img src="{{ url_for('static', filename='icons/arrow-down.svg') }}" alt="Downvote" class="vote-icon">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
-
         </div>
-                {% include 'components/navbar.html' %}
+
+        <!-- New Post Modal -->
+        <div class="modal-overlay" id="newPostModal" onclick="closeNewPostModal()">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <div class="modal-header">
+                    <h2 class="modal-title">New Discussion</h2>
+                    <div class="modal-close" onclick="closeNewPostModal()">
+                        <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
+                    </div>
+                </div>
+                <form action="{{ url_for('views.create_post') }}" method="POST">
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select name="category" class="form-select">
+                            <option value="Discussion">Discussion</option>
+                            <option value="Question">Question</option>
+                            <option value="Suggestion">Suggestion</option>
+                            <option value="News">News</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Title</label>
+                        <input type="text" name="title" class="form-input" placeholder="What's on your mind?" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Content</label>
+                        <textarea name="content" class="form-textarea" placeholder="Provide more details..." required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Post Discussion</button>
+                </form>
+            </div>
+        </div>
+
+        {% include 'components/navbar.html' %}
     </div>
+
+    <script>
+        const filterBtn = document.getElementById('filterBtn');
+        const filterDropdown = document.getElementById('filterDropdown');
+        const filterOptions = document.querySelectorAll('.filter-option');
+        const searchInput = document.getElementById('forumSearch');
+        const postLinks = document.querySelectorAll('.post-link');
+
+        let activeCategory = 'all';
+
+        // --- VOTE LOGIC ---
+        async function handleVote(event, postId, element) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            try {
+                const response = await fetch(`/vote-post/${postId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Update counts across the UI
+                    const counters = document.querySelectorAll(`.vote-count[data-post-id="${postId}"]`);
+                    counters.forEach(c => c.innerText = data.votes);
+                    
+                    // Toggle the 'voted' class for visual feedback
+                    const controls = element.querySelector('.vote-controls');
+                    if (data.voted) {
+                        controls.classList.add('voted');
+                    } else {
+                        controls.classList.remove('voted');
+                    }
+                }
+            } catch (error) {
+                console.error("Voting failed:", error);
+            }
+        }
+
+        // --- FILTER LOGIC ---
+        filterBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isVisible = filterDropdown.style.display === 'flex';
+            filterDropdown.style.display = isVisible ? 'none' : 'flex';
+        });
+
+        window.addEventListener('click', () => { filterDropdown.style.display = 'none'; });
+
+        filterOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                filterOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                activeCategory = option.getAttribute('data-category');
+                applyFilters();
+            });
+        });
+
+        searchInput.addEventListener('input', applyFilters);
+
+        function applyFilters() {
+            const query = searchInput.value.toLowerCase();
+            postLinks.forEach(link => {
+                const category = link.getAttribute('data-category');
+                const title = link.getAttribute('data-title');
+                const content = link.getAttribute('data-content');
+                const matchesCategory = (activeCategory === 'all' || category === activeCategory);
+                const matchesSearch = (title.includes(query) || content.includes(query));
+                link.style.display = (matchesCategory && matchesSearch) ? 'block' : 'none';
+            });
+            checkSectionVisibility('trendingSection');
+            checkSectionVisibility('discussionSection');
+        }
+
+        function checkSectionVisibility(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (!section) return;
+            const totalCards = section.querySelectorAll('.post-link').length;
+            const hiddenCards = section.querySelectorAll('.post-link[style="display: none;"]').length;
+            section.style.display = (totalCards === hiddenCards && totalCards !== 0) ? 'none' : 'block';
+        }
+
+        function openNewPostModal() { document.getElementById('newPostModal').style.display = 'flex'; }
+        function closeNewPostModal() { document.getElementById('newPostModal').style.display = 'none'; }
+    </script>
 </body>
 </html>
