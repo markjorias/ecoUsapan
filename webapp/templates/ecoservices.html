@@ -5,11 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>EcoServices</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/about-ecoservice.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ecoservice-about.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/page-transition.css') }}">
+    <script src="{{ url_for('static', filename='js/page-transition.js') }}" defer></script>
     <style>
         /* Local overrides if necessary, but using about-ecoservice.css as requested */
         .scroll-content {
             gap: 8px;
+            padding-bottom: 110px; /* Space for navbar */
         }
         .card-link {
             text-decoration: none;
@@ -30,7 +34,7 @@
             </div>
 
             <!-- Card 1: Seeds Service -->
-            <a href="{{ url_for('views.about_ecoservice_seeds') }}" class="card-link">
+            <a href="{{ url_for('views.about_ecoservice_seeds', source='ecoservices') }}" class="card-link">
                 <div class="da-card">
                     <div class="da-header">
                         <div class="da-logo-container">
@@ -63,7 +67,7 @@
             </a>
 
             <!-- Card 2: Seedlings Service -->
-            <a href="{{ url_for('views.about_ecoservice_seedlings') }}" class="card-link">
+            <a href="{{ url_for('views.about_ecoservice_seedlings', source='ecoservices') }}" class="card-link">
                 <div class="da-card">
                     <div class="da-header">
                         <div class="da-logo-container">
@@ -96,6 +100,8 @@
             </a>
             
         </div>
+        
+        {% include 'components/navbar.html' %}
     </div>
 </body>
 </html>

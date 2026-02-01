@@ -6,10 +6,13 @@
     <title>Forum</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/forum.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/page-transition.css') }}">
+    <script src="{{ url_for('static', filename='js/page-transition.js') }}" defer></script>
 </head>
 <body>
     <div class="app-container">
-        <div class="scroll-content" style="padding-bottom: 40px;">
+        <div class="scroll-content" style="padding-bottom: 110px;">
             
             <!-- Header -->
             <div class="forum-header">
@@ -123,6 +126,7 @@
             </div>
 
         </div>
+        {% include 'components/navbar.html' %}
     </div>
 </body>
 </html>

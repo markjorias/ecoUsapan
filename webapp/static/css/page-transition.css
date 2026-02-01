@@ -1,0 +1,26 @@
+/* Page Transition Styles (Mobile-Style) */
+
+/* 
+   Target .scroll-content for the animation.
+   If a page doesn't have .scroll-content, JS will fallback to .app-container. 
+*/
+.scroll-content, .app-container.animate-target {
+    opacity: 0;
+    transform: translateY(15px); /* Start slightly down for slide-up effect */
+    transition: opacity 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    /* cubic-bezier for a more "natural" iOS-like feel */
+}
+
+/* Page Loaded State: Slide up to natural position and fade in */
+.page-loaded {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+}
+
+/* Page Exiting State: Just fade out, don't slide down (feels weird if it slides down on exit usually) */
+.page-exiting {
+    opacity: 0 !important;
+    transform: translateY(0) !important; /* Keep position, just fade */
+    transition: opacity 0.2s ease-out; /* Faster exit */
+}
+

@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/event-view.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/page-transition.css') }}">
+    <script src="{{ url_for('static', filename='js/page-transition.js') }}" defer></script>
 </head>
 <body>
     <div class="app-container">
@@ -14,7 +16,8 @@
             
             <!-- Header -->
             <div class="event-view-header">
-                <a href="{{ url_for('views.events') }}" class="close-btn">
+                {% set source = request.args.get('source') %}
+                <a href="{{ url_for('views.home') if source == 'home' else url_for('views.events') }}" class="close-btn">
                     <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
                 </a>
                 <h1>About   </h1>

@@ -6,6 +6,9 @@
     <title>Events</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/events.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/page-transition.css') }}">
+    <script src="{{ url_for('static', filename='js/page-transition.js') }}" defer></script>
 </head>
 <body>
     <div class="app-container">
@@ -41,32 +44,37 @@
 
             <!-- Event Cards -->
             <div class="events-list">
-                <div class="event-card">
-                    <div class="event-logo-placeholder"></div>
-                    <div class="event-info">
-                        <div class="event-org">Organization</div>
-                        <div class="event-title">Event Title</div>
-                        <div class="event-loc">Location</div>
+                <a href="{{ url_for('views.event_view', source='events') }}" style="text-decoration: none; color: inherit;">
+                    <div class="event-card">
+                        <div class="event-logo-placeholder"></div>
+                        <div class="event-info">
+                            <div class="event-org">Organization</div>
+                            <div class="event-title">Event Title</div>
+                            <div class="event-loc">Location</div>
+                        </div>
+                        <div class="event-action">  
+                            participate
+                        </div>
                     </div>
-                    <div class="event-action">  
-                        participate
-                    </div>
-                </div>
+                </a>
 
-                <div class="event-card-2">
-                    <div class="event-logo-placeholder"></div>
-                    <div class="event-info">
-                        <div class="event-org">Organization</div>
-                        <div class="event-title">Event Title</div>
-                        <div class="event-loc">Location</div>
+                <a href="{{ url_for('views.event_view', source='events') }}" style="text-decoration: none; color: inherit;">
+                    <div class="event-card-2">
+                        <div class="event-logo-placeholder"></div>
+                        <div class="event-info">
+                            <div class="event-org">Organization</div>
+                            <div class="event-title">Event Title</div>
+                            <div class="event-loc">Location</div>
+                        </div>
+                        <div class="event-action">
+                            participate
+                        </div>
                     </div>
-                    <div class="event-action">
-                        participate
-                    </div>
-                </div>
+                </a>
             </div>
 
         </div>
+        {% include 'components/navbar.html' %}
     </div>
 </body>
 </html>

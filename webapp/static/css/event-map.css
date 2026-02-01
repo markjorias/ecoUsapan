@@ -37,9 +37,9 @@ body {
 /* Map fills the container */
 #map {
     width: 100%;
-    height: 723px;
-    margin-top: auto;
-    border-radius: 24px;
+    height: 100%; /* Fill container */
+    margin-top: 0;
+    border-radius: 0; /* Full bleed */
     z-index: 1; /* Lowest level */
 }
 
@@ -47,8 +47,8 @@ body {
 .map-header {
     position: absolute;
     top: max(env(safe-area-inset-top), 74px); /* Adjust to match events page */
-    left: 24px; /* Align with design padding */
-    right: 24px;
+    left: 19px; /* Align with design padding */
+    right: 19px;
     height: 36px;
     display: flex;
     align-items: center;
@@ -82,7 +82,7 @@ body {
 /* Bottom Info Card Overlay */
 .info-card-container {
     position: absolute;
-    bottom: 40px;
+    bottom: 120px;
     left: 0;
     width: 100%;
     padding: 0 20px;
@@ -185,6 +185,6 @@ body {
     }
     
     .map-header {
-        top: max(env(safe-area-inset-top), 20px);
+        top: max(env(safe-area-inset-top), 74px);
     }
 }

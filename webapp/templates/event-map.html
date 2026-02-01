@@ -12,6 +12,9 @@
      crossorigin=""/>
      
     <link rel="stylesheet" href="{{ url_for('static', filename='css/event-map.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/page-transition.css') }}">
+    <script src="{{ url_for('static', filename='js/page-transition.js') }}" defer></script>
 </head>
 <body>
     <div class="app-container">
@@ -39,6 +42,7 @@
                 </div>
             </div>
         </div>
+        {% include 'components/navbar.html' %}
     </div>
 
     <!-- Leaflet JS -->

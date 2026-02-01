@@ -458,6 +458,7 @@ body {
     color: #8E8E93;
     width: 60px; /* Fixed width for touch target */
     text-decoration: none; /* Remove underline */
+    transition: color 0.3s ease, background-color 0.3s ease; /* Smooth transition */
 }
 
 .nav-bar-item.active {

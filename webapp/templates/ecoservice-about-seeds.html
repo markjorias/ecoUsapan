@@ -6,13 +6,16 @@
     <title>Amount EcoService Seeds</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/ecoservice-about.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/page-transition.css') }}">
+    <script src="{{ url_for('static', filename='js/page-transition.js') }}" defer></script>
 </head>
 <body>
     <div class="app-container">
         <div class="scroll-content">
             
             <div class="about-header">
-                <a href="{{ url_for('views.home') }}" class="close-btn">
+                {% set source = request.args.get('source') %}
+                <a href="{{ url_for('views.home') if source == 'home' else url_for('views.ecoservices') }}" class="close-btn">
                     <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
                 </a>
                 <h1>Senior Citizen ID</h1> <!-- Maintaining placeholder or context? User said "copy the header style... then follow content". The Header text usually reflects the current page. User didn't specify Title. "Senior Citizen ID" is in the image. I should probably use "About EcoService" or "Seeds Distribution" or similar based on content. I'll use "About EcoService" for now. Wait, user said "create the about-ecoservice-seeds.html copy the header style...". I'll use "About EcoService". Actually, looking at image, header says "Senior Citizen ID". I will use "About EcoService" as it fits the filename. -->
