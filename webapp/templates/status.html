@@ -123,17 +123,31 @@
             </div>
             
             <!-- 1. Initiatives Section -->
-            <div class="section-title">{% if current_user.is_admin %}All User Initiatives{% else %}My Initiatives{% endif %}</div>
+            <div class="section-title">{% if current_user.role == 'Admin_LGU' %}All User Initiatives{% else %}My Initiatives{% endif %}</div>
             <div class="status-list">
                 {% if initiatives %}
                     {% for item in initiatives %}
-                    <div class="status-card">
+                    <div class="status-card clickable-card"
+                        onclick="openInitiativeModal(
+                            '{{ item.id }}',
+                            '{{ item.title|replace("'", "\\'") }}',
+                            '{{ item.org_name|replace("'", "\\'") }}',
+                            '{{ item.description|replace("\n", "\\n")|replace("'", "\\'") }}',
+                            '{{ item.city }}',
+                            '{{ item.province }}',
+                            '{{ item.contact_full_name|replace("'", "\\'") }}',
+                            '{{ item.contact_role }}',
+                            '{{ item.email }}', 
+                            '{{ url_for('static', filename='uploads/' + item.image_filename) }}',
+                            '{{ item.status }}',
+                            {{ 'true' if item.user_id == current_user.id or current_user.role == 'Admin_LGU' else 'false' }}
+                        )">
                         <div class="card-header">
                             <div class="card-title">{{ item.title }}</div>
                             <div class="status-badge {{ item.status|lower }}">{{ item.status }}</div>
                         </div>
                         <div class="card-body">
-                            <div class="card-thumbnail" style="background-image: url('{{ url_for('static', filename='images/userupload/' + item.image_filename) if item.image_filename != 'default_event.png' else '' }}'); background-size: cover; background-position: center;">
+                            <div class="card-thumbnail" style="background-image: url('{{ url_for('static', filename='uploads/' + item.image_filename) }}'); background-size: cover; background-position: center;">
                                 {% if item.image_filename == 'default_event.png' %}
                                 <img src="{{ url_for('static', filename='icons/map-pin.svg') }}" alt="Initiative" style="width: 20px; opacity: 0.3;">
                                 {% endif %}
@@ -141,12 +155,7 @@
                             <div class="card-details">
                                 <div class="card-subtitle">{{ item.city }}</div>
                                 <div class="card-meta">Submitted: {{ item.date_created.strftime('%b %d, %Y') }}</div>
-                                
-                                {% if current_user.role == 'Admin_LGU' and item.status == 'Pending' %}
-                                <a href="{{ url_for('views.approve_initiative', id=item.id) }}" style="text-decoration: none;">
-                                    <div style="margin-top: 8px; font-size: 10px; font-weight: 800; color: #49A427; text-transform: uppercase;">✔ Approve and Publish</div>
-                                </a>
-                                {% endif %}
+                                <div class="click-hint">Tap to View Details {% if current_user.role == 'Admin_LGU' and item.status == 'Pending' %}& Review{% endif %}</div>
                             </div>
                         </div>
                     </div>
@@ -157,7 +166,7 @@
             </div>
 
             <!-- 2. Participations Section -->
-            <div class="section-title">{% if current_user.is_admin %}Global Participations{% else %}My Events{% endif %}</div>
+            <div class="section-title">My Participation</div>
             <div class="status-list">
                 {% if participations %}
                     {% for p in participations %}
@@ -193,8 +202,9 @@
                             '{{ req.id }}', 
                             '{{ req.item_name }}', 
                             '{{ req.planting_site_desc|replace('\n', '\\n')|replace('\'', '\\\'') }}', 
-                            '{% if req.image_filename %}{{ url_for('static', filename='uploads/' + req.image_filename) }}{% endif %}',
-                            '{{ req.status }}'
+                            '{% if req.image_filename %}{{ url_for('static', filename='images/userupload/' + req.image_filename) }}{% endif %}',
+                            '{{ req.status }}',
+                            '{{ req.service_type }}'
                          )"
                          {% endif %}>
                         
@@ -204,7 +214,7 @@
                         </div>
                         <div class="card-body">
                             <div class="card-thumbnail">
-                                <img src="{{ url_for('static', filename='images/' + ('DENR.png' if req.service_type == 'Seedling' else 'Department-of-Agriculture.svg')) }}" alt="Dept" style="width: 30px;">
+                                <img src="{{ url_for('static', filename='images/' + ('DENR.png' if req.service_type == 'Seedling' else 'Department-of-Agriculture.png')) }}" alt="Dept" style="width: 30px;">
                             </div>
                             <div class="card-details">
                                 <div class="card-subtitle" style="font-weight: 800;">Qty: {{ req.quantity_requested }} Units</div>
@@ -223,7 +233,42 @@
             </div>
         </div>
 
-        <!-- Detail Modal Overlay -->
+        <!-- Initiative Detail Modal Overlay -->
+        <div class="modal-overlay" id="initiativeModal" onclick="closeInitiativeModal()">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <div class="modal-close" onclick="closeInitiativeModal()">
+                    <img src="{{ url_for('static', filename='icons/x.svg') }}" style="width: 14px;">
+                </div>
+                
+                <span class="modal-subtitle" id="initModalStatusDisplay">PENDING INITIATIVE</span>
+                <div class="modal-title" id="initModalTitle">Initiative Title</div>
+                <div style="font-size: 12px; color: #666; margin-top: -4px;" id="initModalOrg">Organization Name</div>
+
+                <span class="modal-section-label">Description</span>
+                <div class="modal-text" id="initModalDescription">Loading description...</div>
+
+                <span class="modal-section-label">Location & Contact</span>
+                <div class="modal-text" id="initModalLocation">Loading info...</div>
+
+                <span class="modal-section-label" id="registrantsLabel" style="display: none;">Registered Participants</span>
+                <div class="modal-text" id="registrantsList" style="display: none; background: #E8F5E9; border: 1px solid #C8E6C9;"></div>
+
+                <span class="modal-section-label">Initiative Photo</span>
+                <div class="site-photo-container">
+                    <img id="initModalPhoto" src="" alt="No photo uploaded" onerror="this.src='https://placehold.co/400x200?text=No+Photo+Uploaded';">
+                </div>
+                
+                {% if current_user.role == 'Admin_LGU' %}
+                <div id="initAdminActionContainer" class="admin-action-row">
+                    <!-- Approval button shown by JS if pending -->
+                </div>
+                {% endif %}
+
+                <button class="action-btn-full btn-cancel" style="width: 100%; margin-top: 12px;" onclick="closeInitiativeModal()">Close</button>
+            </div>
+        </div>
+
+        <!-- Detail Modal Overlay for Service Requests -->
         <div class="modal-overlay" id="requestModal" onclick="closeRequestModal()">
             <div class="modal-content" onclick="event.stopPropagation()">
                 <div class="modal-close" onclick="closeRequestModal()">
@@ -235,6 +280,9 @@
 
                 <span class="modal-section-label">Requester & Site Information</span>
                 <div class="modal-text" id="modalDetails">Loading details...</div>
+
+                <span class="modal-section-label" id="participantLabel" style="display: none;">Registered Participants</span>
+                <div class="modal-text" id="participantList" style="display: none; background: #E8F5E9; border: 1px solid #C8E6C9; max-height: 150px; overflow-y: auto;"></div>
 
                 <span class="modal-section-label">Site Photo</span>
                 <div class="site-photo-container">
@@ -257,13 +305,9 @@
                 <h3 style="font-weight: 800; margin-bottom: 12px;" id="confirmTitle">Confirm Action</h3>
                 <p style="font-size: 13px; color: #666; margin-bottom: 24px;" id="confirmMessage">Are you sure you want to perform this action?</p>
                 
-                <form id="statusUpdateForm" method="POST" action="">
-                    <input type="hidden" name="status" id="targetStatusInput">
-                    <div style="display: flex; gap: 10px;">
-                        <button type="button" class="action-btn-full btn-cancel" style="padding: 10px;" onclick="closeConfirmModal()">Cancel</button>
-                        <button type="submit" class="action-btn-full" style="padding: 10px;" id="confirmSubmitBtn">Proceed</button>
-                    </div>
-                </form>
+                <div id="confirmationFormContainer">
+                    <!-- Dynamic form based on type (GET for initiatives, POST for requests) -->
+                </div>
             </div>
         </div>
         
@@ -272,16 +316,97 @@
     </div>
 
     <script>
-        let activeRequestId = null;
+        let activeId = null;
+        let activeType = null; // 'initiative' or 'request'
+        const userRole = "{{ current_user.role }}";
 
-        function openRequestModal(id, itemName, details, photoUrl, status) {
-            activeRequestId = id;
+        // --- Initiative Modal Logic ---
+        function openInitiativeModal(id, title, org, desc, city, province, contact, role, email, photoUrl, status, isAuthorized) {
+            activeId = id;
+            activeType = 'initiative';
+            
+            // Set text content
+            document.getElementById('initModalTitle').innerText = title;
+            document.getElementById('initModalOrg').innerText = org;
+            document.getElementById('initModalDescription').innerText = desc;
+            document.getElementById('initModalLocation').innerText = 
+                `Location: ${city}, ${province}\nContact: ${contact} (${role})\nEmail: ${email}`;
+            document.getElementById('initModalStatusDisplay').innerText = status + " INITIATIVE";
+            
+            // Set photo
+            const photoImg = document.getElementById('initModalPhoto');
+            photoImg.src = (photoUrl && !photoUrl.includes('default_event.png')) ? photoUrl : "https://placehold.co/400x200?text=No+Photo+Uploaded";
+
+            // --- REGISTRANTS LOGIC ---
+            const regLabel = document.getElementById('registrantsLabel');
+            const regList = document.getElementById('registrantsList');
+
+            if (isAuthorized) {
+                regLabel.style.display = 'block';
+                regList.style.display = 'block';
+                regList.innerHTML = "<em>Loading registrants...</em>";
+
+                fetch(`/get-participants/${id}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.length === 0) {
+                            regList.innerHTML = "No participants have registered yet.";
+                        } else {
+                            regList.innerHTML = data.map(p => `• ${p.name} (${p.email})`).join('<br>');
+                        }
+                    })
+                    .catch(err => {
+                        regList.innerHTML = "Error loading participant list.";
+                    });
+            } else {
+                regLabel.style.display = 'none';
+                regList.style.display = 'none';
+            }
+
+            // Admin Action buttons logic (unchanged)
+            const container = document.getElementById('initAdminActionContainer');
+            if (container) {
+                container.innerHTML = '';
+                if (userRole === 'Admin_LGU' && status === 'Pending') {
+                    container.innerHTML = `
+                        <div style="display: flex; gap: 10px;">
+                            <button type="button" class="action-btn-full btn-approve" onclick="askInitiativeConfirmation('Approved')">Approve</button>
+                            <button type="button" class="action-btn-full btn-decline" onclick="askInitiativeConfirmation('Declined')">Decline</button>
+                        </div>
+                    `;
+                }
+            }
+            document.getElementById('initiativeModal').style.display = 'flex';
+        }
+        
+        function closeInitiativeModal() {
+            document.getElementById('initiativeModal').style.display = 'none';
+        }
+
+        function askInitiativeConfirmation() {
+            const container = document.getElementById('confirmationFormContainer');
+            document.getElementById('confirmTitle').innerText = "Confirm Approval";
+            document.getElementById('confirmMessage').innerText = "Are you sure you want to approve and publish this initiative to the community feed?";
+            
+            container.innerHTML = `
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" class="action-btn-full btn-cancel" style="padding: 10px;" onclick="closeConfirmModal()">Cancel</button>
+                    <a href="/approve-initiative/${activeId}" class="action-btn-full btn-approve" style="padding: 10px; text-decoration: none; display: flex; align-items: center; justify-content: center;">Confirm</a>
+                </div>
+            `;
+            document.getElementById('confirmOverlay').style.display = 'flex';
+        }
+
+        // --- Service Request Modal Logic ---
+        function openRequestModal(id, itemName, details, photoUrl, status, serviceType) {
+            activeId = id;
+            activeType = 'request';
             document.getElementById('modalItemName').innerText = itemName;
             document.getElementById('modalDetails').innerText = details;
             document.getElementById('modalStatusDisplay').innerText = status + " REQUEST";
             
             const photoImg = document.getElementById('modalSitePhoto');
-            if (photoUrl && photoUrl !== '') {
+            if (photoUrl && photoUrl !== '' && !photoUrl.includes('undefined')) {
                 photoImg.src = photoUrl;
             } else {
                 photoImg.src = "https://placehold.co/400x200?text=No+Photo+Uploaded";
@@ -291,18 +416,24 @@
             if (container) {
                 container.innerHTML = ''; 
 
-                // Logic to show/hide based on current status
-                if (status === 'Pending') {
-                    // Show both Approve and Decline for Pending
-                    container.innerHTML += `<button type="button" class="action-btn-full btn-approve" onclick="askConfirmation('Approved')">Approve</button>`;
-                    container.innerHTML += `<button type="button" class="action-btn-full btn-decline" onclick="askConfirmation('Declined')">Decline</button>`;
-                } else if (status === 'Approved') {
-                    // Show only Claimed for Approved (Decline disappears)
-                    container.innerHTML += `<button type="button" class="action-btn-full btn-claim" onclick="askConfirmation('Claimed')">Mark as Claimed</button>`;
+                let isAuthorized = false;
+                if (userRole === 'Admin_DA' && (serviceType === 'Seed' || serviceType === 'Seeds')) {
+                    isAuthorized = true;
+                } else if (userRole === 'Admin_DENR' && (serviceType === 'Seedling' || serviceType === 'Seedlings')) {
+                    isAuthorized = true;
                 }
-                // If status is 'Declined' or 'Claimed', no further admin action buttons are shown
-            }
 
+                if (isAuthorized) {
+                    if (status === 'Pending') {
+                        container.innerHTML += `<button type="button" class="action-btn-full btn-approve" onclick="askRequestConfirmation('Approved')">Approve</button>`;
+                        container.innerHTML += `<button type="button" class="action-btn-full btn-decline" onclick="askRequestConfirmation('Declined')">Decline</button>`;
+                    } else if (status === 'Approved') {
+                        container.innerHTML += `<button type="button" class="action-btn-full btn-claim" onclick="askRequestConfirmation('Claimed')">Mark as Claimed</button>`;
+                    } else if (status === 'Declined') {
+                        container.innerHTML += `<button type="button" class="action-btn-full btn-approve" onclick="askRequestConfirmation('Pending')">Re-open Request</button>`;
+                    }
+                }
+            }
             document.getElementById('requestModal').style.display = 'flex';
         }
 
@@ -310,23 +441,20 @@
             document.getElementById('requestModal').style.display = 'none';
         }
 
-        function askConfirmation(targetStatus) {
-            const form = document.getElementById('statusUpdateForm');
-            const submitBtn = document.getElementById('confirmSubmitBtn');
-            const title = document.getElementById('confirmTitle');
-            const msg = document.getElementById('confirmMessage');
+        function askRequestConfirmation(targetStatus) {
+            const container = document.getElementById('confirmationFormContainer');
+            document.getElementById('confirmTitle').innerText = `Confirm ${targetStatus}`;
+            document.getElementById('confirmMessage').innerText = `Are you sure you want to change this request status to ${targetStatus}? This will finalize the record and update stock levels.`;
 
-            form.action = `/update-request-status/${activeRequestId}`;
-            document.getElementById('targetStatusInput').value = targetStatus;
-
-            submitBtn.className = "action-btn-full " + (
-                targetStatus === 'Approved' ? 'btn-approve' : 
-                targetStatus === 'Declined' ? 'btn-decline' : 'btn-claim'
-            );
-            
-            title.innerText = `Confirm ${targetStatus}`;
-            msg.innerText = `Are you sure you want to change this request status to ${targetStatus}? This will finalize the record and update stock levels.`;
-
+            container.innerHTML = `
+                <form method="POST" action="/update-request-status/${activeId}">
+                    <input type="hidden" name="status" value="${targetStatus}">
+                    <div style="display: flex; gap: 10px;">
+                        <button type="button" class="action-btn-full btn-cancel" style="padding: 10px;" onclick="closeConfirmModal()">Cancel</button>
+                        <button type="submit" class="action-btn-full ${targetStatus === 'Approved' ? 'btn-approve' : targetStatus === 'Declined' ? 'btn-decline' : 'btn-claim'}" style="padding: 10px;">Proceed</button>
+                    </div>
+                </form>
+            `;
             document.getElementById('confirmOverlay').style.display = 'flex';
         }
 
@@ -338,6 +466,7 @@
             if (e.key === 'Escape') {
                 closeConfirmModal();
                 closeRequestModal();
+                closeInitiativeModal();
             }
         });
     </script>

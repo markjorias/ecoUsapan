@@ -1,4 +1,4 @@
-/* Forum Page Styles */
+/* Forum Page Styles - EcoUsapan */
 
 :root {
     --app-width: 393px;
@@ -6,6 +6,8 @@
     --bg-color: #f5f5f7;
     --frame-bg: #ffffff;
     --shadow: 0 20px 40px rgba(0,0,0,0.1);
+    --eco-green: #49A427;
+    --eco-light-green: #E8F5E9;
 }
 
 * {
@@ -32,13 +34,12 @@ body {
     box-shadow: var(--shadow);
     border-radius: 40px;
     border: 8px solid #333;
-    
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-/* Container */
+/* Scrollable Container */
 .scroll-content {
     width: 100%;
     height: 100%;
@@ -46,15 +47,14 @@ body {
     overflow-x: hidden;
     scrollbar-width: none;
     -ms-overflow-style: none;
-    
     padding-top: max(env(safe-area-inset-top), 74px);
-    padding-bottom: 110px; /* Specific to forum page */
+    padding-bottom: 220px; /* Clearance for the 99px nav bar */
     padding-left: 19px;
     padding-right: 19px;
-    
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 16px; 
 }
 
 .scroll-content::-webkit-scrollbar {
@@ -68,7 +68,6 @@ body {
     align-items: center;
     width: 100%;
     padding: 16px 0;
-    margin-bottom: 12px;
     gap: 16px;
 }
 
@@ -93,13 +92,20 @@ body {
     flex: 1;
 }
 
+/* Filter Dropdown Logic */
+.filter-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
 .filter-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    background: none;
-    border: none;
     padding: 0;
 }
 
@@ -108,33 +114,60 @@ body {
     height: 24px;
 }
 
-/* Search and Add Row */
+.filter-dropdown {
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background: white;
+    width: 160px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    display: none; /* Controlled by JS */
+    flex-direction: column;
+    padding: 8px;
+    z-index: 2500;
+    border: 1px solid #eee;
+}
+
+.filter-option {
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #444;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: 0.2s;
+}
+
+.filter-option.active {
+    background: var(--eco-light-green);
+    color: var(--eco-green);
+}
+
+.filter-option:hover {
+    background: #f9f9f9;
+}
+
+/* Search and Add Topic Row */
 .search-add-row {
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 4px;
     width: 100%;
 }
 
-/* Search Container */
 .search-container {
     display: flex;
     align-items: center;
     gap: 8px;
     flex: 1;
-    width: auto;
     height: 49px;
     padding: 0 16px;
     border: 1px solid #E0E0E0;
     border-radius: 59px;
-}
-
-.search-icon-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background-color: #fff;
 }
 
 .search-icon {
@@ -142,15 +175,11 @@ body {
     height: 20px;
 }
 
-.search-text-container {
-    flex: 1;
-}
-
 .search-input {
     width: 100%;
     border: none;
     outline: none;
-    font-family: 'Montserrat', sans-serif;
+    font-family: inherit;
     font-size: 14px;
     background: transparent;
 }
@@ -159,7 +188,6 @@ body {
     color: #9E9E9E;
 }
 
-/* Add Forum Container */
 .add-forum-container {
     display: flex;
     align-items: center;
@@ -170,6 +198,7 @@ body {
     border-radius: 50%;
     cursor: pointer;
     flex-shrink: 0;
+    background-color: #fff;
 }
 
 .add-forum-icon {
@@ -177,22 +206,21 @@ body {
     height: 24px;
 }
 
-/* Forum Sections Wrapper */
+/* Section Containers */
 .forum-sections-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
     width: 100%;
 }
 
-/* Forum Section Container (NEW) */
 .forum-section-container {
-    width: auto;
-    height: auto;
+    width: 100%;
     background-color: #FFFFFF;
     border-radius: 24px;
     padding: 16px;
-    border: 1px solid #E0E0E0; /* Optional: adds definition if background is white */
+    border: 1px solid #E0E0E0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
 }
 
 .section-title {
@@ -202,7 +230,6 @@ body {
     color: #333;
 }
 
-/* Forum Card List (formerly .forum-list) */
 .forum-card-list {
     display: flex;
     flex-direction: column;
@@ -210,19 +237,19 @@ body {
     width: 100%;
 }
 
-.forum-card1, .forum-card2, .forum-card3, .forum-card4 {
+/* Forum Cards */
+.forum-card1, .forum-card3 {
     width: 100%;
-    height: 75px;
-    padding: 0;
-    background-color: #F9F9F9; /* Slight contrast against white container */
-    margin: 0;
+    min-height: 85px;
+    height: auto; 
+    padding: 12px 16px;
+    background-color: #F9F9F9;
     display: flex;
     align-items: center;
     gap: 8px;
     border-radius: 12px;
+    text-decoration: none;
 }
-
-
 
 .forum-info {
     flex: 1;
@@ -230,21 +257,24 @@ body {
     flex-direction: column;
     justify-content: center;
     gap: 4px;
-    margin-left: 16px;
-    height: 100%;
 }
 
-.forum-username {
-    font-size: 10px;
-    font-weight: 300;
-    color: #666;
+.forum-tag {
+    font-size: 8px;
+    font-weight: 700;
+    color: var(--eco-green);
+    background-color: var(--eco-light-green);
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    width: fit-content;
 }
 
 .forum-title {
-    font-size: 16px;
+    font-size: 15px; 
     font-weight: 700;
     color: #000;
-    margin: 2px 0;
+    line-height: 1.2;
 }
 
 .forum-meta {
@@ -255,49 +285,205 @@ body {
 
 .forum-username {
     font-size: 10px;
-    font-weight: 300;
-    color: #666;
+    font-weight: 600; 
+    color: var(--eco-green);
 }
 
 .forum-comments {
     font-size: 10px;
-    font-weight: 300;
+    font-weight: 400;
     color: #666;
 }
 
+/* Voting UI */
 .forum-action {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-right: 8px;
     flex-shrink: 0;
-}
-
-.forum-tag {
-    font-size: 8px;
-    font-weight: 700;
-    color: #4CAF50; /* Green tint */
-    background-color: #E8F5E9;
-    padding: 2px 6px;
-    border-radius: 4px;
-    text-transform: uppercase;
-    width: fit-content;
+    cursor: pointer;
 }
 
 .vote-controls {
     display: flex;
+    flex-direction: column; 
     justify-content: center;
     align-items: center;
-    gap: 8px;
+    gap: 2px;
+    padding: 6px 10px;
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #eee;
+    transition: all 0.2s ease;
+}
+
+.vote-controls.voted {
+    background-color: var(--eco-light-green);
+    border-color: var(--eco-green);
+}
+
+.vote-controls.voted .vote-count {
+    color: var(--eco-green);
+}
+
+.vote-controls.voted .vote-icon {
+    filter: invert(48%) sepia(79%) saturate(452%) hue-rotate(65deg) brightness(95%) contrast(92%);
+    /* This filter makes the black/grey icon turn the specific Eco Green color */
+    transform: translateY(-2px);
+}
+
+.vote-controls:hover {
+    background: #f0f0f0;
 }
 
 .vote-icon {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    transition: transform 0.2s;
 }
 
-/* Mobile Responsive Override */
+.vote-count {
+    font-size: 10px;
+    font-weight: 800;
+    color: #333;
+}
+
+/* Modal Overlay & Content */
+.modal-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    padding: 20px;
+}
+
+.modal-content {
+    background: white;
+    width: 100%;
+    border-radius: 28px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    position: relative;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #333;
+}
+
+.modal-close {
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #666;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+
+.form-input, .form-textarea, .form-select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #E0E0E0;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+}
+
+.form-textarea {
+    height: 120px;
+    resize: none;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--eco-green);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+/* Navigation Bar */
+.bottom-nav {
+    width: 100%;
+    height: 99px;
+    background-color: #FFFFFF;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    padding-top: 15px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    border-top: 1px solid #E5E5EA;
+}
+
+.nav-bar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    color: #8E8E93;
+    width: 60px;
+    text-decoration: none;
+}
+
+.nav-bar-item.active {
+    color: var(--eco-green);
+}
+
+.nav-bar-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+.nav-bar-label {
+    font-size: 10px;
+    font-weight: 500;
+}
+
+.nav-center-item {
+    width: 52px;
+    height: 52px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: -10px;
+    text-decoration: none;
+}
+
+.nav-center-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Responsive Fix for small screens */
 @media (max-width: 500px) {
     body {
         background-color: var(--frame-bg);
@@ -306,10 +492,10 @@ body {
 
     .app-container {
         width: 100%;
-        height: 100vh; /* Full viewport height */
+        height: 100vh;
         border-radius: 0;
         box-shadow: none;
         border: none;
-        padding-top: env(safe-area-inset-top, 20px); /* Slightly less default padding on actual mobile if env not supported */
+        padding-top: env(safe-area-inset-top, 20px);
     }
 }

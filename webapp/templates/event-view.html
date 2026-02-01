@@ -14,48 +14,47 @@
             
             <!-- Header -->
             <div class="event-view-header">
-                <a href="{{ url_for('views.events') }}" class="close-btn">
+                <a href="javascript:history.back()" class="close-btn">
                     <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
                 </a>
-                <h1>About   </h1>
+                <h1>About {{ event.event_type }}</h1>
             </div>
 
             <div class="event-title-container">
-                <span class="event-username">@username</span>
-                <h2 class="event-main-title">Event Title</h2>
+                <span class="event-username">@{{ event.author.username }}</span>
+                <h2 class="event-main-title">{{ event.title }}</h2>
             </div>
 
             <div class="event-tags-container">
-                <span class="event-tag">3 Days Left</span>
-                <span class="event-tag">EventType</span>
-                <span class="event-tag">OrganizingTeam</span>
-                <span class="event-tag">Tree Planting</span>
+                <span class="event-tag">{{ event.get_time_left() }}</span>
+                <span class="event-tag">{{ event.event_type }}</span>
+                <span class="event-tag">{{ event.org_name }}</span>
             </div>
 
             <div class="event-details-bar">
                 <div class="event-date-time">
                     <div class="event-detail-item">
                         <img src="{{ url_for('static', filename='icons/calendar.svg') }}" alt="Calendar" class="detail-icon">
-                        <span class="detail-text">Mon Dec 25</span>
+                        <span class="detail-text">{{ event.date }}</span>
                     </div>
                     <div class="event-detail-item">
                         <img src="{{ url_for('static', filename='icons/clock.svg') }}" alt="Clock" class="detail-icon">
-                        <span class="detail-text">12:00</span>
+                        <span class="detail-text">{{ event.time }}</span>
                     </div>
                 </div>
                 <div class="event-location">
                     <img src="{{ url_for('static', filename='icons/map-pin.svg') }}" alt="Location" class="detail-icon">
-                    <span class="detail-text">Camarines Sur Polytechnic Colleges</span>
+                    <span class="detail-text">{{ event.city }}, {{ event.province }}</span>
                 </div>
             </div>
 
             <div class="event-image-container">
-                <img src="{{ url_for('static', filename='images/sample-image1.png') }}" alt="Event Image" class="event-image">
+                <img src="{{ event.image_url }}" class="event-image" alt="{{ event.title }}">
             </div>
 
             <div class="event-description">
                 <h3 class="description-header">Description</h3>
-                <p class="description-text">Help us bring the green back to our hillsides and watersheds! Volunteers will work together to plant native fruit-bearing and forest trees that will provide shade, clean air, and protection against landslides for years to come. No experience is needed, as our team will teach you the proper way to plant and care for a sapling. Let’s grow a forest together to protect our children’s future.</p>
+                <p class="description-text">{{ event.description }}</p>
             </div>
 
             <div class="event-author-section">
@@ -64,14 +63,14 @@
                 <div class="author-card">
                     <div class="author-info-group">
                         <div class="author-pfp-container">
-                            <img src="{{ url_for('static', filename='images/sample-image1.png') }}" alt="Author" class="author-pfp">
+                            <img src="{{ url_for('static', filename='images/user.jpg') }}" alt="Author" class="author-pfp">
                         </div>
                         <div class="author-content-stack">
-                            <span class="author-username">@username</span>
-                            <span class="author-name">Author Name</span>
+                            <span class="author-username">@{{ event.author.username }}</span>
+                            <span class="author-name">{{ event.contact_fname }} {{ event.contact_lname }}</span>
                             <div class="author-chips">
-                                <span class="author-chip">Author Role</span>
-                                <span class="author-chip">Organizing Team</span>
+                                <span class="author-chip">{{ event.contact_role }}</span>
+                                <span class="author-chip">{{ event.org_name }}</span>
                             </div>
                         </div>
                     </div>

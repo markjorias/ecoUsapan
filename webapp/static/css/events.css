@@ -38,7 +38,6 @@ body {
     align-items: center;
 }
 
-/* Container */
 .scroll-content {
     width: 100%;
     height: 100%;
@@ -48,7 +47,7 @@ body {
     -ms-overflow-style: none;
     
     padding-top: max(env(safe-area-inset-top), 74px);
-    padding-bottom: 110px; /* Specific to events page */
+    padding-bottom: 110px; 
     padding-left: 19px;
     padding-right: 19px;
     
@@ -90,7 +89,7 @@ body {
     font-weight: 700;
     margin: 0;
     color: #000;
-    flex: 1; /* Allow title to push filter button to the right */
+    flex: 1;
 }
 
 .filter-btn {
@@ -118,32 +117,15 @@ body {
     width: 100%;
 }
 
-/* Search Container */
 .search-container {
     display: flex;
     align-items: center;
     gap: 8px;
     flex: 1;
-    width: auto;
     height: 49px;
     padding: 0 16px;
     border: 1px solid #E0E0E0;
     border-radius: 59px;
-}
-
-.search-icon-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.search-icon {
-    width: 20px;
-    height: 20px;
-}
-
-.search-text-container {
-    flex: 1;
 }
 
 .search-input {
@@ -155,20 +137,6 @@ body {
     background: transparent;
 }
 
-.search-input::placeholder {
-    color: #9E9E9E;
-}
-
-/* Add Event Link Wrapper */
-.add-event-link {
-    text-decoration: none;
-    color: inherit;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Add Event Container */
 .add-event-container {
     display: flex;
     align-items: center;
@@ -181,26 +149,19 @@ body {
     flex-shrink: 0;
 }
 
-.add-event-icon {
-    width: 24px;
-    height: 24px;
-}
-
 /* Events List */
 .events-list {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding: 0;
-    width: 100%; /* Ensure it takes full width of container */
+    width: 100%;
 }
 
-.event-card, .event-card-2 {
-    width: 100%; /* Adapts to container */
+.event-card {
+    width: 100%;
     height: 75px;
-    padding: 0;
+    padding: 12px 8px;
     background-color: #FFFFFF;
-    margin: 0; /* Margin handled by gap in parent now */
     display: flex;
     align-items: center;
     gap: 8px;
@@ -223,23 +184,9 @@ body {
     gap: 4px;
 }
 
-.event-org {
-    font-size: 10px;
-    font-weight: 300;
-    color: #666;
-}
-
-.event-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: #000;
-}
-
-.event-loc {
-    font-size: 10px;
-    font-weight: 300;
-    color: #666;
-}
+.event-org { font-size: 10px; font-weight: 300; color: #666; }
+.event-title { font-size: 16px; font-weight: 700; color: #000; }
+.event-loc { font-size: 10px; font-weight: 300; color: #666; }
 
 .event-action {
     width: 60px;
@@ -253,23 +200,73 @@ body {
     font-size: 8px;
     font-weight: 600;
     color: #FFF;
-    cursor: pointer;
-    flex-shrink: 0;
 }
 
-/* Mobile Responsive Override */
-@media (max-width: 500px) {
-    body {
-        background-color: var(--frame-bg);
-        align-items: flex-start;
-    }
+/* --- BOTTOM NAVIGATION BAR STYLES (REQUIRED) --- */
+.bottom-nav {
+    width: 100%;
+    height: 99px;
+    background-color: #FFFFFF;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    padding-top: 15px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    border-top: 1px solid #E5E5EA;
+}
 
+.nav-bar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    color: #8E8E93;
+    width: 60px;
+    text-decoration: none;
+}
+
+.nav-bar-item.active {
+    color: #49A427;
+}
+
+.nav-bar-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+.nav-bar-label {
+    font-size: 10px;
+    font-weight: 500;
+}
+
+.nav-center-item {
+    width: 52px;
+    height: 52px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: -10px;
+    text-decoration: none;
+}
+
+.nav-center-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+@media (max-width: 500px) {
+    body { background-color: var(--frame-bg); align-items: flex-start; }
     .app-container {
         width: 100%;
-        height: 100vh; /* Full viewport height */
+        height: 100vh;
         border-radius: 0;
         box-shadow: none;
         border: none;
-        padding-top: env(safe-area-inset-top, 20px); /* Slightly less default padding on actual mobile if env not supported */
+        padding-top: env(safe-area-inset-top, 20px);
     }
 }

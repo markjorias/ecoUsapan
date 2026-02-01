@@ -1,10 +1,11 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash, current_app
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash, current_app, jsonify
 from flask_login import login_required, current_user
-from .models import Initiative, ServiceRequest, Participation, InventoryItem
+from .models import Initiative, ServiceRequest, Participation, InventoryItem, Comment, ForumPost, PostVote
 from . import db
 from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
+
 views = Blueprint('views', __name__)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -22,79 +23,75 @@ def home():
 @views.route('/events')
 @login_required
 def events():
-    """
-    FIX: This route was missing, causing the BuildError in home.html.
-    It displays the full list of available environmental initiatives.
-    """
+    # Fetch all approved initiatives to show in the dedicated list
     initiatives = Initiative.query.filter_by(status='Approved').order_by(Initiative.date_created.desc()).all()
-    return render_template('home.html', initiatives=initiatives, user=current_user)
+    # Change 'home.html' to 'events.html'
+    return render_template('events.html', initiatives=initiatives, user=current_user)
 
 @views.route('/status')
 @login_required
 def status():
-    # Role-based dashboard filtering
-    if current_user.role == 'Admin_LGU':
-        initiatives = Initiative.query.all()
+    if current_user.is_admin:
+        initiatives = Initiative.query.order_by(Initiative.date_created.desc()).all()
+        # Admin still sees their own joined events here
+        participations = Participation.query.filter_by(user_id=current_user.id).all()
         requests = ServiceRequest.query.all()
-        is_admin_view = True
-    elif current_user.role == 'Admin_DA':
-        initiatives = []
-        requests = ServiceRequest.query.filter_by(service_type='Seed').all()
-        is_admin_view = True
-    elif current_user.role == 'Admin_DENR':
-        initiatives = []
-        requests = ServiceRequest.query.filter_by(service_type='Seedling').all()
-        is_admin_view = True
     else:
-        initiatives = Initiative.query.filter_by(user_id=current_user.id).all()
+        initiatives = Initiative.query.filter_by(user_id=current_user.id).order_by(Initiative.date_created.desc()).all()
+        participations = Participation.query.filter_by(user_id=current_user.id).all()
         requests = ServiceRequest.query.filter_by(user_id=current_user.id).all()
-        is_admin_view = False
 
-    return render_template('status.html', initiatives=initiatives, requests=requests, user=current_user, is_admin_view=is_admin_view)
+    return render_template('status.html', user=current_user, initiatives=initiatives, requests=requests, participations=participations)
+
+
 
 @views.route('/update-request-status/<int:id>', methods=['POST'])
 @login_required
 def update_request_status(id):
-    if not current_user.is_admin:
-        return redirect(url_for('views.home'))
-        
+    """
+    Updates status of service requests with department-specific security.
+    Uses correct model attributes: service_type, quantity_requested, stock_quantity.
+    """
     req = ServiceRequest.query.get_or_404(id)
     new_status = request.form.get('status')
     old_status = req.status
+
+    # STRICT ACCESS CONTROL
+    if current_user.role == 'Admin_LGU':
+        flash('Unauthorized: LGU Admins cannot manage departmental service requests.', category='error')
+        return redirect(url_for('views.status'))
+
+    if req.service_type == 'Seeds' and current_user.role != 'Admin_DA':
+        flash('Unauthorized: Only DA Admins can manage Seed requests.', category='error')
+        return redirect(url_for('views.status'))
     
-    # Logic for Reverting Stock if Declined
-    # We only revert if it's changing TO Declined from something else
+    if req.service_type == 'Seedlings' and current_user.role != 'Admin_DENR':
+        flash('Unauthorized: Only DENR Admins can manage Seedling requests.', category='error')
+        return redirect(url_for('views.status'))
+
+    # Revert inventory if declined
     if new_status == 'Declined' and old_status != 'Declined':
-        # Find the item in inventory
-        item = InventoryItem.query.filter_by(
-            name=req.item_name, 
-            category=req.service_type
-        ).first()
-        
+        item = InventoryItem.query.filter_by(name=req.item_name, category=req.service_type).first()
         if item:
             item.stock_quantity += req.quantity_requested
             db.session.add(item)
-            flash(f'Request declined. {req.quantity_requested} units added back to {item.name} stock.', category='info')
     
-    # Logic if changing FROM Declined back to something else (e.g. accidentally declined)
+    # Re-reserve if changing FROM declined
     elif old_status == 'Declined' and new_status != 'Declined':
-        item = InventoryItem.query.filter_by(
-            name=req.item_name, 
-            category=req.service_type
-        ).first()
-        
+        item = InventoryItem.query.filter_by(name=req.item_name, category=req.service_type).first()
         if item:
             if item.stock_quantity >= req.quantity_requested:
                 item.stock_quantity -= req.quantity_requested
                 db.session.add(item)
             else:
-                flash(f'Cannot change status. Not enough stock to re-reserve this item.', category='error')
+                flash('Insufficient stock to re-reserve item.', category='error')
                 return redirect(url_for('views.status'))
 
     req.status = new_status
     db.session.commit()
     flash(f'Request status updated to {new_status}.', category='success')
     return redirect(url_for('views.status'))
+
 
 # --- Service & Inventory Routes ---
 
@@ -409,6 +406,23 @@ def launch_initiative1():
 def launch_initiative2():
     if request.method == 'POST':
         part1 = session.get('init_part1', {})
+        
+        # --- NEW IMAGE HANDLING LOGIC ---
+        image_file = request.files.get('event_image')
+        filename = 'default_event.png' # Fallback
+        
+        if image_file and allowed_file(image_file.filename):
+            original_filename = secure_filename(image_file.filename)
+            # Create a unique name to avoid conflicts
+            filename = f"user_{current_user.id}_{int(datetime.utcnow().timestamp())}_{original_filename}"
+            
+            upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
+            if not os.path.exists(upload_folder):
+                os.makedirs(upload_folder)
+            
+            image_file.save(os.path.join(upload_folder, filename))
+        # --------------------------------
+
         new_initiative = Initiative(
             user_id=current_user.id,
             title=part1.get('title'),
@@ -428,6 +442,7 @@ def launch_initiative2():
             contact_role=request.form.get('role'),
             email=request.form.get('email'),
             event_link=request.form.get('link'),
+            image_filename=filename, # Use the saved filename here
             status='Pending'
         )
         db.session.add(new_initiative)
@@ -436,14 +451,16 @@ def launch_initiative2():
         flash('Initiative submitted for approval!', category='success')
         return redirect(url_for('views.status'))
     return render_template('launch_initiative2.html', user=current_user)
-
 # --- Admin Controls ---
 
 @views.route('/approve-initiative/<int:id>')
 @login_required
 def approve_initiative(id):
+    """
+    Secured route: Only LGU Admins can approve community initiatives.
+    """
     if current_user.role != 'Admin_LGU':
-        flash('Unauthorized.', category='error')
+        flash('Unauthorized: Only LGU Admins can approve initiatives.', category='error')
         return redirect(url_for('views.home'))
     
     initiative = Initiative.query.get_or_404(id)
@@ -452,22 +469,169 @@ def approve_initiative(id):
     flash('Initiative Approved!', category='success')
     return redirect(url_for('views.status'))
 
+@views.route('/participate/<int:initiative_id>', methods=['POST'])
+@login_required
+def participate(initiative_id):
+    data = request.get_json()
+    
+    # --- Input Validation ---
+    full_name = data.get('full_name', '').strip()
+    address = data.get('address', '').strip()
+    contact = data.get('contact', '').strip()
+    email = data.get('email', '').strip()
+    purpose = data.get('purpose', '').strip()
+
+    if not all([full_name, address, contact, email, purpose]):
+        return jsonify({'error': 'All fields are required.'}), 400
+    
+    if "@" not in email or "." not in email:
+        return jsonify({'error': 'Please enter a valid email address.'}), 400
+
+    # --- Save to Database ---
+    new_participation = Participation(
+        user_id=current_user.id,
+        initiative_id=initiative_id,
+        full_name=full_name,
+        address=address,
+        contact_number=contact,
+        email=email,
+        purpose=purpose
+    )
+    
+    db.session.add(new_participation)
+    db.session.commit()
+    
+    return jsonify({'message': 'Success'}), 200
+
+@views.route('/get-participants/<int:id>')
+@login_required
+def get_participants(id):
+    initiative = Initiative.query.get_or_404(id)
+    # Security: Only allow the creator or an admin to see the list
+    if initiative.user_id != current_user.id and not current_user.is_admin:
+        return jsonify([]), 403
+    
+    registrants = Participation.query.filter_by(initiative_id=id).all()
+    return jsonify([{'name': r.full_name, 'email': r.email} for r in registrants])
+
 # --- Auxiliary Page Routes ---
 
-@views.route('/event-view')
+@views.route('/event-view/<int:id>')
 @login_required
-def event_view():
-    return render_template('event-view.html')
+def event_view(id):
+    # Fetch the specific initiative or return a 404 error if it doesn't exist
+    event = Initiative.query.get_or_404(id)
+    return render_template('event-view.html', event=event, user=current_user)
 
 @views.route('/forum')
 @login_required
 def forum():
-    return render_template('forum.html')
+    trending = ForumPost.query.order_by(ForumPost.votes.desc()).limit(3).all()
+    recent = ForumPost.query.order_by(ForumPost.date_posted.desc()).all()
+    return render_template('forum.html', user=current_user, trending=trending, recent=recent)
 
-@views.route('/forum-view')
+
+@views.route('/forum-view/<int:id>')
 @login_required
-def forum_view():
-    return render_template('forum-view.html')
+def forum_view(id):
+    post = ForumPost.query.get_or_404(id)
+    # Get current user's vote type for this post
+    user_vote = PostVote.query.filter_by(user_id=current_user.id, post_id=id).first()
+    user_vote_type = user_vote.vote_type if user_vote else None
+    
+    comments = Comment.query.filter_by(post_id=id, parent_id=None).order_by(Comment.date_posted.desc()).all()
+    return render_template('forum-view.html', 
+                           user=current_user, 
+                           post=post, 
+                           comments=comments, 
+                           user_vote_type=user_vote_type)
+
+@views.route('/add-comment/<int:post_id>', methods=['POST'])
+@login_required
+def add_comment(post_id):
+    content = request.form.get('content')
+    parent_id = request.form.get('parent_id') # Will be None for main comments
+    
+    if content:
+        new_comment = Comment(
+            content=content,
+            user_id=current_user.id,
+            post_id=post_id,
+            parent_id=parent_id
+        )
+        db.session.add(new_comment)
+        db.session.commit()
+        flash('Comment posted!', category='success')
+    
+    return redirect(url_for('views.forum_view', id=post_id))
+
+@views.route('/create-post', methods=['POST'])
+@login_required
+def create_post():
+    title = request.form.get('title')
+    content = request.form.get('content')
+    category = request.form.get('category')
+    
+    if not title or not content:
+        flash('All fields are required!', category='error')
+    else:
+        new_post = ForumPost(
+            title=title,
+            content=content,
+            category=category,
+            user_id=current_user.id
+        )
+        db.session.add(new_post)
+        db.session.commit()
+        flash('New discussion created!', category='success')
+        
+    return redirect(url_for('views.forum'))
+
+@views.route('/vote-post/<int:post_id>', methods=['POST'])
+@login_required
+def vote_post(post_id):
+    post = ForumPost.query.get_or_404(post_id)
+    data = request.get_json()
+    vote_type = data.get('vote_type') # 'up' or 'down'
+    
+    # Check if this user has already voted on this post
+    existing_vote = PostVote.query.filter_by(user_id=current_user.id, post_id=post_id).first()
+    
+    # Logic: 
+    # 1. If no vote exists: Create new vote.
+    # 2. If same vote exists: Remove it (toggle off).
+    # 3. If opposite vote exists: Change the type and update total.
+    
+    change_in_total = 0
+    new_status = None # 'up', 'down', or None
+    
+    if not existing_vote:
+        # Create new vote
+        new_vote = PostVote(user_id=current_user.id, post_id=post_id, vote_type=vote_type)
+        db.session.add(new_vote)
+        change_in_total = 1 if vote_type == 'up' else -1
+        new_status = vote_type
+    else:
+        if existing_vote.vote_type == vote_type:
+            # Toggle off (Remove existing vote)
+            change_in_total = -1 if vote_type == 'up' else 1
+            db.session.delete(existing_vote)
+            new_status = None
+        else:
+            # Switch vote type (e.g., from up to down)
+            # If switching up -> down: total goes down by 2 (+1 becomes -1)
+            # If switching down -> up: total goes up by 2 (-1 becomes +1)
+            change_in_total = -2 if vote_type == 'down' else 2
+            existing_vote.vote_type = vote_type
+            new_status = vote_type
+
+    post.votes += change_in_total
+    db.session.commit()
+    
+    return jsonify({
+        'votes': post.votes,
+        'status': new_status
+    })
 
 @views.route('/seeds-view')
 @login_required
