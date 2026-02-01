@@ -29,6 +29,7 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+webapp/static/uploads/
 
 # PyInstaller
 *.manifest
