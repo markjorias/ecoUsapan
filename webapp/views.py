@@ -177,3 +177,38 @@ def status():
                            participations=participations, # Pass this to the restored section
                            user=current_user,
                            is_admin_view=is_admin_view)
+
+@views.route('/ecoservices')
+@login_required
+def ecoservices():
+    return render_template('ecoservices.html')
+
+@views.route('/about-seeds')
+@login_required
+def about_ecoservice_seeds():
+    return render_template('about-ecoservice-seeds.html')
+
+@views.route('/about-seedlings')
+@login_required
+def about_ecoservice_seedlings():
+    return render_template('about-ecoservice-seedlings.html')
+
+@views.route('/seed-inventory')
+@login_required
+def seed_inventory():
+    return render_template('seed_inventory.html')
+
+@views.route('/seedling-inventory')
+@login_required
+def tree_seedlings_inventory():
+    return render_template('tree_seedlings_inventory.html')
+
+@views.route('/request-seeds-form')
+@login_required
+def request_seeds_form():
+    return render_template('request-seeds-form.html')
+
+@views.route('/request-seedlings-form')
+@login_required
+def request_seedlings_form():
+    return render_template('request-seedlings-form.html')
