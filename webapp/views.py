@@ -212,3 +212,17 @@ def request_seeds_form():
 @login_required
 def request_seedlings_form():
     return render_template('request-seedlings-form.html')
+
+@views.route('/submit-request/<string:item_name>/<string:service_type>')
+@login_required
+def submit_request(item_name, service_type):
+    new_req = ServiceRequest(
+        user_id=current_user.id, 
+        item_name=item_name, 
+        service_type=service_type,
+        status='Pending'
+    )
+    db.session.add(new_req)
+    db.session.commit()
+    flash('Request submitted!', category='success')
+    return redirect(url_for('views.status'))
