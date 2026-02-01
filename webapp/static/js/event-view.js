@@ -22,11 +22,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Submit Form
     submitBtn.addEventListener('click', function() {
-        // Validate inputs if needed (skipping for now as per instructions)
+        const eventId = window.location.pathname.split('/').pop(); // Grabs ID from URL
         
-        // Hide form and show confirmation
-        formContainer.style.display = 'none';
-        confirmationMessage.style.display = 'flex';
+        const formData = {
+            full_name: document.querySelector('input[placeholder="Your Name"]').value,
+            address: document.querySelector('input[placeholder="Your Address"]').value,
+            contact: document.querySelector('input[placeholder="09XX XXX XXXX"]').value,
+            email: document.querySelector('input[placeholder="email@example.com"]').value,
+            purpose: document.querySelector('textarea[placeholder="Why do you want to join?"]').value
+        };
+
+        fetch(`/participate/${eventId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error); // Simple validation alert
+            } else {
+                // Success: Switch to the confirmation message
+                formContainer.style.display = 'none';
+                confirmationMessage.style.display = 'flex';
+            }
+        })
+        .catch(error => console.error('Error:', error));
     });
 
     // Close Confirmation

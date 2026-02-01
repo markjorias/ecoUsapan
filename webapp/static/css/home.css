@@ -227,16 +227,19 @@ body {
 }
 
 .featured-tag {
-    width: 78px;
+    width: fit-content; /* Let the box grow with the text */
+    min-width: 78px;    /* Maintain a minimum size for short words */
+    padding: 0 12px;    /* Add breathing room on the sides */
     height: 28px;
     background-color: #219018;
     color: #FFFFFF;
-    font-size: 16px;
+    font-size: 12px;    /* Slightly smaller font helps long words fit better */
     font-weight: 700;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 4px;
+    white-space: nowrap; /* Prevents the text from wrapping inside the tag */
 }
 
 .featured-title {

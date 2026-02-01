@@ -1,6 +1,8 @@
 from . import db
 from flask_login import UserMixin
 from datetime import datetime
+import os
+from flask import url_for, current_app
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -51,6 +53,43 @@ class Initiative(db.Model):
     status = db.Column(db.String(50), default='Pending') 
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
+    def get_time_left(self):
+        try:
+            # HTML date input usually gives YYYY-MM-DD
+            # HTML time input usually gives HH:MM (24-hour)
+            event_datetime = datetime.strptime(f"{self.date} {self.time}", "%Y-%m-%d %H:%M")
+            now = datetime.now() # Using local time to match user input
+            delta = event_datetime - now
+
+            if delta.total_seconds() <= 0:
+                return "Completed"
+            
+            if delta.days > 0:
+                return f"{delta.days} Day{'s' if delta.days > 1 else ''} Left"
+            
+            hours = int(delta.total_seconds() // 3600)
+            if hours > 0:
+                return f"{hours} Hour{'s' if hours > 1 else ''} Left"
+            
+            return "Starting Soon"
+        except (ValueError, TypeError):
+            return "Time TBA"
+    @property
+    def image_url(self):
+        # Check if the filename exists in the database
+        if self.image_filename:
+            # Construct the absolute path to check if the file actually exists on the server
+            file_path = os.path.join(current_app.root_path, 'static/uploads', self.image_filename)
+            if os.path.exists(file_path):
+                return url_for('static', filename='uploads/' + self.image_filename)
+        
+        # Fallback to a default image in your static/images folder
+        return url_for('static', filename='images/default-initiative.png')
+
+    @property
+    def contact_full_name(self):
+        return f"{self.contact_fname} {self.contact_lname}"
+
 class ServiceRequest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -68,3 +107,38 @@ class Participation(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     initiative_id = db.Column(db.Integer, db.ForeignKey('initiative.id'), nullable=False)
     date_joined = db.Column(db.DateTime, default=datetime.utcnow)
+    # New fields to match the participation modal
+    full_name = db.Column(db.String(150), nullable=False)
+    address = db.Column(db.String(255), nullable=False)
+    contact_number = db.Column(db.String(20), nullable=False)
+    email = db.Column(db.String(150), nullable=False)
+    purpose = db.Column(db.Text, nullable=False)
+    # Relationship to easily access event data
+    initiative = db.relationship('Initiative', backref='participants')
+    initiative = db.relationship('Initiative', backref='registrations')
+
+class ForumPost(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    category = db.Column(db.String(50), default='Discussion') # 'News', 'Suggestion', etc.
+    date_posted = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    image_filename = db.Column(db.String(100))
+    votes = db.Column(db.Integer, default=0)
+
+    # Relationships
+    author = db.relationship('User', backref='posts')
+    comments = db.relationship('Comment', backref='post', cascade="all, delete-orphan", lazy=True)
+
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    date_posted = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('forum_post.id'), nullable=False)
+    parent_id = db.Column(db.Integer, db.ForeignKey('comment.id')) # For nested replies
+
+    # Relationships
+    author = db.relationship('User', backref='user_comments')
+    replies = db.relationship('Comment', backref=db.backref('parent', remote_side=[id]), lazy=True)

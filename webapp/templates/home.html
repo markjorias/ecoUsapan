@@ -28,7 +28,6 @@
                     </div>
                     <span class="nav-label">Status</span>
                 </a>
-                <!-- ... other nav items ... -->
                 <a href="{{ url_for('views.event_map') }}" class="nav-item" style="text-decoration: none; color: inherit;">
                     <div class="nav-square">
                         <div class="nav-icon" style="-webkit-mask-image: url({{ url_for('static', filename='icons/map-pin.svg') }}); mask-image: url({{ url_for('static', filename='icons/map-pin.svg') }});"></div>
@@ -43,81 +42,65 @@
                 </div>
             </div>
             
-            <!-- Featured Carousel Section -->
+            <!-- Dynamic Featured Carousel -->
             <div class="featured-carousel-container">
                 <div class="featured-carousel" id="featuredCarousel">
-                    <div class="featured-card active" data-index="0">
-                        <img src="{{ url_for('static', filename='images/sample-image1.png') }}" alt="Featured Image 1" class="featured-image">
+                    {% for event in initiatives[:3] %}
+                    <div class="featured-card {{ 'active' if loop.first }}" data-index="{{ loop.index0 }}">
+                        <img src="{{ url_for('static', filename='uploads/' + event.image_filename) if event.image_filename != 'default_event.png' else url_for('static', filename='images/sample-image1.png') }}" alt="{{ event.title }}" class="featured-image">
                         <div class="featured-gradient-overlay"></div>
                         <div class="featured-info-overlay">
-                            <div class="featured-tag">tag</div>
-                            <div class="featured-title">Featured Title 1</div>
-                            <div class="featured-user">@username1</div>
+                            <div class="featured-tag">{{ event.event_type }}</div>
+                            <div class="featured-title">{{ event.title }}</div>
+                            <div class="featured-user">@{{ event.author.username }}</div>
                         </div>
                     </div>
-                    <div class="featured-card" data-index="1">
-                        <img src="{{ url_for('static', filename='images/sample-image2.png') }}" alt="Featured Image 2" class="featured-image">
+                    {% else %}
+                    <div class="featured-card active">
+                        <img src="{{ url_for('static', filename='images/sample-image1.png') }}" class="featured-image">
                         <div class="featured-gradient-overlay"></div>
                         <div class="featured-info-overlay">
-                            <div class="featured-tag">tag</div>
-                            <div class="featured-title">Featured Title 2</div>
-                            <div class="featured-user">@username2</div>
+                            <div class="featured-tag">Welcome</div>
+                            <div class="featured-title">Start an Initiative!</div>
+                            <div class="featured-user">No events yet</div>
                         </div>
                     </div>
-                    <div class="featured-card" data-index="2">
-                        <img src="{{ url_for('static', filename='images/sample-image3.png') }}" alt="Featured Image 3" class="featured-image">
-                        <div class="featured-gradient-overlay"></div>
-                        <div class="featured-info-overlay">
-                            <div class="featured-tag">tag</div>
-                            <div class="featured-title">Featured Title 3</div>
-                            <div class="featured-user">@username3</div>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
                 
                 <div class="carousel-indicators">
-                    <div class="indicator-pill active" data-index="0">
+                    {% for event in initiatives[:3] %}
+                    <div class="indicator-pill {{ 'active' if loop.first }}" data-index="{{ loop.index0 }}">
                         <div class="indicator-progress"></div>
                     </div>
-                    <div class="indicator-pill" data-index="1">
-                        <div class="indicator-progress"></div>
-                    </div>
-                    <div class="indicator-pill" data-index="2">
-                        <div class="indicator-progress"></div>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
             
             <!-- Dynamic Events Section -->
             <div class="events-container">
                 <a href="{{ url_for('views.events') }}" class="events-header" style="text-decoration: none; color: inherit;">
-                    Events
+                    Recent Events
                     <img src="{{ url_for('static', filename='icons/chevron-right.svg') }}" alt="Arrow">
                 </a>
                 
-                <a href="{{ url_for('views.event_view') }}" class="event-card" style="text-decoration: none; color: inherit;">
-                    <div class="event-logo-placeholder"></div>
+                {% for event in initiatives[:2] %}
+                <a href="{{ url_for('views.event_view', id=event.id) }}" class="event-card" style="text-decoration: none; color: inherit;">
+                    <div class="event-logo-placeholder" style="background-image: url('{{ url_for('static', filename='uploads/' + event.image_filename) if event.image_filename != 'default_event.png' else '' }}'); background-size: cover; background-position: center;">
+                        {% if event.image_filename == 'default_event.png' %}
+                        <img src="{{ url_for('static', filename='icons/calendar.svg') }}" style="width: 20px; opacity: 0.2; display: block; margin: 11px auto;">
+                        {% endif %}
+                    </div>
                     <div class="event-info">
-                        <div class="event-org">Organization</div>
-                        <div class="event-title">Event Title</div>
-                        <div class="event-loc">Location</div>
+                        <div class="event-org">{{ event.org_name or "Individual" }}</div>
+                        <div class="event-title">{{ event.title }}</div>
+                        <div class="event-loc">{{ event.city }}</div>
                     </div>
-                    <div class="event-action">
-                        participate
-                    </div>
+                    <div class="event-action">participate</div>
                 </a>
-                
-                <a href="{{ url_for('views.event_view') }}" class="event-card-2" style="text-decoration: none; color: inherit;">
-                    <div class="event-logo-placeholder"></div>
-                    <div class="event-info">
-                        <div class="event-org">Organization</div>
-                        <div class="event-title">Event Title</div>
-                        <div class="event-loc">Location</div>
-                    </div>
-                    <div class="event-action">
-                        participate
-                    </div>
-                </a>
+                {% else %}
+                <p style="font-size: 11px; color: #999; text-align: center; padding: 10px;">No upcoming events.</p>
+                {% endfor %}
                 
                 <div class="separator-container">
                     <div class="separator-line"></div>
@@ -142,7 +125,7 @@
                     </div>
                     <div class="service-info">
                         <div class="service-title">Request Seeds</div>
-                        <div class="service-dept">Department of Argriculture</div>
+                        <div class="service-dept">Department of Agriculture</div>
                     </div>
                 </a>
                 
@@ -161,10 +144,8 @@
         {% include 'components/navbar.html' %}
     </div>
 
-    <!-- Keyboard Shortcut Script -->
     <script>
         document.addEventListener('keydown', function(event) {
-            // Shortcut: Shift + L (Capital L for Logout)
             if (event.shiftKey && (event.key === 'L' || event.key === 'l')) {
                 window.location.href = "{{ url_for('auth.logout') }}";
             }

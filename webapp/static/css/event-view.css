@@ -62,11 +62,12 @@ body {
 /* Header Styles */
 .event-view-header {
     width: 100%;
-    height: 36px;
     display: flex;
-    align-items: center;
     gap: 16px;
-    padding: 0;
+    height: auto;
+    min-height: 36px;
+    align-items: center;
+    padding: 4px 0;
 }
 
 .close-btn {
@@ -88,7 +89,7 @@ body {
     font-weight: 700;
     color: #000;
     margin: 0;
-    line-height: 36px;
+    line-height: 1.1;
 }
 
 /* Event Title Container */
@@ -120,7 +121,7 @@ body {
     margin-right: -19px;
     padding: 4px 19px;
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     overflow-x: auto;
     gap: 8px;
     scrollbar-width: none;

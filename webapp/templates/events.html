@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Events</title>
+    <title>All Events - EcoUsapan</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/events.css') }}">
 </head>
@@ -39,34 +39,35 @@
                 </a>
             </div>
 
-            <!-- Event Cards -->
+            <!-- Dynamic Events List -->
             <div class="events-list">
-                <div class="event-card">
-                    <div class="event-logo-placeholder"></div>
-                    <div class="event-info">
-                        <div class="event-org">Organization</div>
-                        <div class="event-title">Event Title</div>
-                        <div class="event-loc">Location</div>
+                {% for event in initiatives %}
+                <a href="{{ url_for('views.event_view', id=event.id) }}" style="text-decoration: none; color: inherit;">
+                    <div class="event-card">
+                        <div class="event-logo-placeholder" style="background-image: url('{{ url_for('static', filename='uploads/' + event.image_filename) if event.image_filename != 'default_event.png' else '' }}'); background-size: cover; background-position: center;">
+                            {% if event.image_filename == 'default_event.png' %}
+                            <img src="{{ url_for('static', filename='icons/calendar.svg') }}" style="width: 20px; opacity: 0.1; display: block; margin: 11px auto;">
+                            {% endif %}
+                        </div>
+                        <div class="event-info">
+                            <div class="event-org">{{ event.org_name or "Individual" }}</div>
+                            <div class="event-title">{{ event.title }}</div>
+                            <div class="event-loc">{{ event.city }}, {{ event.province }}</div>
+                        </div>
+                        <div class="event-action">participate</div>
                     </div>
-                    <div class="event-action">  
-                        participate
-                    </div>
+                </a>
+                {% else %}
+                <div style="text-align: center; padding: 40px; color: #999;">
+                    <p style="font-size: 14px;">No events are currently scheduled.</p>
+                    <a href="{{ url_for('views.launch_initiative1') }}" style="color: #49A427; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-top: 10px; display: block;">Be the first to launch one!</a>
                 </div>
-
-                <div class="event-card-2">
-                    <div class="event-logo-placeholder"></div>
-                    <div class="event-info">
-                        <div class="event-org">Organization</div>
-                        <div class="event-title">Event Title</div>
-                        <div class="event-loc">Location</div>
-                    </div>
-                    <div class="event-action">
-                        participate
-                    </div>
-                </div>
+                {% endfor %}
             </div>
 
         </div>
+        
+        {% include 'components/navbar.html' %}
     </div>
 </body>
 </html>
