@@ -129,10 +129,10 @@
             </div>
             
             <div class="services-container">
-                <div class="events-header">
+                <a href="{{ url_for('views.ecoservices') }}" class="events-header" style="text-decoration: none; color: inherit;">
                     EcoServices
                     <img src="{{ url_for('static', filename='icons/chevron-right.svg') }}" alt="Arrow">
-                </div>
+                </a>
                 
                 <a href="{{ url_for('views.about_ecoservice_seeds') }}" class="service-card" style="text-decoration: none; color: inherit;">
                     <div class="service-logo-container">

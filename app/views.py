@@ -61,3 +61,15 @@ def about_ecoservice_seeds():
 @views.route('/about-ecoservice-seedlings')
 def about_ecoservice_seedlings():
     return render_template('about-ecoservice-seedlings.html')
+
+@views.route('/request-seeds-form')
+def request_seeds_form():
+    return render_template('request-seeds-form.html')
+
+@views.route('/request-seedlings-form')
+def request_seedlings_form():
+    return render_template('request-seedlings-form.html')
+
+@views.route('/ecoservices')
+def ecoservices():
+    return render_template('ecoservices.html')
