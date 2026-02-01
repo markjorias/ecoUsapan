@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>EcoUsapan</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="{{ url_for('static', filename='js/carousel.js') }}" defer></script>
 </head>
@@ -131,27 +129,27 @@
             </div>
             
             <div class="services-container">
-                <div class="events-header">
+                <a href="{{ url_for('views.ecoservices') }}" class="events-header" style="text-decoration: none; color: inherit;">
                     EcoServices
                     <img src="{{ url_for('static', filename='icons/chevron-right.svg') }}" alt="Arrow">
-                </div>
+                </a>
                 
-                <a href="{{ url_for('views.request_seeds') }}" class="service-card" style="text-decoration: none; color: inherit;">
+                <a href="{{ url_for('views.about_ecoservice_seeds') }}" class="service-card" style="text-decoration: none; color: inherit;">
                     <div class="service-logo-container">
                         <img src="{{ url_for('static', filename='images/Department-of-Agriculture.svg') }}" alt="DA Logo" class="service-logo">
                     </div>
                     <div class="service-info">
-                        <div class="service-title">Request for Seeds</div>
+                        <div class="service-title">Request Seeds</div>
                         <div class="service-dept">Department of Argriculture</div>
                     </div>
                 </a>
                 
-                <a href="{{ url_for('views.request_seedlings') }}" class="service-card" style="text-decoration: none; color: inherit;">
+                <a href="{{ url_for('views.about_ecoservice_seedlings') }}" class="service-card" style="text-decoration: none; color: inherit;">
                     <div class="service-logo-container">
                         <img src="{{ url_for('static', filename='images/DENR.png') }}" alt="DENR Logo" class="service-logo">
                     </div>
                     <div class="service-info">
-                        <div class="service-title">Request for Seedlings</div>
+                        <div class="service-title">Request Tree Seedlings</div>
                         <div class="service-dept">Department of Environment and Natural Resources</div>
                     </div>
                 </a>
