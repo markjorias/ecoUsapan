@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>EcoUsapan</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="{{ url_for('static', filename='js/carousel.js') }}" defer></script>
 </head>
@@ -18,21 +16,21 @@
                 <img src="{{ url_for('static', filename='images/ecoUsapan_logo.png') }}" alt="EcoUsapan Logo" class="app-logo">
             </div>
             
-            <!-- Category Navigation Grid -->
             <div class="nav-grid">
-                <a href="{{ url_for('views.forum') }}" class="nav-item">
+                <a href="{{ url_for('views.forum') }}" class="nav-item" style="text-decoration: none; color: inherit;">
                     <div class="nav-square">
                         <div class="nav-icon" style="-webkit-mask-image: url({{ url_for('static', filename='icons/users.svg') }}); mask-image: url({{ url_for('static', filename='icons/users.svg') }});"></div>
                     </div>
                     <span class="nav-label">Forum</span>
                 </a>
-                <a href="{{ url_for('views.status') }}" class="nav-item">
+                <a href="{{ url_for('views.status') }}" class="nav-item" style="text-decoration: none; color: inherit;">
                     <div class="nav-square">
                         <div class="nav-icon" style="-webkit-mask-image: url({{ url_for('static', filename='icons/data.svg') }}); mask-image: url({{ url_for('static', filename='icons/data.svg') }});"></div>
                     </div>
                     <span class="nav-label">Status</span>
                 </a>
-                <a href="{{ url_for('views.event_map') }}" class="nav-item">
+                <!-- ... other nav items ... -->
+                <a href="{{ url_for('views.event_map') }}" class="nav-item" style="text-decoration: none; color: inherit;">
                     <div class="nav-square">
                         <div class="nav-icon" style="-webkit-mask-image: url({{ url_for('static', filename='icons/map-pin.svg') }}); mask-image: url({{ url_for('static', filename='icons/map-pin.svg') }});"></div>
                     </div>
@@ -53,27 +51,27 @@
                         <img src="{{ url_for('static', filename='images/sample-image1.png') }}" alt="Featured Image 1" class="featured-image">
                         <div class="featured-gradient-overlay"></div>
                         <div class="featured-info-overlay">
-                            <div class="featured-tag">News</div>
-                            <div class="featured-title">Tree Planting Activity</div>
-                            <div class="featured-user">@admin</div>
+                            <div class="featured-tag">tag</div>
+                            <div class="featured-title">Featured Title 1</div>
+                            <div class="featured-user">@username1</div>
                         </div>
                     </div>
                     <div class="featured-card" data-index="1">
                         <img src="{{ url_for('static', filename='images/sample-image2.png') }}" alt="Featured Image 2" class="featured-image">
                         <div class="featured-gradient-overlay"></div>
                         <div class="featured-info-overlay">
-                            <div class="featured-tag">Event</div>
-                            <div class="featured-title">Coastal Cleanup Drive</div>
-                            <div class="featured-user">@nature_lover</div>
+                            <div class="featured-tag">tag</div>
+                            <div class="featured-title">Featured Title 2</div>
+                            <div class="featured-user">@username2</div>
                         </div>
                     </div>
                     <div class="featured-card" data-index="2">
                         <img src="{{ url_for('static', filename='images/sample-image3.png') }}" alt="Featured Image 3" class="featured-image">
                         <div class="featured-gradient-overlay"></div>
                         <div class="featured-info-overlay">
-                            <div class="featured-tag">Updates</div>
-                            <div class="featured-title">New Seedlings Available</div>
-                            <div class="featured-user">@denr_local</div>
+                            <div class="featured-tag">tag</div>
+                            <div class="featured-title">Featured Title 3</div>
+                            <div class="featured-user">@username3</div>
                         </div>
                     </div>
                 </div>
@@ -133,29 +131,28 @@
                 </a>
             </div>
             
-            <!-- EcoServices Section -->
             <div class="services-container">
-                <div class="events-header">
+                <a href="{{ url_for('views.ecoservices') }}" class="events-header" style="text-decoration: none; color: inherit;">
                     EcoServices
                     <img src="{{ url_for('static', filename='icons/chevron-right.svg') }}" alt="Arrow">
-                </div>
+                </a>
                 
-                <a href="{{ url_for('views.request_seeds') }}" class="service-card" style="text-decoration: none; color: inherit;">
+                <a href="{{ url_for('views.about_ecoservice_seeds') }}" class="service-card" style="text-decoration: none; color: inherit;">
                     <div class="service-logo-container">
                         <img src="{{ url_for('static', filename='images/Department-of-Agriculture.svg') }}" alt="DA Logo" class="service-logo">
                     </div>
                     <div class="service-info">
-                        <div class="service-title">Request for Seeds</div>
-                        <div class="service-dept">Department of Agriculture</div>
+                        <div class="service-title">Request Seeds</div>
+                        <div class="service-dept">Department of Argriculture</div>
                     </div>
                 </a>
                 
-                <a href="{{ url_for('views.request_seedlings') }}" class="service-card" style="text-decoration: none; color: inherit;">
+                <a href="{{ url_for('views.about_ecoservice_seedlings') }}" class="service-card" style="text-decoration: none; color: inherit;">
                     <div class="service-logo-container">
                         <img src="{{ url_for('static', filename='images/DENR.png') }}" alt="DENR Logo" class="service-logo">
                     </div>
                     <div class="service-info">
-                        <div class="service-title">Request for Seedlings</div>
+                        <div class="service-title">Request Tree Seedlings</div>
                         <div class="service-dept">Department of Environment and Natural Resources</div>
                     </div>
                 </a>

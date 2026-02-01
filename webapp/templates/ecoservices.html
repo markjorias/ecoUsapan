@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EcoServices</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/about-ecoservice.css') }}">
+    <style>
+        /* Local overrides if necessary, but using about-ecoservice.css as requested */
+        .scroll-content {
+            gap: 8px;
+        }
+        .card-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="scroll-content">
+            
+            <div class="about-header">
+                <a href="{{ url_for('views.home') }}" class="close-btn">
+                    <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
+                </a>
+                <h1>EcoServices</h1>
+            </div>
+
+            <!-- Card 1: Seeds Service -->
+            <a href="{{ url_for('views.about_ecoservice_seeds') }}" class="card-link">
+                <div class="da-card">
+                    <div class="da-header">
+                        <div class="da-logo-container">
+                            <img src="{{ url_for('static', filename='images/Department-of-Agriculture.svg') }}" alt="DA Logo" class="da-logo">
+                        </div>
+                        <div class="da-title">Department of Agriculture<br>Naga City Office</div>
+                    </div>
+                    
+                    <div class="da-details">
+                        <div class="da-detail-row">
+                            <img src="{{ url_for('static', filename='icons/map-pin.svg') }}" class="da-icon" alt="Location">
+                            <div class="da-text">
+                                <span>City Hall Complex, Juan Q. Miranda Ave., Concepcion Pequeña, Naga City</span>
+                            </div>
+                        </div>
+                        <div class="da-detail-row">
+                            <img src="{{ url_for('static', filename='icons/message-circle.svg') }}" class="da-icon" alt="Email"> 
+                            <div class="da-text">
+                                <span>da@naga.gov.ph</span>
+                            </div>
+                        </div>
+                        <div class="da-detail-row">
+                            <img src="{{ url_for('static', filename='icons/plus.svg') }}" class="da-icon" alt="Phone"> 
+                            <div class="da-text">
+                                <span>(054) 473-2315</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Card 2: Seedlings Service -->
+            <a href="{{ url_for('views.about_ecoservice_seedlings') }}" class="card-link">
+                <div class="da-card">
+                    <div class="da-header">
+                        <div class="da-logo-container">
+                            <img src="{{ url_for('static', filename='images/DENR.png') }}" alt="DENR Logo" class="da-logo">
+                        </div>
+                        <div class="da-title">Department of Environment and Natural Resources</div>
+                    </div>
+                    
+                    <div class="da-details">
+                        <div class="da-detail-row">
+                            <img src="{{ url_for('static', filename='icons/map-pin.svg') }}" class="da-icon" alt="Location">
+                            <div class="da-text">
+                                <span>Panganiban Dr, Naga, 4400 Camarines Sur</span>
+                            </div>
+                        </div>
+                        <div class="da-detail-row">
+                            <img src="{{ url_for('static', filename='icons/message-circle.svg') }}" class="da-icon" alt="Email">
+                            <div class="da-text">
+                                <span>denr_r5@denr.gov.ph</span>
+                            </div>
+                        </div>
+                        <div class="da-detail-row">
+                            <img src="{{ url_for('static', filename='icons/plus.svg') }}" class="da-icon" alt="Phone">
+                            <div class="da-text">
+                                <span>(054) 472 1111</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            
+        </div>
+    </div>
+</body>
+</html>

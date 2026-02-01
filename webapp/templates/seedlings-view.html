@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>About Ilang-ilang</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/seedlings-view.css') }}">
 </head>
@@ -16,7 +14,7 @@
             
             <!-- Header -->
             <div class="request-for-seedlings-header">
-                <a href="{{ url_for('views.request_seedlings') }}" class="close-btn">
+                <a href="{{ url_for('views.tree_seedlings_inventory') }}" class="close-btn">
                     <img src="{{ url_for('static', filename='icons/chevron-left.svg') }}" alt="Back">
                 </a>
                 <h1>About Ilang-ilang</h1>

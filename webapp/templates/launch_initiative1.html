@@ -4,15 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Launch Your Initiative</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/launch_initiative.css') }}">
 </head>
 <body>
     <div class="app-container">
         <form method="POST" action="{{ url_for('views.launch_initiative1') }}" class="scroll-content" style="padding-bottom: 40px;">
             <div class="launch-header">
+        <div class="scroll-content" style="padding-bottom: 40px;"><div class="launch-header">
                 <a href="{{ url_for('views.home') }}" class="close-btn">
                     <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
                 </a>

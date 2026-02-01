@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Launch Your Initiative - Part 2</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/launch_initiative.css') }}">
 </head>
 <body>
@@ -54,7 +52,7 @@
                 <!-- Event Source Link -->
                 <div class="form-group">
                     <label class="form-label">Event Link (Optional)</label>
-                    <input type="url" name="link" class="form-input" placeholder="http://www.facebook.com/event">
+                    <input type="url" name="link" class="form-input" placeholder="http://www.eventsourcelink.com/event">
                 </div>
 
                 <!-- Event Image Upload -->
@@ -72,7 +70,7 @@
 
             <!-- Submit Button -->
             <div class="bottom-action-container">
-                <button type="submit" class="next-btn">SUBMIT</button>
+                <button type="submit" class="next-btn" style="background-color: #49A427;">SUBMIT</button>
             </div>
         </form>
     </div>
