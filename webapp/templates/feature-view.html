@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Feature View</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ecoservice-about.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/feature-view.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <div class="scroll-content">
+            
+            <div class="feature-view-header">
+                <a href="{{ url_for('views.home') }}" class="close-btn">
+                    <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
+                </a>
+                <h1>Feature Detail</h1>
+            </div>
+
+            <div class="feature-view-title">One Small Trash Fire Can Poison an Entire Neighborhood</div>
+
+            <div class="author-container">
+                <div class="author-username">@green_thumb</div>
+                <div class="date-time-group">
+                    <div class="info-item">
+                        <img src="{{ url_for('static', filename='icons/calendar.svg') }}" class="info-icon" alt="Calendar">
+                        <span>Oct 24, 2025</span>
+                    </div>
+                    <div class="info-item">
+                        <img src="{{ url_for('static', filename='icons/clock.svg') }}" class="info-icon" alt="Clock">
+                        <span>10:30 AM</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-image-container">
+                <img src="{{ url_for('static', filename='images/sample-image2.png') }}" alt="Feature Image" class="feature-image">
+            </div>
+
+            <div class="content-body">
+                <p>Naga City is taking bold steps towards sustainability through its urban gardening initiatives. This project aims to transform idle city lots into productive green spaces, providing fresh produce for the community and reducing the city's carbon footprint.</p>
+                <p>Residents are encouraged to participate by starting their own vertical gardens or joining community-led planting events. By working together, we can create a greener, more resilient Naga City for future generations.</p>
+                <p>The Department of Agriculture provides support through seed distribution and training workshops on sustainable farming techniques.</p>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
