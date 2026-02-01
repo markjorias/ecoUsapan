@@ -11,6 +11,7 @@
 <body>
     <div class="app-container">
         <div class="scroll-content">
+            <!-- Logo Section - Restored to teammate's original structure -->
             <div class="logo-container">
                 <img src="{{ url_for('static', filename='images/ecoUsapan_logo.png') }}" alt="EcoUsapan Logo" class="app-logo">
             </div>
@@ -43,6 +44,7 @@
                 </div>
             </div>
             
+            <!-- Featured Carousel Section -->
             <div class="featured-carousel-container">
                 <div class="featured-carousel" id="featuredCarousel">
                     <div class="featured-card active" data-index="0">
@@ -87,35 +89,36 @@
                 </div>
             </div>
             
+            <!-- Dynamic Events Section -->
             <div class="events-container">
                 <a href="{{ url_for('views.events') }}" class="events-header" style="text-decoration: none; color: inherit;">
                     Events
                     <img src="{{ url_for('static', filename='icons/chevron-right.svg') }}" alt="Arrow">
                 </a>
                 
-                <a href="{{ url_for('views.event_view') }}" class="event-card" style="text-decoration: none; color: inherit;">
-                    <div class="event-logo-placeholder"></div>
-                    <div class="event-info">
-                        <div class="event-org">Organization</div>
-                        <div class="event-title">Event Title</div>
-                        <div class="event-loc">Location</div>
+                {% if initiatives %}
+                    {% for event in initiatives %}
+                    <a href="{{ url_for('views.event_view') }}" class="event-card" style="text-decoration: none; color: inherit;">
+                        <div class="event-logo-placeholder" 
+                             style="background-image: url('{{ url_for('static', filename='images/userupload/' + event.image_filename) if event.image_filename and event.image_filename != 'default_event.png' else '' }}'); 
+                                    background-size: cover; 
+                                    background-position: center;">
+                        </div>
+                        <div class="event-info">
+                            <div class="event-org">{{ event.org_name or 'Independent Group' }}</div>
+                            <div class="event-title">{{ event.title }}</div>
+                            <div class="event-loc">{{ event.city }}{% if event.province %}, {{ event.province }}{% endif %}</div>
+                        </div>
+                        <div class="event-action">
+                            participate
+                        </div>
+                    </a>
+                    {% endfor %}
+                {% else %}
+                    <div style="padding: 20px; text-align: center;">
+                        <p style="font-size: 12px; color: #8E8E93;">No active initiatives yet.</p>
                     </div>
-                    <div class="event-action">
-                        participate
-                    </div>
-                </a>
-                
-                <a href="{{ url_for('views.event_view') }}" class="event-card-2" style="text-decoration: none; color: inherit;">
-                    <div class="event-logo-placeholder"></div>
-                    <div class="event-info">
-                        <div class="event-org">Organization</div>
-                        <div class="event-title">Event Title</div>
-                        <div class="event-loc">Location</div>
-                    </div>
-                    <div class="event-action">
-                        participate
-                    </div>
-                </a>
+                {% endif %}
                 
                 <div class="separator-container">
                     <div class="separator-line"></div>
@@ -158,5 +161,15 @@
         
         {% include 'components/navbar.html' %}
     </div>
+
+    <!-- Keyboard Shortcut Script -->
+    <script>
+        document.addEventListener('keydown', function(event) {
+            // Shortcut: Shift + L (Capital L for Logout)
+            if (event.shiftKey && (event.key === 'L' || event.key === 'l')) {
+                window.location.href = "{{ url_for('auth.logout') }}";
+            }
+        });
+    </script>
 </body>
 </html>
