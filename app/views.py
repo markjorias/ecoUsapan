@@ -16,11 +16,11 @@ def launch_initiative2():
 
 @views.route('/seed-inventory')
 def seed_inventory():
-    return render_template('seed_inventory.html')
+    return render_template('inventory-seeds.html')
 
 @views.route('/tree-seedlings-inventory')
 def tree_seedlings_inventory():
-    return render_template('tree_seedlings_inventory.html')
+    return render_template('inventory-tree-seedlings.html')
 
 @views.route('/events')
 def events():
@@ -38,13 +38,6 @@ def event_view():
 def forum_view():
     return render_template('forum-view.html')
 
-@views.route('/seeds-view')
-def seeds_view():
-    return render_template('seeds-view.html')
-
-@views.route('/seedlings-view')
-def seedlings_view():
-    return render_template('seedlings-view.html')
 
 @views.route('/event-map')
 def event_map():
@@ -56,20 +49,24 @@ def status():
 
 @views.route('/about-ecoservice-seeds')
 def about_ecoservice_seeds():
-    return render_template('about-ecoservice-seeds.html')
+    return render_template('ecoservice-about-seeds.html')
 
 @views.route('/about-ecoservice-seedlings')
 def about_ecoservice_seedlings():
-    return render_template('about-ecoservice-seedlings.html')
+    return render_template('ecoservice-about-seedlings.html')
 
 @views.route('/request-seeds-form')
 def request_seeds_form():
-    return render_template('request-seeds-form.html')
+    return render_template('request-form-seeds.html')
 
 @views.route('/request-seedlings-form')
 def request_seedlings_form():
-    return render_template('request-seedlings-form.html')
+    return render_template('request-form-seedlings.html')
 
 @views.route('/ecoservices')
 def ecoservices():
     return render_template('ecoservices.html')
+
+@views.route('/feature-view')
+def feature_view():
+    return render_template('feature-view.html')

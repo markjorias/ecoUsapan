@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>EcoUsapan</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
     <script src="{{ url_for('static', filename='js/carousel.js') }}" defer></script>
 </head>
 <body>
@@ -45,22 +45,22 @@
             
             <div class="featured-carousel-container">
                 <div class="featured-carousel" id="featuredCarousel">
-                    <div class="featured-card active" data-index="0">
-                        <img src="{{ url_for('static', filename='images/sample-image1.png') }}" alt="Featured Image 1" class="featured-image">
-                        <div class="featured-gradient-overlay"></div>
-                        <div class="featured-info-overlay">
-                            <div class="featured-tag">tag</div>
-                            <div class="featured-title">Featured Title 1</div>
-                            <div class="featured-user">@username1</div>
-                        </div>
-                    </div>
-                    <div class="featured-card" data-index="1">
+                    <a href="{{ url_for('views.feature_view') }}" class="featured-card active" data-index="0" style="text-decoration: none; color: inherit;">
                         <img src="{{ url_for('static', filename='images/sample-image2.png') }}" alt="Featured Image 2" class="featured-image">
                         <div class="featured-gradient-overlay"></div>
                         <div class="featured-info-overlay">
                             <div class="featured-tag">tag</div>
                             <div class="featured-title">Featured Title 2</div>
                             <div class="featured-user">@username2</div>
+                        </div>
+                    </a>
+                    <div class="featured-card" data-index="1">
+                        <img src="{{ url_for('static', filename='images/sample-image1.png') }}" alt="Featured Image 1" class="featured-image">
+                        <div class="featured-gradient-overlay"></div>
+                        <div class="featured-info-overlay">
+                            <div class="featured-tag">tag</div>
+                            <div class="featured-title">Featured Title 1</div>
+                            <div class="featured-user">@username1</div>
                         </div>
                     </div>
                     <div class="featured-card" data-index="2">
