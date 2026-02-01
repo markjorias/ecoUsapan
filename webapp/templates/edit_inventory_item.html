@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Edit Stock - EcoUsapan</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/request-seeds-form.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <form method="POST" class="scroll-content" style="padding-bottom: 40px;">
+            <!-- Header -->
+            <div class="form-header">
+                <a href="javascript:history.back()" class="close-btn">
+                    <img src="{{ url_for('static', filename='icons/chevron-left.svg') }}" alt="Back">
+                </a>
+                <h1>Manage Stock</h1>
+            </div>
+
+            <div class="form-container">
+                <div style="background: #F8F7FA; padding: 16px; border-radius: 12px; margin-bottom: 24px; text-align: center;">
+                    <h2 style="font-size: 18px; font-weight: 800; color: #333;">{{ item.name }}</h2>
+                    <span style="font-size: 10px; color: #49A427; font-weight: 700; text-transform: uppercase;">{{ item.category }} Inventory</span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Variety Name</label>
+                    <input type="text" name="name" class="form-input" value="{{ item.name }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Current Stock Available</label>
+                    <input type="number" name="stock" class="form-input" value="{{ item.stock_quantity }}" min="0" required>
+                    <p style="font-size: 10px; color: #999; margin-top: 4px;">Update this value after a delivery or distribution.</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Public Description</label>
+                    <textarea name="description" class="form-textarea">{{ item.description }}</textarea>
+                </div>
+            </div>
+
+            <div class="bottom-action-container">
+                <button type="submit" class="action-btn" style="background: #333;">UPDATE INVENTORY</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
