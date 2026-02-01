@@ -1,0 +1,322 @@
+:root {
+    --app-width: 393px;
+    --app-height: 852px;
+    --bg-color: #f5f5f7;
+    --frame-bg: #ffffff;
+    --shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.app-container {
+    width: var(--app-width);
+    height: var(--app-height);
+    background: linear-gradient(180deg, #0B9400 -100%, rgba(0, 0, 0, 0) 35%), var(--frame-bg);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    border-radius: 40px;
+    border: 8px solid #333;
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.scroll-content {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    
+    padding-top: max(env(safe-area-inset-top), 74px);
+    padding-bottom: 40px;
+    padding-left: 19px;
+    padding-right: 19px;
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.scroll-content::-webkit-scrollbar {
+    display: none;
+}
+
+/* Header Styles (Copied from request_services.css) */
+.about-header {
+    width: 100%;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0;
+}
+
+.close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+    color: #000;
+}
+
+.close-btn img {
+    width: 24px;
+    height: 24px;
+}
+
+.about-header h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #000;
+    margin: 0;
+    line-height: 36px;
+}
+
+/* Department of Agriculture Card */
+.da-card {
+    width: 100%;
+    /* Dark background removed as per user request */
+    background-color: #FFFFFF;
+    border-radius: 20px;
+    padding: 16px;
+    color: #000000;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    border: 1px solid #D1D1D6;
+}
+
+.da-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+}
+
+.da-logo-container {
+    width: 60px;
+    height: 60px;
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Placeholder centering */
+    overflow: hidden;
+}
+
+.da-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.da-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #000000;
+    line-height: 1.3;
+    flex: 1;
+}
+
+.da-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.da-detail-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+}
+
+.da-icon {
+    width: 16px;
+    height: 16px;
+    opacity: 0.7; /* Slightly dimmed icons */
+}
+
+.da-text a, .da-text span {
+    color: #5E9EFF; /* Blueish link color */
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.4;
+}
+
+.da-text span {
+    color: #8E8E93; /* Grey text for non-links if mixed, or blue for all as per design */
+    color: #5E9EFF; 
+}
+
+/* Content Sections */
+.content-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #FFFFFF; /* Assuming dark mode is prevalent or switching to light for content? */
+    /* Wait, the user image shows standard dark text on light bg for the "About the Service" part? 
+       The prompt says "follow the content in the attached image". 
+       The image shows the card is dark, but the text below "About the Service" is white text on dark background?
+       Ah, looking at "About the Service" in the image description provided by the user... 
+       "The Senior Citizens ID card...". 
+       The image likely has a dark background overall.
+       However, my app generally uses light mode (#F5F5F7).
+       The prompt says "Present a form... copy the header style in request_seeds.html". 
+       request_seeds.html is light mode.
+       I will stick to the app's established theme (Light Mode) for the body content, 
+       but keep the DA card dark ("Senior Citizen ID" card style) as a featured element.
+       So "About the Service" headers should be black.
+    */
+    color: #000000;
+}
+
+.section-text {
+    font-size: 12px;
+    font-weight: 400;
+    color: #000000;
+    line-height: 1.6;
+}
+
+.section-text p {
+    margin-bottom: 8px;
+}
+
+.section-text ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin-top: 8px;
+    margin-bottom: 12px;
+}
+
+.section-text li {
+    margin-bottom: 4px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 500px) {
+    body {
+        background-color: var(--frame-bg);
+        align-items: flex-start;
+    }
+
+    .app-container {
+        width: 100%;
+        height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+        border: none;
+        padding-top: env(safe-area-inset-top, 20px);
+    }
+}
+
+/* Bottom Action Container */
+.bottom-action-container {
+    width: 100%;
+    margin-top: auto;
+}
+
+/* Request Button */
+.request-btn {
+    width: 100%;
+    height: 43px; /* Increased from 50px */
+    background-color: #49A427; /* Green */
+    color: #FFFFFF;
+    font-size: 16px; /* Increased from 14px */
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* margin-top removed as container handles padding */
+    text-decoration: none; /* Reset link underline */
+    box-shadow: none; 
+    transition: transform 0.1s ease;
+}
+
+.request-btn:active {
+    transform: scale(0.98);
+}
+
+/* Service Card Styles */
+.service-card {
+    width: 100%;
+    height: 75px;
+    padding: 10px 8px; /* Reduced vertical padding from 12px to 10px to fit larger logo */
+    background-color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border: 1px solid #E5E5EA;
+}
+
+.service-logo-container {
+    width: 52px; /* Increased from 42.88px */
+    height: 52px; /* Increased from 42.88px */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    background-color: #f8f7fa;
+    border-radius: 8px;
+}
+
+.service-logo {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.service-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+}
+
+.service-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #000;
+}
+
+.service-dept {
+    font-size: 10px;
+    font-weight: 300;
+    color: #666;
+}

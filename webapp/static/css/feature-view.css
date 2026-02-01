@@ -1,0 +1,74 @@
+.feature-view-header {
+    width: 100%;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0;
+}
+
+.author-container {
+    width: 100%;
+    height: 26px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+}
+
+.date-time-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #8E8E93;
+}
+
+.info-icon {
+    width: 14px;
+    height: 14px;
+    opacity: 0.7;
+}
+
+.author-username {
+    font-size: 12px;
+    font-weight: 600;
+    color: #49A427;
+}
+
+/* Base styles common with about-ecoservice.css but adapted for this view */
+.feature-view-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #000;
+    line-height: 1.2;
+}
+
+.feature-image-container {
+    width: 100%;
+    height: 202px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.feature-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.content-body {
+    font-size: 12px;
+    line-height: 1.6;
+    color: #333;
+}
+
+.content-body p {
+    margin-bottom: 8px;
+}
