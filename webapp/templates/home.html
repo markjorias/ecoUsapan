@@ -13,25 +13,26 @@
 <body>
     <div class="app-container">
         <div class="scroll-content">
+            <!-- Logo Section - Restored to teammate's original structure -->
             <div class="logo-container">
                 <img src="{{ url_for('static', filename='images/ecoUsapan_logo.png') }}" alt="EcoUsapan Logo" class="app-logo">
             </div>
             
+            <!-- Category Navigation Grid -->
             <div class="nav-grid">
-                <a href="{{ url_for('views.forum') }}" class="nav-item" style="text-decoration: none; color: inherit;">
+                <a href="{{ url_for('views.forum') }}" class="nav-item">
                     <div class="nav-square">
                         <div class="nav-icon" style="-webkit-mask-image: url({{ url_for('static', filename='icons/users.svg') }}); mask-image: url({{ url_for('static', filename='icons/users.svg') }});"></div>
                     </div>
                     <span class="nav-label">Forum</span>
                 </a>
-                <a href="{{ url_for('views.status') }}" class="nav-item" style="text-decoration: none; color: inherit;">
+                <a href="{{ url_for('views.status') }}" class="nav-item">
                     <div class="nav-square">
                         <div class="nav-icon" style="-webkit-mask-image: url({{ url_for('static', filename='icons/data.svg') }}); mask-image: url({{ url_for('static', filename='icons/data.svg') }});"></div>
                     </div>
                     <span class="nav-label">Status</span>
                 </a>
-                <!-- ... other nav items ... -->
-                <a href="{{ url_for('views.event_map') }}" class="nav-item" style="text-decoration: none; color: inherit;">
+                <a href="{{ url_for('views.event_map') }}" class="nav-item">
                     <div class="nav-square">
                         <div class="nav-icon" style="-webkit-mask-image: url({{ url_for('static', filename='icons/map-pin.svg') }}); mask-image: url({{ url_for('static', filename='icons/map-pin.svg') }});"></div>
                     </div>
@@ -45,33 +46,34 @@
                 </div>
             </div>
             
+            <!-- Featured Carousel Section -->
             <div class="featured-carousel-container">
                 <div class="featured-carousel" id="featuredCarousel">
                     <div class="featured-card active" data-index="0">
                         <img src="{{ url_for('static', filename='images/sample-image1.png') }}" alt="Featured Image 1" class="featured-image">
                         <div class="featured-gradient-overlay"></div>
                         <div class="featured-info-overlay">
-                            <div class="featured-tag">tag</div>
-                            <div class="featured-title">Featured Title 1</div>
-                            <div class="featured-user">@username1</div>
+                            <div class="featured-tag">News</div>
+                            <div class="featured-title">Tree Planting Activity</div>
+                            <div class="featured-user">@admin</div>
                         </div>
                     </div>
                     <div class="featured-card" data-index="1">
                         <img src="{{ url_for('static', filename='images/sample-image2.png') }}" alt="Featured Image 2" class="featured-image">
                         <div class="featured-gradient-overlay"></div>
                         <div class="featured-info-overlay">
-                            <div class="featured-tag">tag</div>
-                            <div class="featured-title">Featured Title 2</div>
-                            <div class="featured-user">@username2</div>
+                            <div class="featured-tag">Event</div>
+                            <div class="featured-title">Coastal Cleanup Drive</div>
+                            <div class="featured-user">@nature_lover</div>
                         </div>
                     </div>
                     <div class="featured-card" data-index="2">
                         <img src="{{ url_for('static', filename='images/sample-image3.png') }}" alt="Featured Image 3" class="featured-image">
                         <div class="featured-gradient-overlay"></div>
                         <div class="featured-info-overlay">
-                            <div class="featured-tag">tag</div>
-                            <div class="featured-title">Featured Title 3</div>
-                            <div class="featured-user">@username3</div>
+                            <div class="featured-tag">Updates</div>
+                            <div class="featured-title">New Seedlings Available</div>
+                            <div class="featured-user">@denr_local</div>
                         </div>
                     </div>
                 </div>
@@ -89,35 +91,36 @@
                 </div>
             </div>
             
+            <!-- Dynamic Events Section -->
             <div class="events-container">
                 <a href="{{ url_for('views.events') }}" class="events-header" style="text-decoration: none; color: inherit;">
                     Events
                     <img src="{{ url_for('static', filename='icons/chevron-right.svg') }}" alt="Arrow">
                 </a>
                 
-                <a href="{{ url_for('views.event_view') }}" class="event-card" style="text-decoration: none; color: inherit;">
-                    <div class="event-logo-placeholder"></div>
-                    <div class="event-info">
-                        <div class="event-org">Organization</div>
-                        <div class="event-title">Event Title</div>
-                        <div class="event-loc">Location</div>
+                {% if initiatives %}
+                    {% for event in initiatives %}
+                    <a href="{{ url_for('views.event_view') }}" class="event-card" style="text-decoration: none; color: inherit;">
+                        <div class="event-logo-placeholder" 
+                             style="background-image: url('{{ url_for('static', filename='images/userupload/' + event.image_filename) if event.image_filename and event.image_filename != 'default_event.png' else '' }}'); 
+                                    background-size: cover; 
+                                    background-position: center;">
+                        </div>
+                        <div class="event-info">
+                            <div class="event-org">{{ event.org_name or 'Independent Group' }}</div>
+                            <div class="event-title">{{ event.title }}</div>
+                            <div class="event-loc">{{ event.city }}{% if event.province %}, {{ event.province }}{% endif %}</div>
+                        </div>
+                        <div class="event-action">
+                            participate
+                        </div>
+                    </a>
+                    {% endfor %}
+                {% else %}
+                    <div style="padding: 20px; text-align: center;">
+                        <p style="font-size: 12px; color: #8E8E93;">No active initiatives yet.</p>
                     </div>
-                    <div class="event-action">
-                        participate
-                    </div>
-                </a>
-                
-                <a href="{{ url_for('views.event_view') }}" class="event-card-2" style="text-decoration: none; color: inherit;">
-                    <div class="event-logo-placeholder"></div>
-                    <div class="event-info">
-                        <div class="event-org">Organization</div>
-                        <div class="event-title">Event Title</div>
-                        <div class="event-loc">Location</div>
-                    </div>
-                    <div class="event-action">
-                        participate
-                    </div>
-                </a>
+                {% endif %}
                 
                 <div class="separator-container">
                     <div class="separator-line"></div>
@@ -130,6 +133,7 @@
                 </a>
             </div>
             
+            <!-- EcoServices Section -->
             <div class="services-container">
                 <div class="events-header">
                     EcoServices
@@ -142,7 +146,7 @@
                     </div>
                     <div class="service-info">
                         <div class="service-title">Request for Seeds</div>
-                        <div class="service-dept">Department of Argriculture</div>
+                        <div class="service-dept">Department of Agriculture</div>
                     </div>
                 </a>
                 
@@ -160,5 +164,15 @@
         
         {% include 'components/navbar.html' %}
     </div>
+
+    <!-- Keyboard Shortcut Script -->
+    <script>
+        document.addEventListener('keydown', function(event) {
+            // Shortcut: Shift + L (Capital L for Logout)
+            if (event.shiftKey && (event.key === 'L' || event.key === 'l')) {
+                window.location.href = "{{ url_for('auth.logout') }}";
+            }
+        });
+    </script>
 </body>
 </html>
