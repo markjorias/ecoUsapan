@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>About EcoService Tree Seedlings</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/about-ecoservice.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <div class="scroll-content">
+            
+            <div class="about-header">
+                <a href="{{ url_for('views.home') }}" class="close-btn">
+                    <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
+                </a>
+                <h1>About EcoService</h1>
+            </div>
+
+             <!-- DENR Card -->
+             <div class="da-card">
+                <div class="da-header">
+                    <div class="da-logo-container">
+                        <img src="{{ url_for('static', filename='images/DENR.png') }}" alt="DENR Logo" class="da-logo">
+                    </div>
+                    <div class="da-title">Department of Environment and Natural Resources</div>
+                </div>
+                
+                <div class="da-details">
+                    <div class="da-detail-row">
+                        <img src="{{ url_for('static', filename='icons/map-pin.svg') }}" class="da-icon" alt="Location">
+                        <div class="da-text">
+                            <!-- Placeholder address -->
+                            <span>Panganiban Dr, Naga, 4400 Camarines Sur</span>
+                        </div>
+                    </div>
+                    <div class="da-detail-row">
+                        <img src="{{ url_for('static', filename='icons/message-circle.svg') }}" class="da-icon" alt="Email">
+                        <div class="da-text">
+                            <a href="mailto:denr_r5@denr.gov.ph">denr_r5@denr.gov.ph</a>
+                        </div>
+                    </div>
+                    <div class="da-detail-row">
+                        <img src="{{ url_for('static', filename='icons/plus.svg') }}" class="da-icon" alt="Phone">
+                        <div class="da-text">
+                            <a href="tel:0544721111">(054) 472 1111</a>
+                        </div>
+                    </div>
+                </div>
+             </div>
+
+             <!-- About the Service -->
+             <div class="content-section">
+                <h2 class="section-title">About the Service</h2>
+                <div class="section-text">
+                    <p>This service allows individuals and community groups to view available seedlings and submit digital requests for tree-growing and environmental activities such as reforestation, mangrove planting, and community greening.</p>
+                    <p>The request process is fully digital through this app to make seedling access easier and more organized.</p>
+                    <p>However, approved seedlings must be personally claimed at a designated location, such as a DENR office, DENR-accredited nursery, or an assigned barangay distribution point, on the scheduled pickup date.</p>
+                </div>
+             </div>
+
+             <!-- Who may request -->
+             <div class="content-section">
+                <h2 class="section-title">Who may request</h2>
+                <div class="section-text">
+                    <p>This service is open to individuals and community groups who wish to contribute to environmental protection and greening initiatives.</p>
+                    <p>Eligible requestors include:</p>
+                    <ul>
+                        <li>Individual environmentalists and volunteers engaged in tree growing or habitat restoration</li>
+                        <li>Community members organizing small-scale greening or reforestation activities</li>
+                        <li>Youth groups, student organizations, and school-based eco-clubs</li>
+                        <li>Homeowners or neighborhood groups conducting community tree-planting projects</li>
+                        <li>Informal environmental groups and advocacy collectives</li>
+                    </ul>
+                    <p>Requests should be non-commercial, community-oriented, and intended for environmental conservation, restoration, or public benefit.</p>
+                </div>
+             </div>
+
+             <!-- Available Services -->
+             <div class="content-section">
+                <h2 class="section-title">Available Services</h2>
+                
+                <!-- Seedlings Inventory Card -->
+                <a href="{{ url_for('views.tree_seedlings_inventory') }}" class="service-card">
+                    <div class="service-logo-container">
+                        <img src="{{ url_for('static', filename='icons/inventory.svg') }}" alt="Inventory Icon" class="service-logo">
+                    </div>
+                    <div class="service-info">
+                        <div class="service-title">Tree Seedlings Inventory</div>
+                        <div class="service-dept">Department of Environment and Natural Resources</div>
+                    </div>
+                </a>
+             </div>
+
+             <!-- Request Button -->
+             <div class="bottom-action-container">
+                <a href="{{ url_for('views.request_seedlings_form') }}" class="request-btn">
+                    Request
+                </a>
+             </div>
+        </div>
+    </div>
+</body>
+</html>

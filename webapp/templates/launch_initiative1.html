@@ -9,7 +9,8 @@
 </head>
 <body>
     <div class="app-container">
-        <div class="scroll-content" style="padding-bottom: 40px;"><div class="launch-header">
+        <form method="POST" action="{{ url_for('views.launch_initiative1') }}" class="scroll-content">
+            <div class="launch-header">
                 <a href="{{ url_for('views.home') }}" class="close-btn">
                     <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
                 </a>
@@ -20,18 +21,19 @@
                 <!-- Title -->
                 <div class="form-group">
                     <label class="form-label">Title</label>
-                    <input type="text" class="form-input" placeholder="Give your initiative a catchy title.">
+                    <input type="text" name="title" class="form-input" placeholder="Give your initiative a catchy title." required>
                 </div>
 
                 <!-- Event Type -->
                 <div class="form-group">
                     <label class="form-label">Event Type</label>
-                    <div class="chips-container">
-                        <div class="chip">Cleanup Drive</div>
-                        <div class="chip">Tree Planting</div>
-                        <div class="chip">Waste<br>Management</div>
-                        <div class="chip">Environment<br>Education</div>
-                        <div class="chip">Others</div>
+                    <input type="hidden" name="event_type" id="selected_event_type" value="Others">
+                    <div class="chips-container" id="event_chips">
+                        <div class="chip" data-value="Cleanup Drive">Cleanup Drive</div>
+                        <div class="chip" data-value="Tree Planting">Tree Planting</div>
+                        <div class="chip" data-value="Waste Management">Waste Management</div>
+                        <div class="chip" data-value="Environment Education">Environment Education</div>
+                        <div class="chip active" data-value="Others">Others</div>
                     </div>
                 </div>
 
@@ -40,51 +42,50 @@
                     <label class="form-label">Date and time</label>
                     <div class="flex-row gap-12">
                         <div class="input-with-icon">
-                            <input type="date" class="form-input" placeholder="Date">
+                            <input type="date" name="date" class="form-input" required>
                         </div>
                         <div class="input-with-icon">
-                            <input type="time" class="form-input" placeholder="Time">
+                            <input type="time" name="time" class="form-input" required>
                         </div>
                     </div>
                 </div>
 
-                <!-- Address -->
+                <!-- Address (Restored Original Fields) -->
                 <div class="form-group">
                     <label class="form-label">Address</label>
-                    <div class="flex-row gap-12">
-                        <input type="text" class="form-input" placeholder="Province">
-                        <input type="text" class="form-input" placeholder="City">
+                    <div class="flex-row gap-12" style="margin-bottom: 8px;">
+                        <input type="text" name="province" class="form-input" placeholder="Province" required>
+                        <input type="text" name="city" class="form-input" placeholder="City" required>
                     </div>
-                    <input type="text" class="form-input" placeholder="Address line 1">
-                    <input type="text" class="form-input" placeholder="Address line 2">
-                    <input type="text" class="form-input" placeholder="Postal Code">
+                    <input type="text" name="address_line1" class="form-input" placeholder="Address line 1" style="margin-bottom: 8px;" required>
+                    <input type="text" name="address_line2" class="form-input" placeholder="Address line 2" style="margin-bottom: 8px;">
+                    <input type="text" name="postal_code" class="form-input" placeholder="Postal Code" required>
                 </div>
 
                 <!-- Description -->
                 <div class="form-group">
                     <label class="form-label">Description</label>
-                    <textarea class="form-textarea" placeholder="Tell us more about your event..."></textarea>
+                    <textarea name="description" class="form-textarea" placeholder="Tell us more about your event..." required></textarea>
                 </div>
             </div>
 
             <!-- Next Button -->
             <div class="bottom-action-container">
-                <a href="{{ url_for('views.launch_initiative2') }}" class="next-btn" style="text-decoration: none;">NEXT</a>
+                <button type="submit" class="next-btn">NEXT</button>
             </div>
-
-        </div>
+        </form>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const eventChips = document.querySelectorAll('.chip');
+            const eventChips = document.querySelectorAll('#event_chips .chip');
+            const hiddenInput = document.getElementById('selected_event_type');
             
             eventChips.forEach(chip => {
                 chip.addEventListener('click', function() {
-                    // Remove active class from all chips
                     eventChips.forEach(c => c.classList.remove('active'));
-                    // Add active class to clicked chip
                     this.classList.add('active');
+                    hiddenInput.value = this.getAttribute('data-value');
                 });
             });
         });

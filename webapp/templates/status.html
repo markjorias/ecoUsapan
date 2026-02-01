@@ -16,90 +16,97 @@
                 <a href="{{ url_for('views.home') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
                     <img src="{{ url_for('static', filename='icons/chevron-left.svg') }}" alt="Back" style="width: 24px; height: 24px; margin-right: 8px;">
                 </a>
-                <div class="status-header-title">Status</div>
+                <div class="status-header-title">{% if is_admin_view %}Management{% else %}Status{% endif %}</div>
             </div>
             
-            <!-- My Initiatives Section -->
-            <div class="section-title">My Initiatives</div>
+            <!-- Initiatives Section -->
+            <div class="section-title">{% if is_admin_view %}All User Initiatives{% else %}My Initiatives{% endif %}</div>
             <div class="status-list">
-                <!-- Example Pending Initiative -->
-                <div class="status-card">
-                    <div class="card-header">
-                        <div class="card-title">Clean Up Drive</div>
-                        <div class="status-badge pending">Pending</div>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-thumbnail">
-                             <!-- Using rocket icon as generic initiative icon -->
-                             <img src="{{ url_for('static', filename='icons/rocket.svg') }}" alt="Initiative">
+                {% if initiatives %}
+                    {% for item in initiatives %}
+                    <div class="status-card">
+                        <div class="card-header">
+                            <div class="card-title">{{ item.title }}</div>
+                            <div class="status-badge {{ item.status|lower }}">{{ item.status }}</div>
                         </div>
-                        <div class="card-details">
-                            <div class="card-subtitle">Barangay Hall</div>
-                            <div class="card-meta">Submitted: Oct 20, 2023</div>
+                        <div class="card-body">
+                            <div class="card-thumbnail" style="background-image: url('{{ url_for('static', filename='images/userupload/' + item.image_filename) if item.image_filename != 'default_event.png' else '' }}'); background-size: cover; background-position: center;">
+                                {% if item.image_filename == 'default_event.png' %}
+                                <img src="{{ url_for('static', filename='icons/map-pin.svg') }}" alt="Initiative" style="width: 20px; opacity: 0.3;">
+                                {% endif %}
+                            </div>
+                            <div class="card-details">
+                                <div class="card-subtitle">{{ item.city }}</div>
+                                <div class="card-meta">Submitted: {{ item.date_created.strftime('%b %d, %Y') }}</div>
+                                {% if is_admin_view and item.status == 'Pending' %}
+                                <a href="{{ url_for('views.approve_initiative', id=item.id) }}" style="text-decoration: none;">
+                                    <div style="margin-top: 8px; font-size: 10px; font-weight: 800; color: #49A427; text-transform: uppercase;">✔ Approve and Publish</div>
+                                </a>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
-                </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="font-size: 12px; color: #999; padding: 10px;">No initiatives found.</p>
+                {% endif %}
             </div>
 
-            <!-- My Events Section -->
-            <div class="section-title">My Events</div>
+            <!-- My Events Section (Restored and Fixed) -->
+            <div class="section-title">{% if is_admin_view %}Global Participations{% else %}My Events{% endif %}</div>
             <div class="status-list">
-                <!-- Example Upcomming Event -->
-                <div class="status-card">
-                     <div class="card-header">
-                        <div class="card-title">Tree Planting</div>
-                        <div class="status-badge approved">Registered</div>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-thumbnail">
-                            <div style="font-weight: 700; color: #49A427;">OCT</div>
+                {% if participations %}
+                    {% for p in participations %}
+                    <div class="status-card">
+                        <div class="card-header">
+                            <!-- Accessed via the initiative relationship -->
+                            <div class="card-title">{{ p.initiative.title }}</div>
+                            <div class="status-badge approved">Registered</div>
                         </div>
-                        <div class="card-details">
-                            <div class="card-subtitle">Naga City Ecology Park</div>
-                            <div class="card-meta">Oct 25, 2023 • 8:00 AM</div>
+                        <div class="card-body">
+                            <div class="card-thumbnail">
+                                <!-- Since date is a string, we display it simply for now -->
+                                <div style="font-weight: 700; color: #49A427; font-size: 10px; text-transform: uppercase;">
+                                    EVENT
+                                </div>
+                            </div>
+                            <div class="card-details">
+                                <div class="card-subtitle">{{ p.initiative.city }}</div>
+                                <div class="card-meta">{{ p.initiative.date }} • {{ p.initiative.time }}</div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="font-size: 12px; color: #999; padding: 10px;">No event registrations found.</p>
+                {% endif %}
             </div>
 
-            <!-- My Requests Section -->
-            <div class="section-title">My Requests</div>
+            <!-- Requests Section -->
+            <div class="section-title">{% if is_admin_view %}Service Requests{% else %}My Requests{% endif %}</div>
             <div class="status-list">
-                <!-- Example Seed Request -->
-                <div class="status-card">
-                    <div class="card-header">
-                        <div class="card-title">Sunflower Seeds</div>
-                        <div class="status-badge completed">Ready for Pickup</div>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-thumbnail">
-                            <img src="{{ url_for('static', filename='images/Department-of-Agriculture.svg') }}" alt="DA">
+                {% if requests %}
+                    {% for req in requests %}
+                    <div class="status-card">
+                        <div class="card-header">
+                            <div class="card-title">{{ req.item_name }}</div>
+                            <div class="status-badge {{ req.status|lower }}">{{ req.status }}</div>
                         </div>
-                        <div class="card-details">
-                            <div class="card-subtitle">Request #12345</div>
-                            <div class="card-meta">DA Office • 3 Packs</div>
-                        </div>
-                    </div>
-                </div>
-
-                 <!-- Example Seedling Request -->
-                <div class="status-card">
-                    <div class="card-header">
-                        <div class="card-title">Narra Seedlings</div>
-                        <div class="status-badge rejected">Declined</div>
-                    </div>
-                     <div class="card-body">
-                        <div class="card-thumbnail">
-                             <img src="{{ url_for('static', filename='images/DENR.png') }}" alt="DENR">
-                        </div>
-                        <div class="card-details">
-                            <div class="card-subtitle">Request #67890</div>
-                            <div class="card-meta">Out of stock</div>
+                        <div class="card-body">
+                            <div class="card-thumbnail">
+                                <img src="{{ url_for('static', filename='images/' + ('DENR.png' if req.service_type == 'Seedling' else 'Department-of-Agriculture.svg')) }}" alt="Dept">
+                            </div>
+                            <div class="card-details">
+                                <div class="card-subtitle">Request #{{ req.id }}00{{ req.user_id }}</div>
+                                <div class="card-meta">Submitted: {{ req.date_submitted.strftime('%b %d, %Y') }}</div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="font-size: 12px; color: #999; padding: 10px;">No service requests found.</p>
+                {% endif %}
             </div>
-
         </div>
         
         {% include 'components/navbar.html' %}

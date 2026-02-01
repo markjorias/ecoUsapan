@@ -9,52 +9,60 @@
 </head>
 <body>
     <div class="app-container">
-        <div class="scroll-content" style="padding-bottom: 40px;"><div class="launch-header">
+        <!-- Added enctype="multipart/form-data" to allow file uploads -->
+        <form method="POST" action="{{ url_for('views.launch_initiative2') }}" enctype="multipart/form-data" class="scroll-content" style="padding-bottom: 40px;">
+            <div class="launch-header">
                 <a href="{{ url_for('views.launch_initiative1') }}" class="close-btn">
                     <img src="{{ url_for('static', filename='icons/chevron-left.svg') }}" alt="Back">
                 </a>
-                <h1>Launch Your Initiative</h1>
+                <h1>Almost There!</h1>
             </div>
 
             <div class="launch-form-container">
                 <!-- Organizing Team -->
                 <div class="form-group">
                     <label class="form-label">Organizing Team</label>
-                    <input type="text" class="form-input mb-12" placeholder="Name of Organization">
-                    <div class="chips-container">
-                        <div class="chip">LGU</div>
-                        <div class="chip">School</div>
-                        <div class="chip">NGO</div>
-                        <div class="chip">Community<br>Group</div>
-                        <div class="chip">Others</div>
+                    <input type="hidden" name="org_type" id="selected_org_type" value="Community Group">
+                    <div class="chips-container" id="org_chips">
+                        <div class="chip" data-value="LGU">LGU</div>
+                        <div class="chip" data-value="School">School</div>
+                        <div class="chip" data-value="NGO">NGO</div>
+                        <div class="chip active" data-value="Community Group">Community Group</div>
+                        <div class="chip" data-value="Others">Others</div>
                     </div>
                 </div>
-                
+
+                <!-- Name -->
+                <div class="form-group">
+                    <label class="form-label">Organization Name</label>
+                    <input type="text" name="org_name" class="form-input" placeholder="Name of your organization/group" required>
+                </div>
+
                 <!-- Contact Person -->
                 <div class="form-group">
                     <label class="form-label">Contact Person</label>
-                    <div class="flex-row gap-12">
-                        <input type="text" class="form-input" placeholder="First Name">
-                        <input type="text" class="form-input" placeholder="Last Name">
+                    <div class="flex-row gap-12" style="margin-bottom: 8px;">
+                        <input type="text" name="fname" class="form-input" placeholder="First Name" required>
+                        <input type="text" name="lname" class="form-input" placeholder="Last Name" required>
                     </div>
-                    <input type="text" class="form-input" placeholder="Role">
-                    <input type="email" class="form-input" placeholder="Email Address">
+                    <input type="text" name="role" class="form-input" placeholder="Role" style="margin-bottom: 8px;" required>
+                    <input type="email" name="email" class="form-input" placeholder="Email Address" required>
                 </div>
 
                 <!-- Event Source Link -->
                 <div class="form-group">
-                    <label class="form-label">Event Source Link</label>
-                    <input type="text" class="form-input" placeholder="http://www.eventsourcelink.com/">
+                    <label class="form-label">Event Link (Optional)</label>
+                    <input type="url" name="link" class="form-input" placeholder="http://www.eventsourcelink.com/event">
                 </div>
 
                 <!-- Event Image Upload -->
                 <div class="form-group">
                     <label class="form-label">Event Image</label>
                     <div class="upload-container">
-                        <input type="file" id="event-image-upload" class="file-input" accept="image/*" hidden>
-                        <div class="upload-box" onclick="document.getElementById('event-image-upload').click()">
+                        <input type="file" id="event-image-upload" name="event_image" class="file-input" accept="image/*" hidden>
+                        <div class="upload-box" id="upload-box" onclick="document.getElementById('event-image-upload').click()">
                             <img src="{{ url_for('static', filename='icons/plus.svg') }}" alt="Upload" class="upload-icon">
-                            <span class="upload-text">Upload Image</span>
+                            <span class="upload-text" id="upload-status">Upload Image</span>
                         </div>
                     </div>
                 </div>
@@ -62,23 +70,36 @@
 
             <!-- Submit Button -->
             <div class="bottom-action-container">
-                <button class="next-btn" style="background-color: #49A427;">SUBMIT</button>
+                <button type="submit" class="next-btn" style="background-color: #49A427;">SUBMIT</button>
             </div>
-
-        </div>
+        </form>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const teamChips = document.querySelectorAll('.chip');
+            // Chip selection logic
+            const teamChips = document.querySelectorAll('#org_chips .chip');
+            const hiddenInput = document.getElementById('selected_org_type');
             
             teamChips.forEach(chip => {
                 chip.addEventListener('click', function() {
-                    // Remove active class from all chips
                     teamChips.forEach(c => c.classList.remove('active'));
-                    // Add active class to clicked chip
                     this.classList.add('active');
+                    hiddenInput.value = this.getAttribute('data-value');
                 });
+            });
+
+            // File upload UI feedback
+            const fileInput = document.getElementById('event-image-upload');
+            const uploadStatus = document.getElementById('upload-status');
+            const uploadBox = document.getElementById('upload-box');
+
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    uploadStatus.textContent = "File: " + this.files[0].name;
+                    uploadBox.style.borderColor = "#49A427";
+                    uploadBox.style.backgroundColor = "#F0F9ED";
+                }
             });
         });
     </script>

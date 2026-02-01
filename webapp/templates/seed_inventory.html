@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Need for Seeds</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/request_services.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <div class="scroll-content" style="padding-bottom: 40px;">
+            
+            <!-- Header -->
+            <div class="request-for-seeds-header">
+                <a href="{{ url_for('views.about_ecoservice_seeds') }}" class="close-btn">
+                    <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
+                </a>
+                <h1>Seeds Inventory</h1>
+            </div>
+
+            <!-- Search Container -->
+            <div class="search-container">
+                <div class="search-icon-container">
+                    <img src="{{ url_for('static', filename='icons/search.svg') }}" alt="Search" class="search-icon">
+                </div>
+                <div class="search-text-container">
+                    <input type="text" class="search-input" placeholder="Search for seeds...">
+                </div>
+            </div>
+
+            <!-- Seeds Grid -->
+            <div class="seeds-grid">
+                <!-- Pechay -->
+                <div class="seed-card">
+                    <div class="seed-image-container">
+                        <img src="{{ url_for('static', filename='images/Pechay.png') }}" alt="Pechay" class="seed-image">
+                    </div>
+                    <div class="seed-info">
+                        <div class="seed-name">Pechay</div>
+                        <div class="seed-availability">Available: 20 Bags</div>
+                    </div>
+                </div>
+
+                <!-- Eggplant -->
+                <div class="seed-card">
+                    <div class="seed-image-container">
+                        <img src="{{ url_for('static', filename='images/Eggplant.png') }}" alt="Eggplant" class="seed-image">
+                    </div>
+                    <div class="seed-info">
+                        <div class="seed-name">Eggplant</div>
+                        <div class="seed-availability">Available: 20 Bags</div>
+                    </div>
+                </div>
+
+                <!-- Ampalaya -->
+                <a href="{{ url_for('views.seeds_view') }}" class="seed-card" style="text-decoration: none;">
+                    <div class="seed-image-container">
+                        <img src="{{ url_for('static', filename='images/Ampalaya.png') }}" alt="Ampalaya" class="seed-image">
+                    </div>
+                    <div class="seed-info">
+                        <div class="seed-name">Ampalaya</div>
+                        <div class="seed-availability">Available: 20 Bags</div>
+                    </div>
+                </a>
+
+                <!-- Saluyot -->
+                <div class="seed-card">
+                    <div class="seed-image-container">
+                        <img src="{{ url_for('static', filename='images/Saluyot.png') }}" alt="Saluyot" class="seed-image">
+                    </div>
+                    <div class="seed-info">
+                        <div class="seed-name">Saluyot</div>
+                        <div class="seed-availability">Available: 20 Bags</div>
+                    </div>
+                </div>
+
+                <!-- Okra -->
+                <div class="seed-card">
+                    <div class="seed-image-container">
+                        <img src="{{ url_for('static', filename='images/Okra.png') }}" alt="Okra" class="seed-image">
+                    </div>
+                    <div class="seed-info">
+                        <div class="seed-name">Okra</div>
+                        <div class="seed-availability">Available: 20 Bags</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
