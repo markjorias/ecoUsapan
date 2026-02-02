@@ -67,12 +67,9 @@
                                     </div>
                                 </div>
                                 <div class="forum-action" onclick="handleVote(event, {{ post.id }}, this)">  
-                                    <div class="forum-action" onclick="handleVote(event, {{ post.id }}, this)">  
-                                    <!-- Added 'voted' class dynamically if the user has a record in PostVote -->
-                                    <div class="vote-controls {% if post.has_user_voted(current_user.id) %}voted{% endif %}">
-                                        <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" class="vote-icon">
-                                        <span class="vote-count" data-post-id="{{ post.id }}">{{ post.votes }}</span>
-                                    </div>
+                                <div class="vote-controls {% if post.get_user_vote(current_user.id) == 'up' %}voted{% endif %}">
+                                    <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" class="vote-icon">
+                                    <span class="vote-count" data-post-id="{{ post.id }}">{{ post.votes }}</span>
                                 </div>
                                 </div>
                             </div>
@@ -101,7 +98,7 @@
                                     </div>
                                 </div>
                                 <div class="forum-action" onclick="handleVote(event, {{ post.id }}, this)">  
-                                    <div class="vote-controls">
+                                    <div class="vote-controls {% if post.get_user_vote(current_user.id) == 'up' %}voted{% endif %}">
                                         <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" class="vote-icon">
                                         <span class="vote-count" data-post-id="{{ post.id }}">{{ post.votes }}</span>
                                     </div>
@@ -123,7 +120,8 @@
                         <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
                     </div>
                 </div>
-                <form action="{{ url_for('views.create_post') }}" method="POST">
+                <!-- Updated with enctype for file support -->
+                <form action="{{ url_for('views.create_post') }}" method="POST" enctype="multipart/form-data">
                     <div class="form-group">
                         <label class="form-label">Category</label>
                         <select name="category" class="form-select">
@@ -141,6 +139,17 @@
                         <label class="form-label">Content</label>
                         <textarea name="content" class="form-textarea" placeholder="Provide more details..." required></textarea>
                     </div>
+
+                    <!-- Image Upload Field -->
+                    <div class="form-group" style="margin-top: 10px;">
+                        <label class="form-label">Attached Image (Optional)</label>
+                        <label for="post_image" style="display: flex; align-items: center; gap: 10px; padding: 12px; border: 2px dashed #ddd; border-radius: 12px; cursor: pointer; justify-content: center; background: #fafafa;">
+                            <img src="{{ url_for('static', filename='icons/image.svg') }}" style="width: 20px; opacity: 0.5;">
+                            <span id="file-name" style="font-size: 13px; color: #666;">Choose an image...</span>
+                            <input type="file" name="image" id="post_image" accept="image/*" style="display: none;" onchange="updateFileName(this)">
+                        </label>
+                    </div>
+
                     <button type="submit" class="submit-btn">Post Discussion</button>
                 </form>
             </div>
@@ -158,27 +167,31 @@
 
         let activeCategory = 'all';
 
+        // Update displayed filename
+        function updateFileName(input) {
+            const fileName = input.files[0] ? input.files[0].name : "Choose an image...";
+            document.getElementById('file-name').textContent = fileName;
+            document.getElementById('file-name').style.color = input.files[0] ? "#49A427" : "#666";
+        }
+
         // --- VOTE LOGIC ---
         async function handleVote(event, postId, element) {
             event.preventDefault();
             event.stopPropagation();
-            
             try {
                 const response = await fetch(`/vote-post/${postId}`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' }
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 'vote_type': 'up' }) 
                 });
-                
+
                 if (response.ok) {
                     const data = await response.json();
-                    
-                    // Update counts across the UI
                     const counters = document.querySelectorAll(`.vote-count[data-post-id="${postId}"]`);
                     counters.forEach(c => c.innerText = data.votes);
-                    
-                    // Toggle the 'voted' class for visual feedback
+
                     const controls = element.querySelector('.vote-controls');
-                    if (data.voted) {
+                    if (data.status === 'up') {
                         controls.classList.add('voted');
                     } else {
                         controls.classList.remove('voted');

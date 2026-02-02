@@ -5,6 +5,7 @@ from . import db
 from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
+import uuid
 
 views = Blueprint('views', __name__)
 
@@ -572,19 +573,48 @@ def create_post():
     content = request.form.get('content')
     category = request.form.get('category')
     
+    # 1. Get the image file from the request
+    image = request.files.get('image')
+    
     if not title or not content:
-        flash('All fields are required!', category='error')
-    else:
-        new_post = ForumPost(
-            title=title,
-            content=content,
-            category=category,
-            user_id=current_user.id
-        )
+        flash('Title and content are required!', category='error')
+        return redirect(url_for('views.forum'))
+
+    image_filename = None
+
+    # 2. Process the image if it exists
+    if image and image.filename != '':
+        # Define and ensure the upload path exists
+        upload_path = os.path.join(current_app.root_path, 'static', 'uploads')
+        if not os.path.exists(upload_path):
+            os.makedirs(upload_path)
+
+        # Generate a unique filename to avoid collisions
+        original_filename = secure_filename(image.filename)
+        extension = os.path.splitext(original_filename)[1]
+        image_filename = f"{uuid.uuid4().hex}{extension}"
+        
+        # Save the file to the disk
+        image.save(os.path.join(upload_path, image_filename))
+
+    # 3. Save to Database
+    new_post = ForumPost(
+        title=title, 
+        content=content, 
+        category=category, 
+        user_id=current_user.id,
+        image_filename=image_filename # This column must exist in your ForumPost model
+    )
+    
+    try:
         db.session.add(new_post)
         db.session.commit()
-        flash('New discussion created!', category='success')
-        
+        flash('Post created successfully!', category='success')
+    except Exception as e:
+        db.session.rollback()
+        flash('An error occurred while creating the post.', category='error')
+        print(f"Error: {e}")
+
     return redirect(url_for('views.forum'))
 
 @views.route('/vote-post/<int:post_id>', methods=['POST'])
