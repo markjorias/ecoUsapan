@@ -121,7 +121,7 @@ body {
     margin-right: -19px;
     padding: 4px 19px;
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     overflow-x: auto;
     gap: 8px;
     scrollbar-width: none;

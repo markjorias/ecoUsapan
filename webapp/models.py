@@ -18,7 +18,7 @@ class User(db.Model, UserMixin):
 
     @property
     def is_admin(self):
-        return self.role in ['Admin_LGU', 'Admin_DA', 'Admin_DENR']
+        return self.role in ['Admin_LGU', 'Admin_DA', 'Admin_DENR', 'Superadmin']
 
 class InventoryItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -76,19 +76,27 @@ class Initiative(db.Model):
             return "Time TBA"
     @property
     def image_url(self):
-        # Check if the filename exists in the database
-        if self.image_filename:
+        # Check if the filename exists and is not the default placeholder
+        if self.image_filename and self.image_filename != 'default_event.png':
             # Construct the absolute path to check if the file actually exists on the server
-            file_path = os.path.join(current_app.root_path, 'static/uploads', self.image_filename)
+            file_path = os.path.join(current_app.root_path, 'static', 'uploads', self.image_filename)
             if os.path.exists(file_path):
                 return url_for('static', filename='uploads/' + self.image_filename)
         
         # Fallback to a default image in your static/images folder
-        return url_for('static', filename='images/default-initiative.png')
+        return url_for('static', filename='images/sample-image1.png')
 
     @property
     def contact_full_name(self):
         return f"{self.contact_fname} {self.contact_lname}"
+
+    @property
+    def has_custom_image(self):
+        """Check if the initiative has a custom uploaded image (not the default)."""
+        if self.image_filename and self.image_filename != 'default_event.png':
+            file_path = os.path.join(current_app.root_path, 'static', 'uploads', self.image_filename)
+            return os.path.exists(file_path)
+        return False
 
 class ServiceRequest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -96,6 +104,7 @@ class ServiceRequest(db.Model):
     item_name = db.Column(db.String(100))
     service_type = db.Column(db.String(50)) # 'Seed' or 'Seedling'
     status = db.Column(db.String(50), default='Pending')
+    date_requested = db.Column(db.DateTime, default=datetime.utcnow)
     # Additional fields for the 4-step form
     quantity_requested = db.Column(db.Integer)
     planting_site_desc = db.Column(db.Text)
@@ -136,6 +145,8 @@ class ForumPost(db.Model):
     # ADD THESE TWO LINES:
     image_filename = db.Column(db.String(150))
     author = db.relationship('User', backref='posts')
+    comments = db.relationship('Comment', backref='post', lazy=True, cascade="all, delete-orphan")
+    votes_associated = db.relationship('PostVote', backref='post', lazy=True, cascade="all, delete-orphan")
 
     def get_user_vote(self, user_id):
         vote = PostVote.query.filter_by(user_id=user_id, post_id=self.id).first()

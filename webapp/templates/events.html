@@ -6,6 +6,8 @@
     <title>All Events - EcoUsapan</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/events.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/page-transitions.css') }}">
+    <script src="{{ url_for('static', filename='js/page-transitions.js') }}" defer></script>
 </head>
 <body>
     <div class="app-container">
@@ -44,8 +46,8 @@
                 {% for event in initiatives %}
                 <a href="{{ url_for('views.event_view', id=event.id) }}" style="text-decoration: none; color: inherit;">
                     <div class="event-card">
-                        <div class="event-logo-placeholder" style="background-image: url('{{ url_for('static', filename='uploads/' + event.image_filename) if event.image_filename != 'default_event.png' else '' }}'); background-size: cover; background-position: center;">
-                            {% if event.image_filename == 'default_event.png' %}
+                        <div class="event-logo-placeholder" style="{% if event.has_custom_image %}background-image: url('{{ event.image_url }}'); background-size: cover; background-position: center;{% endif %}">
+                            {% if not event.has_custom_image %}
                             <img src="{{ url_for('static', filename='icons/calendar.svg') }}" style="width: 20px; opacity: 0.1; display: block; margin: 11px auto;">
                             {% endif %}
                         </div>

@@ -62,6 +62,15 @@ def create_app():
             )
             db.session.add(user)
             
+        if not User.query.filter_by(role='Superadmin').first():
+            superadmin = User(
+                email='superadmin@ecousapan.com',
+                username='SuperAdmin',
+                password=generate_password_hash('superadmin', method='pbkdf2:sha256'),
+                role='Superadmin'
+            )
+            db.session.add(superadmin)
+            
         db.session.commit()
     
     return app

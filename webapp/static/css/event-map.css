@@ -82,7 +82,7 @@ body {
 /* Bottom Info Card Overlay */
 .info-card-container {
     position: absolute;
-    bottom: 40px;
+    bottom: 120px;
     left: 0;
     width: 100%;
     padding: 0 20px;

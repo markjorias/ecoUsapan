@@ -1,0 +1,92 @@
+/* Page Transition Animations
+ * Subtle fade transitions for .app-container > .scroll-content
+ * Excludes admin dashboard (uses different layout)
+ */
+
+/* ===== Content Fade Animations ===== */
+
+/* Initial state: content starts invisible */
+.app-container .scroll-content {
+    opacity: 0;
+    animation: fadeIn 250ms ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Fade out class - triggered by JS before navigation */
+.app-container .scroll-content.fade-out {
+    animation: fadeOut 150ms ease-in forwards;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+}
+
+/* ===== Navbar Smooth Transitions ===== */
+
+/* Smooth transitions for navbar items */
+.bottom-nav .nav-bar-item {
+    transition: color 200ms ease, transform 150ms ease;
+}
+
+.bottom-nav .nav-bar-item:hover {
+    transform: scale(1.05);
+}
+
+.bottom-nav .nav-bar-item.active {
+    transition: color 200ms ease, transform 150ms ease;
+}
+
+/* Navbar icon transitions */
+.bottom-nav .nav-bar-icon {
+    transition: transform 200ms ease;
+}
+
+.bottom-nav .nav-bar-item.active .nav-bar-icon {
+    transform: scale(1.1);
+}
+
+/* Center item (logo) hover effect */
+.bottom-nav .nav-center-item {
+    transition: transform 200ms ease;
+}
+
+.bottom-nav .nav-center-item:hover {
+    transform: scale(1.05);
+}
+
+/* ===== Reduced Motion Support ===== */
+
+@media (prefers-reduced-motion: reduce) {
+    .app-container .scroll-content {
+        animation: none;
+        opacity: 1;
+    }
+    
+    .app-container .scroll-content.fade-out {
+        animation: none;
+        opacity: 0;
+    }
+    
+    .bottom-nav .nav-bar-item,
+    .bottom-nav .nav-bar-icon,
+    .bottom-nav .nav-center-item {
+        transition: none;
+    }
+}

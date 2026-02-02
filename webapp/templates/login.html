@@ -8,45 +8,45 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <style>
-        .login-scroll { width: 100%; overflow-y: auto; display: flex; flex-direction: column; align-items: center; padding: 20px 0; }
-        .login-card { width: 100%; padding: 16px; background: #f9f9f9; border-radius: 12px; text-align: left; border: 1px solid #eee; margin-bottom: 12px; cursor: pointer; transition: all 0.2s ease; display: flex; flex-direction: column; }
-        .login-card:hover { border-color: #49A427; background: #f0f9ed; }
-        .login-card.admin { border-left: 5px solid #000; }
-        .login-card.user { border-left: 5px solid #49A427; }
-        .add-user-card { width: 100%; padding: 16px; background: #fff; border-radius: 12px; text-align: center; border: 2px dashed #49A427; margin-bottom: 24px; cursor: pointer; color: #49A427; font-weight: 700; font-size: 14px; }
-        .role-tag { font-size: 9px; text-transform: uppercase; font-weight: 800; color: #666; margin-bottom: 4px; }
-        .section-label { width: 100%; font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1px; }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
 </head>
 <body>
-    <div class="app-container" style="padding: 40px 24px; background: #fff; justify-content: flex-start;">
+    <div class="login-container">
         <div class="login-scroll">
-            <img src="{{ url_for('static', filename='images/ecoUsapan_logo.png') }}" alt="Logo" style="width: 150px; margin-bottom: 30px;">
-            
-            <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 4px; width: 100%;">Select Account</h2>
-            <p style="font-size: 12px; color: #666; margin-bottom: 24px; width: 100%;">Choose a profile to enter the prototype.</p>
+            <div class="header-area">
+                <img src="{{ url_for('static', filename='images/ecoUsapan_logo.png') }}" alt="Logo" style="width: 180px; margin-bottom: 20px;">
+                <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 8px; color: #333;">Welcome Back</h2>
+                <p style="font-size: 14px; color: #666;">Select your profile to continue to the prototype.</p>
+            </div>
 
             <form action="{{ url_for('auth.login') }}" method="POST" id="loginForm">
                 <input type="hidden" name="email" id="loginEmail">
                 
-                <div class="section-label">Administrators</div>
-                {% for admin in admins %}
-                <div class="login-card admin" onclick="loginAs('{{ admin.email }}')">
-                    <div class="role-tag">{{ admin.role.replace('Admin_', '') }} Access</div>
-                    <div style="font-size: 16px; font-weight: 700;">{{ admin.username }}</div>
-                    <div style="font-size: 11px; color: #888;">{{ admin.email }}</div>
+                <div class="admin-column">
+                    <div class="section-label">Administrators</div>
+                    <div class="grid-section">
+                        {% for admin in admins %}
+                        <div class="login-card admin" onclick="loginAs('{{ admin.email }}')">
+                            <div class="role-tag">{{ admin.role.replace('Admin_', '') }} Access</div>
+                            <div style="font-size: 15px; font-weight: 700;">{{ admin.username }}</div>
+                            <div style="font-size: 11px; color: #888;">{{ admin.email }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
-                {% endfor %}
 
-                <div class="section-label" style="margin-top: 12px;">Standard Users</div>
-                {% for u in users %}
-                <div class="login-card user" onclick="loginAs('{{ u.email }}')">
-                    <div class="role-tag" style="color: #49A427;">Standard Access</div>
-                    <div style="font-size: 16px; font-weight: 700;">{{ u.username }}</div>
-                    <div style="font-size: 11px; color: #888;">{{ u.email }}</div>
+                <div class="user-column">
+                    <div class="section-label">Standard Users</div>
+                    <div class="grid-section">
+                        {% for u in users %}
+                        <div class="login-card user" onclick="loginAs('{{ u.email }}')">
+                            <div class="role-tag" style="color: #49A427;">Standard Access</div>
+                            <div style="font-size: 15px; font-weight: 700;">{{ u.username }}</div>
+                            <div style="font-size: 11px; color: #888;">{{ u.email }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
-                {% endfor %}
             </form>
 
             <a href="{{ url_for('auth.add_test_user') }}" style="text-decoration: none; width: 100%;">

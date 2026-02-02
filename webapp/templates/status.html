@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/status.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/page-transitions.css') }}">
+    <script src="{{ url_for('static', filename='js/page-transitions.js') }}" defer></script>
     <style>
         /* Container Fix to keep Modals inside the "Frame" */
         .app-container {
@@ -123,7 +125,7 @@
             </div>
             
             <!-- 1. Initiatives Section -->
-            <div class="section-title">{% if current_user.role == 'Admin_LGU' %}All User Initiatives{% else %}My Initiatives{% endif %}</div>
+            <div class="section-title">{% if current_user.is_admin %}All Users Initiatives{% else %}My Initiatives{% endif %}</div>
             <div class="status-list">
                 {% if initiatives %}
                     {% for item in initiatives %}
@@ -138,17 +140,26 @@
                             '{{ item.contact_full_name|replace("'", "\\'") }}',
                             '{{ item.contact_role }}',
                             '{{ item.email }}', 
-                            '{{ url_for('static', filename='uploads/' + item.image_filename) }}',
+                            '{{ item.image_url }}',
                             '{{ item.status }}',
                             {{ 'true' if item.user_id == current_user.id or current_user.role == 'Admin_LGU' else 'false' }}
                         )">
                         <div class="card-header">
                             <div class="card-title">{{ item.title }}</div>
-                            <div class="status-badge {{ item.status|lower }}">{{ item.status }}</div>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <div class="status-badge {{ item.status|lower }}">{{ item.status }}</div>
+                                {% if current_user.role == 'Superadmin' %}
+                                <form action="{{ url_for('views.delete_initiative', id=item.id) }}" method="POST" onsubmit="event.stopPropagation(); return confirm('Superadmin: Delete this initiative?');" style="display:inline;">
+                                    <button type="submit" style="background:none; border:none; cursor:pointer; padding:0;">
+                                        <img src="{{ url_for('static', filename='icons/trash.svg') }}" style="width: 16px; height: 16px; filter: grayscale(1);">
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
                         </div>
                         <div class="card-body">
-                            <div class="card-thumbnail" style="background-image: url('{{ url_for('static', filename='uploads/' + item.image_filename) }}'); background-size: cover; background-position: center;">
-                                {% if item.image_filename == 'default_event.png' %}
+                            <div class="card-thumbnail" style="{% if item.has_custom_image %}background-image: url('{{ item.image_url }}'); background-size: cover; background-position: center;{% endif %}">
+                                {% if not item.has_custom_image %}
                                 <img src="{{ url_for('static', filename='icons/map-pin.svg') }}" alt="Initiative" style="width: 20px; opacity: 0.3;">
                                 {% endif %}
                             </div>
@@ -166,6 +177,7 @@
             </div>
 
             <!-- 2. Participations Section -->
+            {% if not current_user.is_admin %}
             <div class="section-title">My Participation</div>
             <div class="status-list">
                 {% if participations %}
@@ -190,6 +202,7 @@
                     <p style="font-size: 12px; color: #999; padding: 10px;">No event registrations found.</p>
                 {% endif %}
             </div>
+            {% endif %}
 
             <!-- 3. Service Requests Section -->
             <div class="section-title">{% if current_user.is_admin %}Pending Service Requests{% else %}My Requests{% endif %}</div>

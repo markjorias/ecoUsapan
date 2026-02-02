@@ -1,0 +1,153 @@
+/* login.css */
+
+/* Mobile Base Styles (Default) */
+.login-scroll { 
+    width: 100%; 
+    overflow-y: auto; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    padding: 20px 0; 
+}
+
+.login-card { 
+    width: 100%; 
+    padding: 16px; 
+    background: #f9f9f9; 
+    border-radius: 12px; 
+    text-align: left; 
+    border: 1px solid #eee; 
+    margin-bottom: 12px; 
+    cursor: pointer; 
+    transition: all 0.2s ease; 
+    display: flex; 
+    flex-direction: column; 
+    box-sizing: border-box; 
+}
+
+.login-card:hover { 
+    border-color: #49A427; 
+    background: #f0f9ed; 
+    transform: translateY(-2px); 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
+}
+
+.login-card.admin { border-left: 5px solid #000; }
+.login-card.user { border-left: 5px solid #49A427; }
+
+.add-user-card { 
+    width: 100%; 
+    padding: 16px; 
+    background: #fff; 
+    border-radius: 12px; 
+    text-align: center; 
+    border: 2px dashed #49A427; 
+    margin-bottom: 24px; 
+    cursor: pointer; 
+    color: #49A427; 
+    font-weight: 700; 
+    font-size: 14px; 
+    box-sizing: border-box; 
+}
+
+.role-tag { font-size: 9px; text-transform: uppercase; font-weight: 800; color: #666; margin-bottom: 4px; }
+.section-label { width: 100%; font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1px; }
+
+/* Wrapper style to replace app-container */
+.login-container {
+    width: 100%;
+    min-height: 100vh;
+    padding: 40px 24px;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align top on mobile */
+}
+
+/* Desktop Styles */
+@media (min-width: 768px) {
+    body {
+        background-color: #f4f6f8;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    .login-container {
+        max-width: auto !important;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        margin: auto; /* Center vertically and horizontally if body is flex */
+        width: 90%; /* Responsive width */
+        max-height: 90vh; /* Fit within screen height */
+        height: auto !important;
+        min-height: auto !important;
+        
+        display: flex;
+        flex-direction: column;
+        overflow: hidden; /* Hide overflow here */
+    }
+
+    .login-scroll {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+        align-items: start;
+        
+        width: 100%;
+        overflow-y: auto; /* Enable scroll if content exceeds max-height */
+        padding-right: 10px; /* Space for scrollbar */
+        flex: 1; /* Take remaining height */
+    }
+
+    /* Header area spans full width */
+    .header-area {
+        grid-column: 1 / -1;
+        text-align: center;
+        margin-bottom: 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* Adjust individual sections to be containers for the grid */
+    .grid-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 16px;
+        width: 100%;
+    }
+
+    /* Ensure section labels span full width of their grid area */
+    .section-label {
+        grid-column: 1 / -1;
+        margin-top: 0 !important;
+        margin-bottom: 16px;
+    }
+
+    .add-user-card {
+        grid-column: 1 / -1;
+        margin-top: 20px;
+    }
+
+    #loginForm {
+        grid-column: 1 / -1;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+
+    /* Split Admins and Users into two columns if desired */
+    .admin-column { grid-column: 1; }
+    .user-column { grid-column: 2; }
+    
+    #loginForm {
+        grid-template-columns: 1fr 1fr;
+        align-items: start;
+    }
+    
+    .login-card { margin-bottom: 0; }
+}

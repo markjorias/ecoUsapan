@@ -316,6 +316,8 @@ body {
 
 .event-info {
     flex: 1; /* Takes available width */
+    min-width: 0; /* Required for text-overflow to work in flex container */
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -332,6 +334,9 @@ body {
     font-size: 16px;
     font-weight: 700;
     color: #000;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .event-loc {

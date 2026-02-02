@@ -1,0 +1,120 @@
+
+{% macro render_comment(comment, is_reply=False) %}
+<div class="comment-card {% if is_reply %}reply-card{% endif %}" id="comment-{{ comment.id }}">
+    <div class="comment-header">@{{ comment.author.username }}</div>
+    <div class="comment-body">{{ comment.content }}</div>
+    <div class="comment-footer">
+        <div class="comment-interactions">
+            <button class="comment-reply-btn" onclick="showReplyInput(this)">
+                <img src="{{ url_for('static', filename='icons/message-circle.svg') }}" alt="Reply" class="interaction-icon">
+                <span class="reply-btn-text">Reply</span>
+            </button>
+        </div>
+        <span class="comment-time">{{ comment.date_posted.strftime('%I:%M %p') }}</span>
+    </div>
+
+    <!-- Inline Reply Form -->
+    <form action="{{ url_for('views.add_comment', post_id=post.id) }}" method="POST" class="inline-reply-container" style="display: none; margin-top: 10px; padding: 10px; background: #f9f9f9; border-radius: 8px;">
+        <input type="hidden" name="parent_id" value="{{ comment.id }}">
+        <input type="text" name="content" placeholder="Write a reply to @{{ comment.author.username }}..." class="inline-reply-input" required 
+               style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px;">
+        <div style="display: flex; justify-content: flex-end; margin-top: 8px;">
+            <button type="submit" class="send-reply-btn" style="color: #49A427; background: none; border: none; font-weight: bold; cursor: pointer;">Send</button>
+        </div>
+    </form>
+
+    <!-- Nested Replies -->
+    {% if comment.replies %}
+    <div class="replies-wrapper">
+        <button class="toggle-thread-btn" onclick="toggleThread(this)" style="background: none; border: none; color: #888; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 11px; margin-top: 5px;">
+            <img src="{{ url_for('static', filename='icons/plus.svg') }}" alt="Expand" class="collapse-icon" style="width: 10px;">
+            <span>Show {{ comment.replies|length }} Replies</span>
+        </button>
+        
+        <div class="replies-container" style="display: none;">
+            {% for reply in comment.replies %}
+                {{ render_comment(reply, is_reply=True) }}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endmacro %}
+
+<div class="forum-details-content">
+    <!-- Header with Delete for Admin -->
+     <div class="forum-view-header" style="margin-bottom: 16px;">
+        <div class="forum-title-container" style="width: 100%;">
+            <span class="forum-username">@{{ post.author.username }}</span>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+                <h2 class="forum-main-title" style="margin: 0; flex: 1;">{{ post.title }}</h2>
+                {% if user.id == post.user_id or user.role == 'Superadmin' %}
+                <form action="{{ url_for('views.delete_post', id=post.id, source='dashboard') }}" method="POST" onsubmit="return confirm('Delete this post?');">
+                    <button type="submit" class="delete-btn">
+                        <img src="{{ url_for('static', filename='icons/trash.svg') }}" alt="Delete">
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Tags & Meta -->
+    <div class="forum-tags-container">
+        <span class="forum-tag">{{ post.category }}</span>
+        <span class="forum-tag">{{ post.date_posted.strftime('%b %d, %Y') }}</span>
+    </div>
+
+    <!-- Image Section -->
+    {% if post.image_filename %}
+    <div class="forum-image-container">
+        <img src="{{ url_for('static', filename='uploads/' + post.image_filename) }}" alt="{{ post.title }}" class="forum-image">
+    </div>
+    {% endif %}
+
+    <!-- Post Content -->
+    <div class="forum-description">
+        <p class="forum-description-text">{{ post.content }}</p>
+    </div>
+
+    <!-- Interaction Bar -->
+    <div class="forum-interaction-bar">
+        <div class="interaction-stats">
+            <div class="vote-pill" style="display: flex; gap: 12px; background: #f0f0f0; padding: 6px 12px; border-radius: 20px;">
+                <!-- Vote logic simplified for modal - simple display or basic hook -->
+                <div class="vote-item {% if user_vote_type == 'up' %}active-up{% endif %}" id="modalUpvoteBtn" onclick="handleModalVote('up', {{ post.id }})">
+                    <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" alt="Upvote" class="stat-icon">
+                </div>
+                
+                <span class="stat-count" id="modalTotalVotes" style="font-weight: 700;">{{ post.votes }}</span>
+                
+                <div class="vote-item {% if user_vote_type == 'down' %}active-down{% endif %}" id="modalDownvoteBtn" onclick="handleModalVote('down', {{ post.id }})">
+                    <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" alt="Downvote" class="stat-icon down-icon">
+                </div>
+            </div>
+
+            <div class="comment-pill">
+                <span class="stat-text">{{ post.comments|length }} comments</span>
+            </div>
+        </div>
+        
+        <form action="{{ url_for('views.add_comment', post_id=post.id) }}" method="POST" class="comment-input-container">
+            <img src="{{ url_for('static', filename='icons/users.svg') }}" alt="User" class="user-icon">
+            <input type="text" name="content" placeholder="Add your comment" class="comment-input" required>
+            <button type="submit" style="border:none; background:none; color:#49A427; font-weight:700; cursor:pointer;">Post</button>
+        </form>
+    </div>
+
+    <!-- Comments -->
+    <div class="comments-section-header">
+        <span class="comments-title">Comments</span>
+    </div>
+
+    <div class="comment-list-container" style="max-height: 400px; overflow-y: auto;">
+        {% for comment in comments %}
+            {{ render_comment(comment) }}
+        {% else %}
+            <p style="font-size: 12px; color: #999; padding: 20px; text-align: center;">No comments yet.</p>
+        {% endfor %}
+    </div>
+</div>

@@ -88,7 +88,23 @@ body {
     font-weight: 700;
     color: #000;
     margin: 0;
+    margin: 0;
     line-height: 36px;
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.delete-btn img {
+    width: 24px;
+    height: 24px;
 }
 
 /* Forum Title Container */
@@ -470,4 +486,79 @@ body {
         border: none;
         padding-top: env(safe-area-inset-top, 20px);
     }
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    padding: 20px;
+}
+
+.modal-content.delete-modal-content {
+    background: white;
+    width: 100%;
+    border-radius: 28px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #333;
+}
+
+.modal-close {
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+}
+
+.modal-description {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.btn-cancel {
+    flex: 1;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #E0E0E0;
+    background: white;
+    font-weight: 700;
+    color: #666;
+    cursor: pointer;
+}
+
+.btn-delete {
+    flex: 1;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    background: #FF3B30;
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
 }

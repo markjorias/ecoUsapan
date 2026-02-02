@@ -6,11 +6,24 @@
     <title>EcoUsapan</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/page-transitions.css') }}">
     <script src="{{ url_for('static', filename='js/carousel.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/page-transitions.js') }}" defer></script>
 </head>
 <body>
     <div class="app-container">
         <div class="scroll-content">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}" style="padding: 10px; margin: 10px; border-radius: 5px; background: {{ '#ffcccc' if category == 'error' else '#ccffcc' }}; color: {{ '#cc0000' if category == 'error' else '#006600' }}; text-align: center;">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
             <div class="logo-container">
                 <img src="{{ url_for('static', filename='images/ecoUsapan_logo.png') }}" alt="EcoUsapan Logo" class="app-logo">
             </div>
@@ -47,7 +60,7 @@
                 <div class="featured-carousel" id="featuredCarousel">
                     {% for event in initiatives[:3] %}
                     <div class="featured-card {{ 'active' if loop.first }}" data-index="{{ loop.index0 }}">
-                        <img src="{{ url_for('static', filename='uploads/' + event.image_filename) if event.image_filename != 'default_event.png' else url_for('static', filename='images/sample-image1.png') }}" alt="{{ event.title }}" class="featured-image">
+                        <img src="{{ event.image_url }}" alt="{{ event.title }}" class="featured-image">
                         <div class="featured-gradient-overlay"></div>
                         <div class="featured-info-overlay">
                             <div class="featured-tag">{{ event.event_type }}</div>
@@ -86,8 +99,8 @@
                 
                 {% for event in initiatives[:2] %}
                 <a href="{{ url_for('views.event_view', id=event.id) }}" class="event-card" style="text-decoration: none; color: inherit;">
-                    <div class="event-logo-placeholder" style="background-image: url('{{ url_for('static', filename='uploads/' + event.image_filename) if event.image_filename != 'default_event.png' else '' }}'); background-size: cover; background-position: center;">
-                        {% if event.image_filename == 'default_event.png' %}
+                    <div class="event-logo-placeholder" style="{% if event.has_custom_image %}background-image: url('{{ event.image_url }}'); background-size: cover; background-position: center;{% endif %}">
+                        {% if not event.has_custom_image %}
                         <img src="{{ url_for('static', filename='icons/calendar.svg') }}" style="width: 20px; opacity: 0.2; display: block; margin: 11px auto;">
                         {% endif %}
                     </div>

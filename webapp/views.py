@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, current_app, jsonify
 from flask_login import login_required, current_user
-from .models import Initiative, ServiceRequest, Participation, InventoryItem, Comment, ForumPost, PostVote
+from .models import User, Initiative, ServiceRequest, Participation, InventoryItem, Comment, ForumPost, PostVote
 from . import db
 from datetime import datetime
 import os
@@ -43,6 +43,45 @@ def status():
         requests = ServiceRequest.query.filter_by(user_id=current_user.id).all()
 
     return render_template('status.html', user=current_user, initiatives=initiatives, requests=requests, participations=participations)
+
+@views.route('/admin-dashboard')
+@login_required
+def admin_dashboard():
+    if not current_user.is_admin:
+        flash('Access denied. Admins only.', category='error')
+        return redirect(url_for('views.home'))
+    
+    # Fetch data for dashboard
+    initiatives = Initiative.query.order_by(Initiative.date_created.desc()).all()
+    requests = ServiceRequest.query.order_by(ServiceRequest.date_requested.desc()).all()
+    total_users = User.query.count()
+    
+    current_date = datetime.now().strftime('%B %d, %Y')
+    
+    # Fetch inventory for management
+    if current_user.role == 'Admin_DA':
+        inventory_items = InventoryItem.query.filter_by(category='Seed').all()
+    elif current_user.role == 'Admin_DENR':
+        inventory_items = InventoryItem.query.filter_by(category='Seedling').all()
+    else: # Superadmin or LGU (sees all)
+        inventory_items = InventoryItem.query.all()
+    
+    
+    # Fetch Forum Data for Dashboard
+    # Trending: Top 5 by votes
+    trending_posts = ForumPost.query.order_by(ForumPost.votes.desc()).limit(5).all()
+    # Recent: All ordered by date
+    recent_posts = ForumPost.query.order_by(ForumPost.date_posted.desc()).all()
+    
+    return render_template('admin_dashboard.html', 
+                           user=current_user, 
+                           initiatives=initiatives, 
+                           requests=requests, 
+                           total_users=total_users,
+                           inventory_items=inventory_items,
+                           trending=trending_posts,
+                           recent=recent_posts,
+                           current_date=current_date)
 
 
 
@@ -92,6 +131,27 @@ def update_request_status(id):
     db.session.commit()
     flash(f'Request status updated to {new_status}.', category='success')
     return redirect(url_for('views.status'))
+
+@views.route('/delete-initiative/<int:id>', methods=['POST'])
+@login_required
+def delete_initiative(id):
+    if current_user.role != 'Superadmin':
+        flash('Unauthorized action.', category='error')
+        return redirect(url_for('views.admin_dashboard'))
+        
+    initiative = Initiative.query.get_or_404(id)
+    try:
+        # Delete related participations first to avoid foreign key constraint errors
+        Participation.query.filter_by(initiative_id=id).delete()
+        db.session.delete(initiative)
+        db.session.commit()
+        flash('Initiative deleted successfully.', category='success')
+    except Exception as e:
+        db.session.rollback()
+        flash('Error deleting initiative.', category='error')
+        print(e)
+        
+    return redirect(url_for('views.admin_dashboard'))
 
 
 # --- Service & Inventory Routes ---
@@ -165,6 +225,7 @@ def tree_seedlings_inventory():
 @login_required
 def edit_item(id):
     item = InventoryItem.query.get_or_404(id)
+    source = request.args.get('source', '')
     
     if request.method == 'POST':
         item.name = request.form.get('name')
@@ -183,9 +244,14 @@ def edit_item(id):
             
         db.session.commit()
         flash(f'{item.name} updated!', category='success')
+        
+        # Check if source is from dashboard to redirect back there
+        form_source = request.form.get('source', '')
+        if form_source == 'dashboard':
+            return redirect(url_for('views.admin_dashboard', view='inventory'))
         return redirect(url_for('views.seed_inventory' if item.category == 'Seed' else 'views.tree_seedlings_inventory'))
 
-    return render_template('manage_inventory.html', item=item, user=current_user)
+    return render_template('manage_inventory.html', item=item, user=current_user, source=source)
 
 @views.route('/manage-inventory', methods=['GET', 'POST'])
 @login_required
@@ -199,6 +265,7 @@ def manage_inventory():
         category = request.form.get('category')
         stock = request.form.get('stock')
         description = request.form.get('description')
+        source = request.form.get('source', '')
         
         # Handle Image Upload
         image_file = request.files.get('image')
@@ -222,6 +289,10 @@ def manage_inventory():
         db.session.commit()
         
         flash(f'{name} added to inventory!', category='success')
+        
+        # Check if source is from dashboard to redirect back there
+        if source == 'dashboard':
+            return redirect(url_for('views.admin_dashboard', view='inventory'))
         return redirect(url_for('views.seed_inventory' if category == 'Seed' else 'views.tree_seedlings_inventory'))
             
     return render_template('manage_inventory.html', user=current_user)
@@ -412,7 +483,7 @@ def launch_initiative2():
         image_file = request.files.get('event_image')
         filename = 'default_event.png' # Fallback
         
-        if image_file and allowed_file(image_file.filename):
+        if image_file and image_file.filename and allowed_file(image_file.filename):
             original_filename = secure_filename(image_file.filename)
             # Create a unique name to avoid conflicts
             filename = f"user_{current_user.id}_{int(datetime.utcnow().timestamp())}_{original_filename}"
@@ -454,25 +525,35 @@ def launch_initiative2():
     return render_template('launch_initiative2.html', user=current_user)
 # --- Admin Controls ---
 
-@views.route('/approve-initiative/<int:id>')
+@views.route('/approve-initiative/<int:id>', methods=['POST'])
 @login_required
 def approve_initiative(id):
     """
     Secured route: Only LGU Admins can approve community initiatives.
     """
-    if current_user.role != 'Admin_LGU':
-        flash('Unauthorized: Only LGU Admins can approve initiatives.', category='error')
+    if current_user.role not in ['Admin_LGU', 'Superadmin']:
+        flash('Unauthorized: Only LGU Admins and Superadmins can approve initiatives.', category='error')
         return redirect(url_for('views.home'))
     
     initiative = Initiative.query.get_or_404(id)
     initiative.status = 'Approved'
     db.session.commit()
     flash('Initiative Approved!', category='success')
-    return redirect(url_for('views.status'))
+    return redirect(url_for('views.admin_dashboard'))
 
 @views.route('/participate/<int:initiative_id>', methods=['POST'])
 @login_required
 def participate(initiative_id):
+    initiative = Initiative.query.get_or_404(initiative_id)
+    
+    # 1. Prevent Admins from participating
+    if current_user.is_admin:
+        return jsonify({'error': 'Admins cannot participate in initiatives.'}), 403
+        
+    # 2. Prevent Creators from participating in their own event
+    if initiative.user_id == current_user.id:
+        return jsonify({'error': 'You cannot join your own initiative.'}), 403
+
     data = request.get_json()
     
     # --- Input Validation ---
@@ -532,6 +613,23 @@ def forum():
     return render_template('forum.html', user=current_user, trending=trending, recent=recent)
 
 
+@views.route('/forum-post-partial/<int:id>')
+@login_required
+def forum_post_partial(id):
+    post = ForumPost.query.get_or_404(id)
+    # Get current user's vote type
+    user_vote = PostVote.query.filter_by(user_id=current_user.id, post_id=id).first()
+    user_vote_type = user_vote.vote_type if user_vote else None
+    
+    comments = Comment.query.filter_by(post_id=id, parent_id=None).order_by(Comment.date_posted.desc()).all()
+    
+    return render_template('components/forum_post_partials.html', 
+                           user=current_user, 
+                           post=post, 
+                           user_vote_type=user_vote_type,
+                           comments=comments)
+
+
 @views.route('/forum-view/<int:id>')
 @login_required
 def forum_view(id):
@@ -544,8 +642,8 @@ def forum_view(id):
     return render_template('forum-view.html', 
                            user=current_user, 
                            post=post, 
-                           comments=comments, 
-                           user_vote_type=user_vote_type)
+                           user_vote_type=user_vote_type,
+                           comments=comments)
 
 @views.route('/add-comment/<int:post_id>', methods=['POST'])
 @login_required
@@ -578,6 +676,10 @@ def create_post():
     
     if not title or not content:
         flash('Title and content are required!', category='error')
+        return redirect(url_for('views.forum'))
+
+    if category == 'News' and not current_user.is_admin:
+        flash('Unauthorized: Only admins can post News.', category='error')
         return redirect(url_for('views.forum'))
 
     image_filename = None
@@ -614,6 +716,37 @@ def create_post():
         db.session.rollback()
         flash('An error occurred while creating the post.', category='error')
         print(f"Error: {e}")
+
+
+
+    source = request.form.get('source')
+    if source == 'dashboard':
+        return redirect(url_for('views.admin_dashboard', view='forum'))
+
+    return redirect(url_for('views.forum'))
+
+@views.route('/delete-post/<int:id>', methods=['POST'])
+@login_required
+def delete_post(id):
+    post = ForumPost.query.get_or_404(id)
+    
+    # Check ownership or Superadmin
+    if current_user.id != post.user_id and current_user.role != 'Superadmin':
+        flash('You do not have permission to delete this post.', category='error')
+        return redirect(url_for('views.forum_view', id=id))
+
+    try:
+        db.session.delete(post)
+        db.session.commit()
+        flash('Post deleted successfully.', category='success')
+    except Exception as e:
+        db.session.rollback()
+        flash('An error occurred while deleting the post.', category='error')
+        print(f"Error: {e}")
+
+    source = request.args.get('source')
+    if source == 'dashboard':
+        return redirect(url_for('views.admin_dashboard', view='forum'))
 
     return redirect(url_for('views.forum'))
 

@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - EcoUsapan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+    <!-- Icons are reused from the main app -->
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <img src="{{ url_for('static', filename='images/ecoUsapan_logo.png') }}" class="sidebar-logo" alt="Logo">
+            
+            <a href="#" class="nav-link active" onclick="switchView('overview', this)">
+                <img src="{{ url_for('static', filename='icons/home.svg') }}" class="nav-icon" alt="Dashboard">
+                Overview
+            </a>
+            
+            {% if current_user.role in ['Admin_DA', 'Admin_DENR'] %}
+            <a href="#" class="nav-link" onclick="switchView('inventory', this)">
+                <img src="{{ url_for('static', filename='icons/inventory.svg') }}" class="nav-icon" alt="Inventory">
+                Inventory
+            </a>
+            {% endif %}
+
+            {% if current_user.role == 'Admin_LGU' %}
+            <a href="#initiatives" class="nav-link" onclick="switchView('overview', this)">
+                <img src="{{ url_for('static', filename='icons/calendar.svg') }}" class="nav-icon" alt="Initiatives">
+                Initiatives
+            </a>
+            {% endif %}
+
+            <a href="#" class="nav-link" onclick="switchView('forum', this)">
+                <img src="{{ url_for('static', filename='icons/message-circle.svg') }}" class="nav-icon" alt="Forum">
+                Forum
+            </a>
+            
+            <div class="sidebar-divider"></div>
+            
+            <a href="{{ url_for('views.home') }}" class="nav-link">
+                <img src="{{ url_for('static', filename='icons/home.svg') }}" class="nav-icon" alt="Home">
+                View Site
+            </a>
+            
+            <div class="user-profile">
+                <!-- Using first letter of role for avatar or similar -->
+                <div class="profile-avatar">{{ user.role[:1] }}</div>
+                <div class="profile-info">
+                    <div class="profile-name">{{ user.username }}</div>
+                    <div class="profile-role">{{ user.role }}</div>
+                </div>
+                <a href="{{ url_for('auth.logout') }}" style="color: #666;">
+                    <img src="{{ url_for('static', filename='icons/logout.svg') }}" style="width: 16px; opacity: 0.7;" alt="Logout">
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header-row">
+                <div class="page-title">Dashboard Overview</div>
+                <div class="date-display">{{ current_date }}</div>
+            </div>
+
+            <!-- OVERVIEW VIEW -->
+            <div id="view-overview" class="view-section">
+            <!-- Stats Overview -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Initiatives</div>
+                    <div class="stat-value">{{ initiatives|length }}</div>
+                    <div class="stat-trend trend-up">
+                        <span>Active items</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Pending Requests</div>
+                    <div class="stat-value">
+                        {% set pending_reqs = requests|selectattr("status", "equalto", "Pending")|list|length %}
+                        {{ pending_reqs }}
+                    </div>
+                    <div class="stat-trend">
+                        <span>Requires attention</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Members</div>
+                    <div class="stat-value">{{ total_users }}</div> <!-- Passed from backend -->
+                    <div class="stat-trend trend-up">
+                        <span>Community growth</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Initiatives Table -->
+            {% if current_user.role in ['Admin_LGU', 'Superadmin'] %}
+            <div class="table-container" id="initiatives">
+                <div class="table-header">
+                    <div class="table-title">Recent Initiatives</div>
+                    <!-- Actions -->
+                </div>
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Organizer</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in initiatives %}
+                        <tr>
+                            <td>
+                                <div style="font-weight: 600;">{{ item.title }}</div>
+                                <div style="font-size: 12px; color: #888;">{{ item.city }}</div>
+                            </td>
+                            <td>{{ item.org_name }}</td>
+                            <td>{{ item.date }}</td>
+                            <td>
+                                <span class="status-pill {{ item.status|lower }}">{{ item.status }}</span>
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 8px;">
+                                    {% if current_user.role == 'Superadmin' %}
+                                    <form action="{{ url_for('views.delete_initiative', id=item.id) }}" method="POST" onsubmit="return confirm('Are you sure?');" style="display:inline;">
+                                        <button type="submit" class="action-btn btn-danger">Delete</button>
+                                    </form>
+                                    {% endif %}
+                                    
+                                    <button type="button" class="action-btn btn-outline" 
+                                            onclick="openInitiativeModal(this)"
+                                            data-title="{{ item.title }}"
+                                            data-org="{{ item.org_name }}"
+                                            data-loc="{{ item.city }}"
+                                            data-date="{{ item.date }}"
+                                            data-status="{{ item.status }}"
+                                            data-desc="{{ item.description }}"
+                                            data-approve-url="{{ url_for('views.approve_initiative', id=item.id) }}"
+                                            data-can-approve="{% if current_user.role in ['Admin_LGU', 'Superadmin'] and item.status == 'Pending' %}true{% else %}false{% endif %}"
+                                            data-image="{% if item.image_filename %}{{ url_for('static', filename='uploads/' + item.image_filename) }}{% endif %}">
+                                        View
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+
+            <!-- Service Requests Table -->
+            {% if current_user.role in ['Admin_DA', 'Admin_DENR', 'Superadmin'] %}
+            <div class="table-container" id="requests">
+                <div class="table-header">
+                    <div class="table-title">Service Requests</div>
+                </div>
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Requester</th>
+                            <th>Qty</th>
+                            <th>Site</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in requests %}
+                        <tr>
+                            <td>
+                                <div style="font-weight: 600;">{{ req.item_name }}</div>
+                                <div style="font-size: 12px; color: #888;">{{ req.service_type }}</div>
+                            </td>
+                            <td>{{ req.requester.username }}<br><span style="font-size:10px; color:#888;">{{ req.requester.email }}</span></td>
+                            <td>{{ req.quantity_requested }}</td>
+                            <td>{{ req.planting_site_desc }}</td>
+                            <td>
+                                <span class="status-pill {{ req.status|lower }}">{{ req.status }}</span>
+                            </td>
+                            <td>
+                                {% if req.status == 'Pending' %}
+                                    <button type="button" class="action-btn btn-outline" 
+                                            onclick="openRequestModal(this)"
+                                            data-item="{{ req.item_name }}"
+                                            data-type="{{ req.service_type }}"
+                                            data-qty="{{ req.quantity_requested }}"
+                                            data-user="{{ req.requester.username }}"
+                                            data-email="{{ req.requester.email }}"
+                                            data-site="{{ req.planting_site_desc }}"
+                                            data-status="{{ req.status }}"
+                                            data-date_req="{{ req.date_requested.strftime('%Y-%m-%d') if req.date_requested else '' }}"
+                                            data-update-url="{{ url_for('views.update_request_status', id=req.id) }}"
+                                            data-can-action="{% if req.status == 'Pending' and ((current_user.role == 'Admin_DA' and req.service_type == 'Seed') or (current_user.role == 'Admin_DENR' and req.service_type == 'Seedling') or (current_user.role == 'Superadmin')) %}true{% else %}false{% endif %}"
+                                            style="margin-left: 4px;">
+                                        View
+                                    </button>
+                                {% else %}
+                                    <button type="button" class="action-btn btn-outline" 
+                                            onclick="openRequestModal(this)"
+                                            data-item="{{ req.item_name }}"
+                                            data-type="{{ req.service_type }}"
+                                            data-qty="{{ req.quantity_requested }}"
+                                            data-user="{{ req.requester.username }}"
+                                            data-email="{{ req.requester.email }}"
+                                            data-site="{{ req.planting_site_desc }}"
+                                            data-status="{{ req.status }}"
+                                            data-date_req="{{ req.date_requested.strftime('%Y-%m-%d') if req.date_requested else '' }}"
+                                            data-can-action="false"
+                                            style="margin-left: 4px;">
+                                        View
+                                    </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+            
+        </div> <!-- End view-overview -->
+
+            <!-- INVENTORY VIEW -->
+            <div id="view-inventory" class="view-section" style="display: none;">
+                <div class="inv-header">
+                    <div class="table-title">Inventory Management</div>
+                    <a href="#" class="add-item-btn" onclick="openInventoryModal('add')">
+                        <span>+</span> Add New Item
+                    </a>
+                </div>
+
+                <!-- Search Container -->
+                <div class="search-container">
+                    <div class="search-icon-container">
+                        <img src="{{ url_for('static', filename='icons/search.svg') }}" alt="Search" class="search-icon">
+                    </div>
+                    <div class="search-text-container">
+                        <input type="text" id="invSearchInput" class="search-input" placeholder="Search inventory..." onkeyup="searchInventory()">
+                    </div>
+                </div>
+
+                <div class="inventory-grid">
+                    {% for item in inventory_items %}
+                    <a href="#" class="inventory-card" 
+                       onclick="openInventoryModal('edit', this)"
+                       data-name="{{ item.name }}"
+                       data-stock="{{ item.stock_quantity }}"
+                       data-desc="{{ item.description }}"
+                       data-category="{{ item.category }}"
+                       data-image="{{ item.image_filename or '' }}"
+                       data-image-url="{{ url_for('static', filename='uploads/' + item.image_filename) }}"
+                       data-update-url="{{ url_for('views.edit_item', id=item.id) }}">
+                        <div class="inv-img-container">
+                            {% if item.image_filename and item.image_filename != 'default_item.png' %}
+                                <img src="{{ url_for('static', filename='uploads/' + item.image_filename) }}" alt="{{ item.name }}" class="inv-img">
+                            {% else %}
+                                <div style="color: #ccc; font-size: 40px;">🌱</div>
+                            {% endif %}
+                        </div>
+                        <div class="inv-info">
+                            <div class="inv-name">{{ item.name }}</div>
+                            <div class="inv-stock {% if item.stock_quantity < 10 %}low{% endif %}">
+                                Stock: {{ item.stock_quantity }}
+                            </div>
+                            <div style="font-size: 11px; color: #999; margin-top: 4px;">{{ item.category }}</div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                    
+                    {% if not inventory_items %}
+                    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #999;">
+                        No items in inventory. Click "Add New Item" to start.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- FORUM VIEW -->
+            <div id="view-forum" class="view-section" style="display: none;">
+                <div class="forum-dash-header">
+                    <div class="table-title">Community Forum</div>
+                    <button class="new-post-btn" onclick="openNewPostModal()">
+                        <span>+</span> New Discussion
+                    </button>
+                </div>
+
+                <!-- Search Container -->
+                <div class="search-container">
+                    <div style="flex: 1; display: flex; align-items: center; background: #fff; border: 1px solid #E5E5EA; border-radius: 12px; padding: 0 12px; height: 44px;">
+                        <div class="search-icon-container" style="display: flex; align-items: center; justify-content: center; margin-right: 8px;">
+                            <img src="{{ url_for('static', filename='icons/search.svg') }}" alt="Search" class="search-icon" style="width: 20px; height: 20px;">
+                        </div>
+                        <div class="search-text-container" style="flex: 1;">
+                            <input type="text" id="forumSearchInput" class="search-input" placeholder="Search topics..." onkeyup="filterForum()" style="width: 100%; border: none; outline: none; font-size: 14px;">
+                        </div>
+                    </div>
+                    
+                    <!-- Filter Button -->
+                    <div class="filter-wrapper" style="margin-left: 12px;">
+                        <button class="filter-btn" id="dbFilterBtn" onclick="toggleFilterDropdown()">
+                            <img src="{{ url_for('static', filename='icons/list.svg') }}" alt="Filter">
+                        </button>
+                        <div class="filter-dropdown" id="dbFilterDropdown">
+                            <div class="filter-option active" onclick="selectFilter('all', this)">All Topics</div>
+                            <div class="filter-option" onclick="selectFilter('News', this)">News</div>
+                            <div class="filter-option" onclick="selectFilter('Discussion', this)">Discussion</div>
+                            <div class="filter-option" onclick="selectFilter('Question', this)">Question</div>
+                            <div class="filter-option" onclick="selectFilter('Suggestion', this)">Suggestion</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trending / Recent -->
+                <div class="forum-sections-wrapper">
+                    {% if trending %}
+                    <div style="margin-bottom: 24px;">
+                        <h2 class="table-title" style="font-size: 16px; margin-bottom: 12px;">Trending</h2>
+                        <div class="forum-card-list">
+                            {% for post in trending %}
+                            <a href="#" class="post-link" onclick="openForumPost({{ post.id }})"
+                               data-category="{{ post.category }}"
+                               data-title="{{ post.title|lower }}"
+                               data-content="{{ post.content|lower }}">
+                                <div class="forum-card1">
+                                    <div class="forum-info">
+                                        <div class="forum-tag">{{ post.category }}</div>
+                                        <div class="forum-title">{{ post.title }}</div>
+                                        <div class="forum-meta">
+                                            <span class="forum-username">@{{ post.author.username }}</span>
+                                            <span class="forum-comments">{{ post.comments|length }} comments</span>
+                                        </div>
+                                    </div>
+                                    <div class="vote-controls">
+                                        <span class="vote-count">{{ post.votes }}</span>
+                                    </div>
+                                </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div>
+                        <h2 class="table-title" style="font-size: 16px; margin-bottom: 12px;">Recent Discussions</h2>
+                        <div class="forum-card-list">
+                            {% for post in recent %}
+                            <a href="#" class="post-link" onclick="openForumPost({{ post.id }})"
+                               data-category="{{ post.category }}"
+                               data-title="{{ post.title|lower }}"
+                               data-content="{{ post.content|lower }}">
+                                <div class="forum-card3">
+                                    <div class="forum-info">
+                                        <div class="forum-tag">{{ post.category }}</div>
+                                        <div class="forum-title">{{ post.title }}</div>
+                                        <div class="forum-meta">
+                                            <span class="forum-username">@{{ post.author.username }}</span>
+                                            <span class="forum-comments">{{ post.comments|length }} comments</span>
+                                        </div>
+                                    </div>
+                                    <div class="vote-controls">
+                                        <span class="vote-count">{{ post.votes }}</span>
+                                    </div>
+                                </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- Inventory Management Modal -->
+    <div class="modal-overlay" id="inventoryModal">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeModal('inventoryModal')">&times;</button>
+            <div class="modal-title" id="invModalTitle">Manage Inventory</div>
+            
+            <form id="invForm" method="POST" enctype="multipart/form-data">
+                <!-- Hidden source field to redirect back to dashboard -->
+                <input type="hidden" name="source" value="dashboard">
+                
+                <!-- Category Badge (Visual Only, real value in hidden input) -->
+                <div id="invCategoryBadge" class="category-badge-display"></div>
+                <!-- Logic to set hidden category input based on user role -->
+                {% if current_user.role == 'Admin_DA' %}
+                    <input type="hidden" name="category" value="Seed">
+                {% elif current_user.role == 'Admin_DENR' %}
+                    <input type="hidden" name="category" value="Seedling">
+                {% else %}
+                    <!-- For Superadmin/LGU -->
+                    <input type="hidden" name="category" id="invCategoryInput" value="Seed"> 
+                {% endif %}
+
+                <div class="form-group">
+                    <label class="form-label">Item Name</label>
+                    <input type="text" name="name" id="invName" class="form-input" placeholder="e.g. Pechay Seeds" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Stock Quantity</label>
+                    <input type="number" name="stock" id="invStock" class="form-input" placeholder="0" min="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" id="invDesc" class="form-textarea" placeholder="Describe variety..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Item Image</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" name="image" id="invImageInput" accept="image/*">
+                    </div>
+                    <div class="image-preview-container" id="invImagePreview">
+                        <span style="color: #999; font-size: 11px;">No image selected</span>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="action-btn btn-outline" onclick="closeModal('inventoryModal')">Cancel</button>
+                    <button type="submit" class="action-btn btn-primary" id="invSubmitBtn">Publish Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Forum Details Modal -->
+    <div class="modal-overlay" id="forumDetailsModal">
+        <div class="modal-box" style="max-height: 90vh; overflow: hidden; display: flex; flex-direction: column;">
+            <button class="modal-close" onclick="closeModal('forumDetailsModal')">&times;</button>
+            <div id="forumModalContent" style="overflow-y: auto; padding-right: 4px;">
+                <!-- Content will be loaded here via AJAX -->
+                <div style="text-align: center; padding: 20px;">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Forum Post Modal -->
+    <div class="modal-overlay" id="newPostModal">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeModal('newPostModal')">&times;</button>
+            <div class="modal-title">New Discussion</div>
+            
+            <form action="{{ url_for('views.create_post') }}" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="source" value="dashboard">
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <select name="category" class="form-input" style="height: 40px;"> <!-- Standardize select style -->
+                        <option value="Discussion">Discussion</option>
+                        <option value="Question">Question</option>
+                        <option value="Suggestion">Suggestion</option>
+                        <option value="News">News</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Title</label>
+                    <input type="text" name="title" class="form-input" placeholder="Topic title..." required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Content</label>
+                    <textarea name="content" class="form-textarea" placeholder="Share your thoughts..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Attached Image (Optional)</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" name="image" accept="image/*">
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="action-btn btn-outline" onclick="closeModal('newPostModal')">Cancel</button>
+                    <button type="submit" class="action-btn btn-primary">Post</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Initiative Details Modal -->
+    <div class="modal-overlay" id="initiativeModal">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeModal('initiativeModal')">&times;</button>
+            <div class="modal-title">Initiative Details</div>
+            
+            <div class="modal-row">
+                <div class="modal-label">Title</div>
+                <div class="modal-value" id="modal-init-title"></div>
+            </div>
+            <div class="modal-row">
+                <div class="modal-label">Organizer</div>
+                <div class="modal-value" id="modal-init-org"></div>
+            </div>
+            <div class="modal-row">
+                <div class="modal-label">Location</div>
+                <div class="modal-value" id="modal-init-loc"></div>
+            </div>
+            <div class="modal-row">
+                <div class="modal-label">Date</div>
+                <div class="modal-value" id="modal-init-date"></div>
+            </div>
+            <div class="modal-row">
+                <div class="modal-label">Status</div>
+                <span id="modal-init-status" class="status-pill"></span>
+            </div>
+            <div class="modal-row">
+                <div class="modal-label">Description</div>
+                <div class="modal-value" id="modal-init-desc" style="white-space: pre-wrap;"></div>
+            </div>
+            
+            <!-- Initiative Image -->
+            <div class="modal-row" id="modal-init-image-container" style="display: none;">
+                <div class="modal-label">Event Image</div>
+                <div class="modal-value">
+                    <img id="modal-init-image" src="" alt="Initiative Image" style="max-width: 100%; border-radius: 8px; margin-top: 8px;">
+                </div>
+            </div>
+            
+            <!-- Dynamic Actions -->
+            <div id="modal-init-actions-container" style="display: none; margin-top: 24px; border-top: 1px solid #eee; padding-top: 16px;">
+                 <div class="modal-label">Actions</div>
+                 <form id="modal-init-form" method="POST" style="display: flex; gap: 8px; margin-top: 8px;">
+                    <button type="submit" class="action-btn btn-primary" style="flex: 1;">Approve Initiative</button>
+                </form>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="action-btn btn-outline" onclick="closeModal('initiativeModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Request Details Modal -->
+    <div class="modal-overlay" id="requestModal">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeModal('requestModal')">&times;</button>
+            <div class="modal-title">Request Details</div>
+            
+            <div class="modal-row">
+                <div class="modal-label">Item Requested</div>
+                <div class="modal-value" id="modal-req-item"></div>
+            </div>
+            <div class="modal-row">
+                <div class="modal-label">Service Type</div>
+                <div class="modal-value" id="modal-req-type"></div>
+            </div>
+            <div class="modal-row">
+                <div class="modal-label">Quantity</div>
+                <div class="modal-value" id="modal-req-qty"></div>
+            </div>
+            <div class="modal-row">
+                <div class="modal-label">Requester</div>
+                <div class="modal-value" id="modal-req-user"></div>
+                <div class="modal-value" id="modal-req-email" style="font-size: 12px; color: #888;"></div>
+            </div>
+            <div class="modal-row">
+                <div class="modal-label">Planting Site / Details</div>
+                <div class="modal-value" id="modal-req-site"></div>
+            </div>
+            <div class="modal-row">
+                <div class="modal-label">Status</div>
+                <span id="modal-req-status" class="status-pill"></span>
+            </div>
+             <div class="modal-row">
+                <div class="modal-label">Date Requested</div>
+                <div class="modal-value" id="modal-req-date"></div>
+            </div>
+            
+            <!-- Dynamic Actions -->
+            <div id="modal-req-actions-container" style="display: none; margin-top: 24px; border-top: 1px solid #eee; padding-top: 16px;">
+                 <div class="modal-label">Actions</div>
+                 <form id="modal-req-form" method="POST" style="display: flex; gap: 8px; margin-top: 8px;">
+                    <button type="submit" name="status" value="Approved" class="action-btn btn-primary" style="flex: 1;">Approve Request</button>
+                    <button type="submit" name="status" value="Declined" class="action-btn btn-danger" style="flex: 1;">Decline Request</button>
+                </form>
+            </div>
+
+            <div class="modal-actions">
+                <button class="action-btn btn-outline" onclick="closeModal('requestModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openInitiativeModal(btn) {
+            document.getElementById('modal-init-title').textContent = btn.dataset.title;
+            document.getElementById('modal-init-org').textContent = btn.dataset.org;
+            document.getElementById('modal-init-loc').textContent = btn.dataset.loc;
+            document.getElementById('modal-init-date').textContent = btn.dataset.date;
+            document.getElementById('modal-init-desc').textContent = btn.dataset.desc;
+            
+            const status = btn.dataset.status;
+            const statusEl = document.getElementById('modal-init-status');
+            statusEl.textContent = status;
+            statusEl.className = 'status-pill ' + status.toLowerCase();
+
+            // Handle Actions
+            const actionsContainer = document.getElementById('modal-init-actions-container');
+            const form = document.getElementById('modal-init-form');
+            
+            if (btn.dataset.canApprove === 'true') {
+                actionsContainer.style.display = 'block';
+                form.action = btn.dataset.approveUrl;
+            } else {
+                actionsContainer.style.display = 'none';
+            }
+
+            // Handle Image
+            const imageContainer = document.getElementById('modal-init-image-container');
+            const imageEl = document.getElementById('modal-init-image');
+            if (btn.dataset.image) {
+                imageEl.src = btn.dataset.image;
+                imageContainer.style.display = 'flex';
+            } else {
+                imageContainer.style.display = 'none';
+            }
+
+            document.getElementById('initiativeModal').classList.add('active');
+        }
+
+        function openRequestModal(btn) {
+            document.getElementById('modal-req-item').textContent = btn.dataset.item;
+            document.getElementById('modal-req-type').textContent = btn.dataset.type;
+            document.getElementById('modal-req-qty').textContent = btn.dataset.qty;
+            document.getElementById('modal-req-user').textContent = btn.dataset.user;
+            document.getElementById('modal-req-email').textContent = btn.dataset.email;
+            document.getElementById('modal-req-site').textContent = btn.dataset.site;
+            document.getElementById('modal-req-date').textContent = btn.dataset.date_req;
+            
+            const status = btn.dataset.status;
+            const statusEl = document.getElementById('modal-req-status');
+            statusEl.textContent = status;
+            statusEl.className = 'status-pill ' + status.toLowerCase();
+            
+            // Handle Actions
+            const actionsContainer = document.getElementById('modal-req-actions-container');
+            const form = document.getElementById('modal-req-form');
+            
+            if (btn.dataset.canAction === 'true') {
+                actionsContainer.style.display = 'block';
+                form.action = btn.dataset.updateUrl;
+            } else {
+                actionsContainer.style.display = 'none';
+            }
+
+            document.getElementById('requestModal').classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // Close on click outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                event.target.classList.remove('active');
+            }
+        }
+
+        // View Switching Logic
+        function switchView(viewName, btn) {
+            // Hide all views
+            document.querySelectorAll('.view-section').forEach(el => el.style.display = 'none');
+            
+            // Show selected view
+            document.getElementById('view-' + viewName).style.display = 'block';
+            
+            // Update Sidebar Active State
+            if (btn) {
+                document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+                btn.classList.add('active');
+            }
+        }
+
+        // Search Inventory Logic
+        function searchInventory() {
+            let input = document.getElementById('invSearchInput').value.toLowerCase();
+            let cards = document.querySelectorAll('.inventory-card');
+            cards.forEach(card => {
+                let name = card.querySelector('.inv-name').textContent.toLowerCase();
+                if (name.includes(input)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Inventory Modal Logic
+        function openInventoryModal(mode, btn) {
+            const modal = document.getElementById('inventoryModal');
+            const form = document.getElementById('invForm');
+            const title = document.getElementById('invModalTitle');
+            const submitBtn = document.getElementById('invSubmitBtn');
+            const preview = document.getElementById('invImagePreview');
+            const badge = document.getElementById('invCategoryBadge');
+            
+            // Set User Role Context for Badge (Simple Check)
+            const userRole = "{{ current_user.role }}";
+            let category = "Item";
+            if (userRole === 'Admin_DA') { category = 'DA Seed Inventory'; badge.className = 'category-badge-display'; }
+            else if (userRole === 'Admin_DENR') { category = 'DENR Seedling Inventory'; badge.className = 'category-badge-display denr'; }
+            else { category = 'Inventory Item'; badge.className = 'category-badge-display'; } // LGU/Superadmin
+
+            if (mode === 'add') {
+                title.textContent = 'Add New Item';
+                submitBtn.textContent = 'Publish Item';
+                form.action = "{{ url_for('views.manage_inventory') }}";
+                
+                // Clear fields
+                document.getElementById('invName').value = '';
+                document.getElementById('invStock').value = '';
+                document.getElementById('invDesc').value = '';
+                document.getElementById('invImageInput').value = ''; // Reset file input
+                preview.innerHTML = '<span style="color: #999; font-size: 11px;">No image selected</span>';
+                
+                badge.textContent = 'Adding to ' + category;
+                
+            } else if (mode === 'edit') {
+                title.textContent = 'Edit Item';
+                submitBtn.textContent = 'Update Item';
+                form.action = btn.dataset.updateUrl;
+                
+                // Populate fields
+                document.getElementById('invName').value = btn.dataset.name;
+                document.getElementById('invStock').value = btn.dataset.stock;
+                document.getElementById('invDesc').value = btn.dataset.desc;
+                
+                // Image Preview
+                if (btn.dataset.image && btn.dataset.image !== 'default_item.png') {
+                    preview.innerHTML = `<img src="${btn.dataset.imageUrl}" alt="Preview">`;
+                } else {
+                    preview.innerHTML = '<span style="color: #999; font-size: 11px;">No custom image</span>';
+                }
+                
+                badge.textContent = 'Editing ' + btn.dataset.category;
+                if (btn.dataset.category === 'Seedling') badge.className = 'category-badge-display denr';
+                else badge.className = 'category-badge-display';
+            }
+            
+            modal.classList.add('active');
+        }
+
+        // --- Forum Logic ---
+        // --- Forum Logic ---
+        let currentFilter = 'all';
+
+        function toggleFilterDropdown() {
+            const dd = document.getElementById('dbFilterDropdown');
+            const isHidden = dd.style.display === 'none' || dd.style.display === '';
+            dd.style.display = isHidden ? 'flex' : 'none';
+        }
+
+        function selectFilter(category, el) {
+            currentFilter = category;
+            
+            // Update UI
+            document.querySelectorAll('#dbFilterDropdown .filter-option').forEach(opt => opt.classList.remove('active'));
+            el.classList.add('active');
+            
+            // Hide Dropdown
+            document.getElementById('dbFilterDropdown').style.display = 'none';
+            
+            filterForum();
+        }
+
+        function filterForum() {
+            let input = document.getElementById('forumSearchInput').value.toLowerCase();
+            let links = document.querySelectorAll('.post-link');
+            
+            links.forEach(link => {
+                let title = link.dataset.title;
+                let content = link.dataset.content;
+                let category = link.dataset.category;
+                
+                let matchesSearch = title.includes(input) || content.includes(input);
+                let matchesFilter = currentFilter === 'all' || category === currentFilter;
+
+                if (matchesSearch && matchesFilter) {
+                    link.style.display = 'block';
+                } else {
+                    link.style.display = 'none';
+                }
+            });
+        }
+
+        function openNewPostModal() {
+            document.getElementById('newPostModal').classList.add('active');
+        }
+
+        async function openForumPost(id) {
+            const modal = document.getElementById('forumDetailsModal');
+            const contentDiv = document.getElementById('forumModalContent');
+            
+            // Show modal with loading state
+            contentDiv.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;">Loading discussion...</div>';
+            modal.classList.add('active');
+            
+            try {
+                const response = await fetch(`/forum-post-partial/${id}`);
+                if (response.ok) {
+                    const html = await response.text();
+                    contentDiv.innerHTML = html;
+                } else {
+                    contentDiv.innerHTML = '<div style="text-align: center; padding: 20px; color: red;">Failed to load content.</div>';
+                }
+            } catch (err) {
+                console.error(err);
+                contentDiv.innerHTML = '<div style="text-align: center; padding: 20px; color: red;">Error loading content.</div>';
+            }
+        }
+
+        // Functions for Modal Interaction (Voting, Replying) within the modal scope
+        async function handleModalVote(type, postId) {
+            try {
+                const response = await fetch(`/vote-post/${postId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 'vote_type': type })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('modalTotalVotes').innerText = data.votes;
+                    
+                    const upBtn = document.getElementById('modalUpvoteBtn');
+                    const downBtn = document.getElementById('modalDownvoteBtn');
+                    
+                    upBtn.classList.remove('active-up');
+                    downBtn.classList.remove('active-down');
+                    
+                    if (data.status === 'up') upBtn.classList.add('active-up');
+                    if (data.status === 'down') downBtn.classList.add('active-down');
+                }
+            } catch (err) { console.error("Vote failed", err); }
+        }
+
+        function showReplyInput(btn) {
+            const container = btn.closest('.comment-card').querySelector('.inline-reply-container');
+            const isHidden = container.style.display === 'none';
+            container.style.display = isHidden ? 'block' : 'none';
+            if (isHidden) container.querySelector('.inline-reply-input').focus();
+        }
+
+        function toggleThread(btn) {
+            const container = btn.nextElementSibling;
+            const isHidden = container.style.display === 'none';
+            container.style.display = isHidden ? 'block' : 'none';
+            const count = container.querySelectorAll(':scope > .comment-card').length; // Ensure scope is correct
+            btn.querySelector('span').innerText = isHidden ? 'Hide Replies' : `Show ${count} Replies`;
+            btn.querySelector('.collapse-icon').style.transform = isHidden ? 'rotate(45deg)' : 'rotate(0deg)';
+        }
+
+        // Image Preview Listener
+        document.getElementById('invImageInput').addEventListener('change', function(event) {
+            const preview = document.getElementById('invImagePreview');
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Auto-switch view based on URL params (e.g. redirect from delete)
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const viewParam = urlParams.get('view');
+            if (viewParam === 'forum') {
+                const forumBtn = document.querySelector('a[onclick*="switchView(\'forum\'"]');
+                switchView('forum', forumBtn);
+            } else if (viewParam === 'inventory') {
+                const invBtn = document.querySelector('a[onclick*="switchView(\'inventory\'"]');
+                switchView('inventory', invBtn);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -9,6 +9,8 @@ auth = Blueprint('auth', __name__)
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
+        if current_user.is_admin:
+            return redirect(url_for('views.admin_dashboard'))
         return redirect(url_for('views.home'))
 
     if request.method == 'POST':
@@ -16,6 +18,8 @@ def login():
         user = User.query.filter_by(email=email).first()
         if user:
             login_user(user, remember=True)
+            if user.is_admin:
+                return redirect(url_for('views.admin_dashboard'))
             return redirect(url_for('views.home'))
         else:
             flash('Account not found.', category='error')
@@ -23,7 +27,8 @@ def login():
     # FIX: We can no longer filter by 'is_admin' in SQL because it's a property.
     # We filter by 'role' instead to populate the login list.
     standard_users = User.query.filter_by(role='User').all()
-    admins = User.query.filter(User.role.like('Admin_%')).all()
+    # Include Superadmin in the admins list
+    admins = User.query.filter(User.role.in_(['Admin_LGU', 'Admin_DA', 'Admin_DENR', 'Superadmin'])).all()
     
     return render_template("login.html", user=current_user, users=standard_users, admins=admins)
 

@@ -6,6 +6,8 @@
     <title>Event Details</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/event-view.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/page-transitions.css') }}">
+    <script src="{{ url_for('static', filename='js/page-transitions.js') }}" defer></script>
     <style>
         /* Helper class for disabled floating buttons to ensure they look inactive */
         .btn-disabled-forced {
@@ -28,7 +30,7 @@
                 <a href="javascript:history.back()" class="close-btn">
                     <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
                 </a>
-                <h1>About {{ event.event_type }}</h1>
+                <h1>About Event</h1>
             </div>
 
             <div class="event-title-container">
@@ -95,7 +97,12 @@
         </div>
 
         <!-- Conditional Participate Button -->
-        {% if current_user.id == event.user_id %}
+        {% if current_user.is_admin %}
+            <!-- User is an Admin -->
+            <button class="floating-participate-btn btn-disabled-forced" disabled>
+                ADMIN VIEW
+            </button>
+        {% elif current_user.id == event.user_id %}
             <!-- User is the Creator -->
             <button class="floating-participate-btn btn-disabled-forced" disabled>
                 ORGANIZER

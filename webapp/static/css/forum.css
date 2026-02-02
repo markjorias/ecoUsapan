@@ -238,6 +238,12 @@ body {
 }
 
 /* Forum Cards */
+.post-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
 .forum-card1, .forum-card3 {
     width: 100%;
     min-height: 85px;
