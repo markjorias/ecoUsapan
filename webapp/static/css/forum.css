@@ -259,6 +259,8 @@ body {
 
 .forum-info {
     flex: 1;
+    min-width: 0;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -281,6 +283,9 @@ body {
     font-weight: 700;
     color: #000;
     line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .forum-meta {

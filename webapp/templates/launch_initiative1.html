@@ -6,7 +6,23 @@
     <title>Launch Your Initiative</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/launch_initiative.css') }}">
-</head>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+    <style>
+        #map-selection {
+            height: 300px;
+            width: 100%;
+            border-radius: 8px;
+            margin-top: 8px;
+            z-index: 1;
+        }
+    </style>
 <body>
     <div class="app-container">
         <form method="POST" action="{{ url_for('views.launch_initiative1') }}" class="scroll-content">
@@ -60,6 +76,15 @@
                     <input type="text" name="address_line1" class="form-input" placeholder="Address line 1" style="margin-bottom: 8px;" required>
                     <input type="text" name="address_line2" class="form-input" placeholder="Address line 2" style="margin-bottom: 8px;">
                     <input type="text" name="postal_code" class="form-input" placeholder="Postal Code" required>
+                    
+                    <!-- Map Pinning Section -->
+                    <div style="margin-top: 16px;">
+                        <label class="form-label">Pin Location on Map</label>
+                        <p style="font-size: 12px; color: #666; margin-bottom: 8px;">Tap on the map to pin the exact event location.</p>
+                        <div id="map-selection"></div>
+                        <input type="hidden" name="latitude" id="lat_input">
+                        <input type="hidden" name="longitude" id="lng_input">
+                    </div>
                 </div>
 
                 <!-- Description -->
@@ -88,7 +113,42 @@
                     hiddenInput.value = this.getAttribute('data-value');
                 });
             });
+
+            // Map Initialization
+            // Ensure container exists
+            var mapContainer = document.getElementById('map-selection');
+            if(!mapContainer) return;
+
+            var nagaLat = 13.6192;
+            var nagaLng = 123.1859;
+            var map = L.map('map-selection').setView([nagaLat, nagaLng], 13);
+
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd'
+            }).addTo(map);
+
+            var marker;
+
+            function onMapClick(e) {
+                if (marker) {
+                    map.removeLayer(marker);
+                }
+                marker = L.marker(e.latlng).addTo(map);
+                document.getElementById('lat_input').value = e.latlng.lat;
+                document.getElementById('lng_input').value = e.latlng.lng;
+            }
+
+            map.on('click', onMapClick);
+            
+            // Fix map rendering issue when hidden/resized
+            setTimeout(function(){ 
+                map.invalidateSize();
+            }, 500);
         });
     </script>
+    
+
 </body>
 </html>

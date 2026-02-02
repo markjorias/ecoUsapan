@@ -41,36 +41,5 @@ def create_app():
     
     with app.app_context():
         db.create_all()
-        
-        # FIX: Changed 'is_admin=True' to 'role='Admin_LGU'' 
-        # because is_admin is now a read-only property.
-        if not User.query.filter_by(email='admin@ecousapan.com').first():
-            admin = User(
-                email='admin@ecousapan.com', 
-                username='admin', 
-                password=generate_password_hash('admin', method='pbkdf2:sha256'),
-                role='Admin_LGU'
-            )
-            db.session.add(admin)
-            
-        if not User.query.filter_by(email='user@ecousapan.com').first():
-            user = User(
-                email='user@ecousapan.com', 
-                username='tester', 
-                password=generate_password_hash('user', method='pbkdf2:sha256'),
-                role='User'
-            )
-            db.session.add(user)
-            
-        if not User.query.filter_by(role='Superadmin').first():
-            superadmin = User(
-                email='superadmin@ecousapan.com',
-                username='SuperAdmin',
-                password=generate_password_hash('superadmin', method='pbkdf2:sha256'),
-                role='Superadmin'
-            )
-            db.session.add(superadmin)
-            
-        db.session.commit()
     
     return app

@@ -8,6 +8,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+    <!-- Leaflet for Map -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
     <!-- Icons are reused from the main app -->
 </head>
 <body>
@@ -25,6 +32,17 @@
             <a href="#" class="nav-link" onclick="switchView('inventory', this)">
                 <img src="{{ url_for('static', filename='icons/inventory.svg') }}" class="nav-icon" alt="Inventory">
                 Inventory
+            </a>
+            {% endif %}
+
+            {% if current_user.role == 'Superadmin' %}
+            <a href="#" class="nav-link" onclick="switchView('inventory-seeds', this)">
+                <img src="{{ url_for('static', filename='icons/inventory.svg') }}" class="nav-icon" alt="Seeds">
+                Seeds Inventory
+            </a>
+            <a href="#" class="nav-link" onclick="switchView('inventory-seedlings', this)">
+                <img src="{{ url_for('static', filename='icons/inventory.svg') }}" class="nav-icon" alt="Seedlings">
+                Seedlings Inventory
             </a>
             {% endif %}
 
@@ -103,6 +121,9 @@
                 <div class="table-header">
                     <div class="table-title">Recent Initiatives</div>
                     <!-- Actions -->
+                    <button class="new-post-btn" onclick="openInitiativeForm('add')">
+                        <span>+</span> Add Initiative
+                    </button>
                 </div>
                 <table class="styled-table">
                     <thead>
@@ -132,6 +153,23 @@
                                     <form action="{{ url_for('views.delete_initiative', id=item.id) }}" method="POST" onsubmit="return confirm('Are you sure?');" style="display:inline;">
                                         <button type="submit" class="action-btn btn-danger">Delete</button>
                                     </form>
+                                    <button type="button" class="action-btn btn-primary"
+                                            onclick="openInitiativeForm('edit', this)"
+                                            data-id="{{ item.id }}"
+                                            data-title="{{ item.title }}"
+                                            data-event-type="{{ item.event_type }}"
+                                            data-date="{{ item.date }}"
+                                            data-time="{{ item.time }}"
+                                            data-city="{{ item.city }}"
+                                            data-province="{{ item.province }}"
+                                            data-address="{{ item.address_line1 }}"
+                                            data-org="{{ item.org_name }}"
+                                            data-desc="{{ item.description }}"
+                                            data-lat="{{ item.latitude }}"
+                                            data-lng="{{ item.longitude }}"
+                                            data-update-url="{{ url_for('views.edit_initiative', id=item.id) }}">
+                                        Edit
+                                    </button>
                                     {% endif %}
                                     
                                     <button type="button" class="action-btn btn-outline" 
@@ -142,6 +180,8 @@
                                             data-date="{{ item.date }}"
                                             data-status="{{ item.status }}"
                                             data-desc="{{ item.description }}"
+                                            data-lat="{{ item.latitude }}"
+                                            data-lng="{{ item.longitude }}"
                                             data-approve-url="{{ url_for('views.approve_initiative', id=item.id) }}"
                                             data-can-approve="{% if (current_user.role == 'Superadmin' or current_user.role == 'Admin_LGU') and item.status == 'Pending' %}true{% else %}false{% endif %}"
                                             data-image="{% if item.image_filename %}{{ url_for('static', filename='uploads/' + item.image_filename) }}{% endif %}">
@@ -281,6 +321,102 @@
                         No items in inventory. Click "Add New Item" to start.
                     </div>
                     {% endif %}
+                </div>
+            </div>
+
+            <!-- SEEDS INVENTORY VIEW (Superadmin) -->
+            <div id="view-inventory-seeds" class="view-section" style="display: none;">
+                <div class="inv-header">
+                    <div class="table-title">Seeds Inventory</div>
+                    <a href="#" class="add-item-btn" onclick="openInventoryModal('add', 'Seed')">
+                        <span>+</span> Add New Seed
+                    </a>
+                </div>
+                 <!-- Search Container -->
+                <div class="search-container">
+                    <div class="search-icon-container">
+                        <img src="{{ url_for('static', filename='icons/search.svg') }}" alt="Search" class="search-icon">
+                    </div>
+                    <div class="search-text-container">
+                        <input type="text" id="invSearchInputSeeds" class="search-input" placeholder="Search seeds..." onkeyup="searchInventory('view-inventory-seeds')">
+                    </div>
+                </div>
+
+                <div class="inventory-grid">
+                    {% for item in inventory_items if item.category == 'Seed' %}
+                    <a href="#" class="inventory-card" 
+                       onclick="openInventoryModal('edit', this)"
+                       data-name="{{ item.name }}"
+                       data-stock="{{ item.stock_quantity }}"
+                       data-desc="{{ item.description }}"
+                       data-category="{{ item.category }}"
+                       data-image="{{ item.image_filename or '' }}"
+                       data-image-url="{{ url_for('static', filename='uploads/' + item.image_filename) }}"
+                       data-update-url="{{ url_for('views.edit_item', id=item.id) }}">
+                        <div class="inv-img-container">
+                            {% if item.image_filename and item.image_filename != 'default_item.png' %}
+                                <img src="{{ url_for('static', filename='uploads/' + item.image_filename) }}" alt="{{ item.name }}" class="inv-img">
+                            {% else %}
+                                <div style="color: #ccc; font-size: 40px;">🌱</div>
+                            {% endif %}
+                        </div>
+                        <div class="inv-info">
+                            <div class="inv-name">{{ item.name }}</div>
+                            <div class="inv-stock {% if item.stock_quantity < 10 %}low{% endif %}">
+                                Stock: {{ item.stock_quantity }}
+                            </div>
+                            <div style="font-size: 11px; color: #999; margin-top: 4px;">{{ item.category }}</div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- SEEDLINGS INVENTORY VIEW (Superadmin) -->
+            <div id="view-inventory-seedlings" class="view-section" style="display: none;">
+                <div class="inv-header">
+                    <div class="table-title">Seedlings Inventory</div>
+                    <a href="#" class="add-item-btn" onclick="openInventoryModal('add', 'Seedling')">
+                        <span>+</span> Add New Seedling
+                    </a>
+                </div>
+                <!-- Search Container -->
+                <div class="search-container">
+                    <div class="search-icon-container">
+                        <img src="{{ url_for('static', filename='icons/search.svg') }}" alt="Search" class="search-icon">
+                    </div>
+                    <div class="search-text-container">
+                        <input type="text" id="invSearchInputSeedlings" class="search-input" placeholder="Search seedlings..." onkeyup="searchInventory('view-inventory-seedlings')">
+                    </div>
+                </div>
+
+                <div class="inventory-grid">
+                    {% for item in inventory_items if item.category == 'Seedling' %}
+                    <a href="#" class="inventory-card" 
+                       onclick="openInventoryModal('edit', this)"
+                       data-name="{{ item.name }}"
+                       data-stock="{{ item.stock_quantity }}"
+                       data-desc="{{ item.description }}"
+                       data-category="{{ item.category }}"
+                       data-image="{{ item.image_filename or '' }}"
+                       data-image-url="{{ url_for('static', filename='uploads/' + item.image_filename) }}"
+                       data-update-url="{{ url_for('views.edit_item', id=item.id) }}">
+                        <div class="inv-img-container">
+                            {% if item.image_filename and item.image_filename != 'default_item.png' %}
+                                <img src="{{ url_for('static', filename='uploads/' + item.image_filename) }}" alt="{{ item.name }}" class="inv-img">
+                            {% else %}
+                                <div style="color: #ccc; font-size: 40px;">🌱</div>
+                            {% endif %}
+                        </div>
+                        <div class="inv-info">
+                            <div class="inv-name">{{ item.name }}</div>
+                            <div class="inv-stock {% if item.stock_quantity < 10 %}low{% endif %}">
+                                Stock: {{ item.stock_quantity }}
+                            </div>
+                            <div style="font-size: 11px; color: #999; margin-top: 4px;">{{ item.category }}</div>
+                        </div>
+                    </a>
+                    {% endfor %}
                 </div>
             </div>
 
@@ -518,6 +654,12 @@
                 <div class="modal-label">Description</div>
                 <div class="modal-value" id="modal-init-desc" style="white-space: pre-wrap;"></div>
             </div>
+
+            <!-- Initiative Map View -->
+            <div class="modal-row" id="modal-init-map-container">
+                <div class="modal-label">Location Map</div>
+                <div id="view-init-map" style="height: 250px; width: 100%; border-radius: 8px; margin-top: 8px; z-index: 1;"></div>
+            </div>
             
             <!-- Initiative Image -->
             <div class="modal-row" id="modal-init-image-container" style="display: none;">
@@ -592,7 +734,86 @@
         </div>
     </div>
 
+    <!-- Initiative Form Modal (Add/Edit) -->
+    <div class="modal-overlay" id="initiativeFormModal">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeModal('initiativeFormModal')">&times;</button>
+            <div class="modal-title" id="initFormTitle">Add New Initiative</div>
+            
+            <form id="initForm" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label class="form-label">Initiative Title</label>
+                    <input type="text" name="title" id="initFormTitleId" class="form-input" placeholder="e.g. Tree Planting Activity" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Event Type</label>
+                    <select name="event_type" id="initFormType" class="form-input" required>
+                        <option value="Tree Planting">Tree Planting</option>
+                        <option value="Coastal Cleanup">Coastal Cleanup</option>
+                        <option value="Seminar">Seminar / Workshop</option>
+                        <option value="Community Garden">Community Garden</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <label class="form-label">Date</label>
+                        <input type="date" name="date" id="initFormDate" class="form-input" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label class="form-label">Time</label>
+                        <input type="time" name="time" id="initFormTime" class="form-input" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Location</label>
+                    <div style="display: flex; gap: 10px; margin-bottom: 8px;">
+                         <input type="text" name="city" id="initFormCity" class="form-input" placeholder="City/Municipality" required>
+                         <input type="text" name="province" id="initFormProvince" class="form-input" placeholder="Province" required>
+                    </div>
+                    <input type="text" name="address_line1" id="initFormAddress" class="form-input" placeholder="Specific Address (gy, St, etc.)" required>
+                    
+                    <!-- Map Pinning Section -->
+                    <div style="margin-top: 16px;">
+                        <label class="form-label">Pin Location on Map</label>
+                        <p style="font-size: 12px; color: #666; margin-bottom: 8px;">Click on the map to pin the exact event location.</p>
+                        <div id="admin-map-selection" style="height: 300px; width: 100%; border-radius: 8px; margin-top: 8px; z-index: 1;"></div>
+                        <input type="hidden" name="latitude" id="admin_lat_input">
+                        <input type="hidden" name="longitude" id="admin_lng_input">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Organizer Name</label>
+                    <input type="text" name="org_name" id="initFormOrg" class="form-input" placeholder="Organization or Lead" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" id="initFormDesc" class="form-textarea" placeholder="Describe the initiative..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Cover Image</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" name="image" accept="image/*">
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="action-btn btn-outline" onclick="closeModal('initiativeFormModal')">Cancel</button>
+                    <button type="submit" class="action-btn btn-primary" id="initFormSubmitBtn">Create Initiative</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
+        var adminMap = null;
+    
         function openInitiativeModal(btn) {
             document.getElementById('modal-init-title').textContent = btn.dataset.title;
             document.getElementById('modal-init-org').textContent = btn.dataset.org;
@@ -625,6 +846,39 @@
             } else {
                 imageContainer.style.display = 'none';
             }
+
+
+            // Map Initialization for View Modal
+            setTimeout(function() {
+                var viewMapContainer = document.getElementById('view-init-map');
+                if(!viewMapContainer) return;
+                
+                viewMapContainer.innerHTML = '';
+                
+                var lat = parseFloat(btn.dataset.lat) || 13.6192;
+                var lng = parseFloat(btn.dataset.lng) || 123.1859;
+                
+                var viewMap = L.map('view-init-map', {
+                    zoomControl: false,
+                    dragging: false,
+                    scrollWheelZoom: false,
+                    doubleClickZoom: false,
+                    boxZoom: false,
+                    keyboard: false
+                }).setView([lat, lng], 13);
+                
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; OpenStreetMap contributors',
+                    subdomains: 'abcd'
+                }).addTo(viewMap);
+                
+                if (btn.dataset.lat && btn.dataset.lng) {
+                     L.marker([lat, lng]).addTo(viewMap);
+                }
+                
+                setTimeout(function(){ viewMap.invalidateSize(); }, 100);
+            }, 300);
 
             document.getElementById('initiativeModal').classList.add('active');
         }
@@ -684,9 +938,23 @@
         }
 
         // Search Inventory Logic
-        function searchInventory() {
-            let input = document.getElementById('invSearchInput').value.toLowerCase();
-            let cards = document.querySelectorAll('.inventory-card');
+        function searchInventory(viewId) {
+            let inputId = 'invSearchInput';
+            let containerId = 'view-inventory';
+            
+            if (viewId) {
+                containerId = viewId;
+                if (viewId === 'view-inventory-seeds') inputId = 'invSearchInputSeeds';
+                if (viewId === 'view-inventory-seedlings') inputId = 'invSearchInputSeedlings';
+            }
+            
+            let inputEl = document.getElementById(inputId);
+            if (!inputEl) return;
+            
+            let input = inputEl.value.toLowerCase();
+            let container = document.getElementById(containerId);
+            let cards = container.querySelectorAll('.inventory-card');
+            
             cards.forEach(card => {
                 let name = card.querySelector('.inv-name').textContent.toLowerCase();
                 if (name.includes(input)) {
@@ -698,59 +966,75 @@
         }
 
         // Inventory Modal Logic
-        function openInventoryModal(mode, btn) {
+        function openInventoryModal(mode, btnOrCategory) {
             const modal = document.getElementById('inventoryModal');
             const form = document.getElementById('invForm');
             const title = document.getElementById('invModalTitle');
             const submitBtn = document.getElementById('invSubmitBtn');
             const preview = document.getElementById('invImagePreview');
             const badge = document.getElementById('invCategoryBadge');
+            const categoryInput = document.getElementById('invCategoryInput');
             
             // Set User Role Context for Badge (Simple Check)
             const userRole = "{{ current_user.role }}";
-            let category = "Item";
+            let category = "Item"; // Default display text
+            
             if (userRole === 'Admin_DA') { category = 'DA Seed Inventory'; badge.className = 'category-badge-display'; }
             else if (userRole === 'Admin_DENR') { category = 'DENR Seedling Inventory'; badge.className = 'category-badge-display denr'; }
-            else { category = 'Inventory Item'; badge.className = 'category-badge-display'; } // LGU/Superadmin
+            else { category = 'Inventory Item'; badge.className = 'category-badge-display'; }
 
             if (mode === 'add') {
                 title.textContent = 'Add New Item';
-                submitBtn.textContent = 'Publish Item';
                 form.action = "{{ url_for('views.manage_inventory') }}";
+                submitBtn.textContent = 'Publish Item';
                 
-                // Clear fields
+                // Clear inputs
                 document.getElementById('invName').value = '';
                 document.getElementById('invStock').value = '';
                 document.getElementById('invDesc').value = '';
-                document.getElementById('invImageInput').value = ''; // Reset file input
+                document.getElementById('invImageInput').value = ''; // Clear file input
                 preview.innerHTML = '<span style="color: #999; font-size: 11px;">No image selected</span>';
                 
-                badge.textContent = 'Adding to ' + category;
-                
+                // Handle split inventory category for Superadmin
+                if (typeof btnOrCategory === 'string' && categoryInput) {
+                    categoryInput.value = btnOrCategory;
+                    badge.innerText = "New " + btnOrCategory;
+                } else {
+                    badge.innerText = "New " + category;
+                    // Reset to default if needed (e.g. valid default for LGU)
+                    if (categoryInput) categoryInput.value = 'Seed'; 
+                }
+
             } else if (mode === 'edit') {
+                const btn = btnOrCategory;
                 title.textContent = 'Edit Item';
-                submitBtn.textContent = 'Update Item';
                 form.action = btn.dataset.updateUrl;
+                submitBtn.textContent = 'Update Item';
                 
-                // Populate fields
+                // Populate inputs
                 document.getElementById('invName').value = btn.dataset.name;
                 document.getElementById('invStock').value = btn.dataset.stock;
                 document.getElementById('invDesc').value = btn.dataset.desc;
                 
-                // Image Preview
-                if (btn.dataset.image && btn.dataset.image !== 'default_item.png') {
-                    preview.innerHTML = `<img src="${btn.dataset.imageUrl}" alt="Preview">`;
+                // Set appropriate category for editing
+                if (categoryInput && btn.dataset.category) {
+                    categoryInput.value = btn.dataset.category;
+                    badge.innerText = "Edit " + btn.dataset.category;
                 } else {
-                    preview.innerHTML = '<span style="color: #999; font-size: 11px;">No custom image</span>';
+                    badge.innerText = "Edit " + category;
                 }
                 
-                badge.textContent = 'Editing ' + btn.dataset.category;
-                if (btn.dataset.category === 'Seedling') badge.className = 'category-badge-display denr';
-                else badge.className = 'category-badge-display';
+                // Preview Image if exists
+                if (btn.dataset.image) {
+                     preview.innerHTML = `<img src="${btn.dataset.imageUrl}" alt="Preview">`;
+                } else {
+                     preview.innerHTML = '<span style="color: #999; font-size: 11px;">No image selected</span>';
+                }
             }
             
             modal.classList.add('active');
         }
+
 
         // --- Forum Logic ---
         // --- Forum Logic ---
@@ -797,6 +1081,108 @@
 
         function openNewPostModal() {
             document.getElementById('newPostModal').classList.add('active');
+        }
+
+        function openInitiativeForm(mode, btn) {
+            const modal = document.getElementById('initiativeFormModal');
+            const form = document.getElementById('initForm');
+            const title = document.getElementById('initFormTitle');
+            const submitBtn = document.getElementById('initFormSubmitBtn');
+
+            if (mode === 'add') {
+                title.textContent = 'Add New Initiative';
+                submitBtn.textContent = 'Create Initiative';
+                form.action = "{{ url_for('views.add_initiative') }}";
+                
+                // Clear fields
+                document.getElementById('initFormTitleId').value = '';
+                document.getElementById('initFormType').value = 'Tree Planting';
+                document.getElementById('initFormDate').value = '';
+                document.getElementById('initFormTime').value = '';
+                document.getElementById('initFormCity').value = '';
+                document.getElementById('initFormProvince').value = '';
+                document.getElementById('initFormAddress').value = '';
+                document.getElementById('initFormOrg').value = '';
+                document.getElementById('initFormDesc').value = '';
+                document.getElementById('admin_lat_input').value = '';
+                document.getElementById('admin_lng_input').value = '';
+                
+            } else if (mode === 'edit') {
+                title.textContent = 'Edit Initiative';
+                submitBtn.textContent = 'Update Initiative';
+                form.action = btn.dataset.updateUrl;
+                
+                // Populate fields
+                document.getElementById('initFormTitleId').value = btn.dataset.title;
+                document.getElementById('initFormType').value = btn.dataset.eventType;
+                document.getElementById('initFormDate').value = btn.dataset.date;
+                document.getElementById('initFormTime').value = btn.dataset.time;
+                document.getElementById('initFormCity').value = btn.dataset.city;
+                document.getElementById('initFormProvince').value = btn.dataset.province;
+                document.getElementById('initFormAddress').value = btn.dataset.address;
+                document.getElementById('initFormOrg').value = btn.dataset.org;
+                document.getElementById('initFormDesc').value = btn.dataset.desc;
+                
+                // Set hidden lat/lng
+                document.getElementById('admin_lat_input').value = btn.dataset.lat || '';
+                document.getElementById('admin_lng_input').value = btn.dataset.lng || '';
+            }
+            
+            modal.classList.add('active');
+            
+            // Initialize Map after modal is shown
+            setTimeout(function() {
+                var mapContainer = document.getElementById('admin-map-selection');
+                if(!mapContainer) return;
+                
+                // Clear any existing map instance
+                if (adminMap) {
+                    adminMap.remove();
+                    adminMap = null;
+                }
+                
+                // Determine initial coordinates
+                var initialLat = 13.6192;
+                var initialLng = 123.1859;
+                var hasSavedLocation = false;
+                
+                if (mode === 'edit' && btn.dataset.lat && btn.dataset.lng && btn.dataset.lat !== 'None' && btn.dataset.lng !== 'None') {
+                    initialLat = parseFloat(btn.dataset.lat);
+                    initialLng = parseFloat(btn.dataset.lng);
+                    hasSavedLocation = true;
+                }
+                
+                adminMap = L.map('admin-map-selection').setView([initialLat, initialLng], 13);
+
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; OpenStreetMap contributors',
+                    subdomains: 'abcd'
+                }).addTo(adminMap);
+
+                var marker;
+                
+                // If editing and has location, place marker
+                if (hasSavedLocation) {
+                    marker = L.marker([initialLat, initialLng]).addTo(adminMap);
+                }
+
+                function onMapClick(e) {
+                    if (marker) {
+                        adminMap.removeLayer(marker);
+                    }
+                    marker = L.marker(e.latlng).addTo(adminMap);
+                    document.getElementById('admin_lat_input').value = e.latlng.lat;
+                    document.getElementById('admin_lng_input').value = e.latlng.lng;
+                }
+
+                adminMap.on('click', onMapClick);
+                
+                // Fix map rendering
+                setTimeout(function(){ 
+                    adminMap.invalidateSize();
+                }, 100);
+            }, 300);
         }
 
         async function openForumPost(id) {

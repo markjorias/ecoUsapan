@@ -109,7 +109,7 @@
                         <div class="seed-availability">Available: {{ item.stock_quantity }} Bags</div>
                         
                         <!-- Buttons only shown for Admins -->
-                        {% if current_user.role == 'Admin_DA' or current_user.role == 'Admin_LGU' %}
+                        {% if current_user.role in ['Admin_DA', 'Admin_LGU', 'Superadmin'] %}
                             <a href="{{ url_for('views.edit_item', id=item.id) }}" class="admin-action-btn">MANAGE STOCK</a>
                         {% endif %}
                     </div>
@@ -125,7 +125,7 @@
                 {% endfor %}
             </div>
 
-            {% if current_user.role == 'Admin_DA' or current_user.role == 'Admin_LGU' %}
+            {% if current_user.role in ['Admin_DA', 'Admin_LGU', 'Superadmin'] %}
             <div class="add-new-container">
                 <a href="{{ url_for('views.manage_inventory') }}" class="user-action-btn" style="background: #49A427; padding: 12px; font-size: 12px;">
                     + ADD NEW SEED TYPE

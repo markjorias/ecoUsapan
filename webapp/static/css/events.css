@@ -186,9 +186,9 @@ body {
     gap: 4px;
 }
 
-.event-org { font-size: 10px; font-weight: 300; color: #666; }
+.event-org { font-size: 10px; font-weight: 300; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .event-title { font-size: 16px; font-weight: 700; color: #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.event-loc { font-size: 10px; font-weight: 300; color: #666; }
+.event-loc { font-size: 10px; font-weight: 300; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .event-action {
     width: 60px;

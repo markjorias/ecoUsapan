@@ -328,6 +328,9 @@ body {
     font-size: 10px;
     font-weight: 300;
     color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .event-title {
@@ -343,6 +346,9 @@ body {
     font-size: 10px;
     font-weight: 300;
     color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .event-action {

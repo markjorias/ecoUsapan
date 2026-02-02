@@ -18,7 +18,7 @@ def allowed_file(filename):
 @views.route('/')
 @login_required
 def home():
-    initiatives = Initiative.query.filter_by(status='Approved').order_by(Initiative.date_created.desc()).all()
+    initiatives = Initiative.query.filter_by(status='Approved').order_by(Initiative.date_created.desc()).limit(5).all()
     return render_template('home.html', initiatives=initiatives, user=current_user)
 
 @views.route('/events')
@@ -101,12 +101,12 @@ def update_request_status(id):
         flash('Unauthorized: LGU Admins cannot manage departmental service requests.', category='error')
         return redirect(url_for('views.status'))
 
-    if req.service_type == 'Seeds' and current_user.role != 'Admin_DA':
-        flash('Unauthorized: Only DA Admins can manage Seed requests.', category='error')
+    if req.service_type == 'Seed' and current_user.role not in ['Admin_DA', 'Superadmin']:
+        flash('Unauthorized: Only DA Admins or Superadmins can manage Seed requests.', category='error')
         return redirect(url_for('views.status'))
     
-    if req.service_type == 'Seedlings' and current_user.role != 'Admin_DENR':
-        flash('Unauthorized: Only DENR Admins can manage Seedling requests.', category='error')
+    if req.service_type == 'Seedling' and current_user.role not in ['Admin_DENR', 'Superadmin']:
+        flash('Unauthorized: Only DENR Admins or Superadmins can manage Seedling requests.', category='error')
         return redirect(url_for('views.status'))
 
     # Revert inventory if declined
@@ -256,7 +256,7 @@ def edit_item(id):
 @views.route('/manage-inventory', methods=['GET', 'POST'])
 @login_required
 def manage_inventory():
-    if current_user.role not in ['Admin_DA', 'Admin_DENR', 'Admin_LGU']:
+    if current_user.role not in ['Admin_DA', 'Admin_DENR', 'Admin_LGU', 'Superadmin']:
         flash('Unauthorized.', category='error')
         return redirect(url_for('views.home'))
 
@@ -468,7 +468,9 @@ def launch_initiative1():
             'address_line1': request.form.get('address_line1'),
             'address_line2': request.form.get('address_line2'),
             'postal_code': request.form.get('postal_code'),
-            'description': request.form.get('description')
+            'description': request.form.get('description'),
+            'latitude': request.form.get('latitude'),
+            'longitude': request.form.get('longitude')
         }
         return redirect(url_for('views.launch_initiative2'))
     return render_template('launch_initiative1.html', user=current_user)
@@ -515,7 +517,9 @@ def launch_initiative2():
             email=request.form.get('email'),
             event_link=request.form.get('link'),
             image_filename=filename, # Use the saved filename here
-            status='Pending'
+            status='Pending',
+            latitude=part1.get('latitude'),
+            longitude=part1.get('longitude')
         )
         db.session.add(new_initiative)
         db.session.commit()
@@ -523,7 +527,118 @@ def launch_initiative2():
         flash('Initiative submitted for approval!', category='success')
         return redirect(url_for('views.status'))
     return render_template('launch_initiative2.html', user=current_user)
+    return render_template('launch_initiative2.html', user=current_user)
+
+@views.route('/api/events')
+def api_events():
+    """
+    Returns JSON data for all approved initiatives for the map.
+    """
+    initiatives = Initiative.query.filter_by(status='Approved').all()
+    events_data = []
+    
+    for event in initiatives:
+        # Default coords (Naga City) if missing
+        lat = event.latitude if event.latitude else 13.6192
+        lng = event.longitude if event.longitude else 123.1859
+        
+        events_data.append({
+            'id': event.id,
+            'title': event.title,
+            'image_url': event.image_url,
+            'org_name': event.org_name if event.org_name else 'Community Event',
+            'location': f"{event.city}",
+            'lat': lat,
+            'lng': lng
+        })
+        
+    return jsonify(events_data)
 # --- Admin Controls ---
+
+@views.route('/add-initiative', methods=['POST'])
+@login_required
+def add_initiative():
+    if current_user.role not in ['Admin_LGU', 'Superadmin']:
+        flash('Unauthorized action.', category='error')
+        return redirect(url_for('views.admin_dashboard'))
+
+    # Handle Image Upload
+    image_file = request.files.get('image')
+    filename = 'default_event.png'
+    
+    if image_file and image_file.filename and allowed_file(image_file.filename):
+        original_filename = secure_filename(image_file.filename)
+        filename = f"init_{current_user.id}_{int(datetime.utcnow().timestamp())}_{original_filename}"
+        upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
+        if not os.path.exists(upload_folder):
+            os.makedirs(upload_folder)
+        image_file.save(os.path.join(upload_folder, filename))
+
+    new_initiative = Initiative(
+        user_id=current_user.id,
+        title=request.form.get('title'),
+        event_type=request.form.get('event_type'),
+        date=request.form.get('date'),
+        time=request.form.get('time'),
+        province=request.form.get('province'),
+        city=request.form.get('city'),
+        address_line1=request.form.get('address_line1'),
+        org_name=request.form.get('org_name'),
+        description=request.form.get('description'),
+        image_filename=filename,
+        status='Approved' # Admin created initiatives are auto-approved
+    )
+    
+    try:
+        db.session.add(new_initiative)
+        db.session.commit()
+        flash('Initiative created successfully!', category='success')
+    except Exception as e:
+        db.session.rollback()
+        flash('Error creating initiative.', category='error')
+        print(f"Error: {e}")
+        
+    return redirect(url_for('views.admin_dashboard'))
+
+@views.route('/edit-initiative/<int:id>', methods=['POST'])
+@login_required
+def edit_initiative(id):
+    if current_user.role not in ['Admin_LGU', 'Superadmin']:
+        flash('Unauthorized action.', category='error')
+        return redirect(url_for('views.admin_dashboard'))
+        
+    initiative = Initiative.query.get_or_404(id)
+    
+    initiative.title = request.form.get('title')
+    initiative.event_type = request.form.get('event_type')
+    initiative.date = request.form.get('date')
+    initiative.time = request.form.get('time')
+    initiative.province = request.form.get('province')
+    initiative.city = request.form.get('city')
+    initiative.address_line1 = request.form.get('address_line1')
+    initiative.org_name = request.form.get('org_name')
+    initiative.description = request.form.get('description')
+    
+    # Handle Image Upload (Optional Update)
+    image_file = request.files.get('image')
+    if image_file and image_file.filename and allowed_file(image_file.filename):
+        original_filename = secure_filename(image_file.filename)
+        filename = f"init_{current_user.id}_{int(datetime.utcnow().timestamp())}_{original_filename}"
+        upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
+        if not os.path.exists(upload_folder):
+            os.makedirs(upload_folder)
+        image_file.save(os.path.join(upload_folder, filename))
+        initiative.image_filename = filename # Update filename
+        
+    try:
+        db.session.commit()
+        flash('Initiative updated successfully!', category='success')
+    except Exception as e:
+        db.session.rollback()
+        flash('Error updating initiative.', category='error')
+        print(f"Error: {e}")
+        
+    return redirect(url_for('views.admin_dashboard'))
 
 @views.route('/approve-initiative/<int:id>', methods=['POST'])
 @login_required

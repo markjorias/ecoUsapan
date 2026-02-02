@@ -51,6 +51,8 @@ class Initiative(db.Model):
     event_link = db.Column(db.String(255))
     image_filename = db.Column(db.String(100), default='default_event.png')
     status = db.Column(db.String(50), default='Pending') 
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
     def get_time_left(self):
