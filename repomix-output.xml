@@ -7735,70 +7735,6 @@ package-lock.json
 yarn.lock
 </file>
 
-<file path="readme.md">
-## **Key Features**
-
-* **Dynamic Forum**: Engage in community discussions with real-time search, category filtering (News, Questions, Suggestions, etc.), and a robust Upvote/Downvote system.  
-* **Environmental Initiatives**: Users can propose cleanup drives or tree-planting events. Admins (LGU) can review, approve, or decline these proposals.  
-* **Service Requests**: Streamlined access to government services such as requesting rice seeds (DA) or mahogany seedlings (DENR).  
-* **Participation Tracking**: A personal dashboard for users to track the status of their service requests and registered events.  
-* **Role-Based Access**: Dedicated administrative dashboards for LGU, DA, and DENR officials to manage approvals and community data.
-
-## **Technology Stack**
-
-* **Backend**: Python, Flask  
-* **Database**: SQLite with SQLAlchemy ORM  
-* **Frontend**: HTML5, CSS3 (Mobile-first design), JavaScript (ES6+)  
-* **Authentication**: Flask-Login
-
-## **Installation & Setup**
-
-Follow these steps to get the project running on your local machine:
-
-1. **Clone the Repository**  
-   git clone \[https://github.com/yourusername/ecoUsapan.git\](https://github.com/yourusername/ecoUsapan.git)  
-   cd ecoUsapan
-
-2. **Create a Virtual Environment**  
-   python \-m venv venv  
-   \# Windows:  
-   venv\\Scripts\\activate  
-   \# Mac/Linux:  
-   source venv/bin/activate
-
-3. **Install Dependencies**  
-   pip install \-r requirements.txt
-
-4. **Initialize the Database**  
-   Instead of manually creating tables, use the provided system seeder to set up the schema and test data:  
-   python seed\_system.py
-
-5. **Run the Application**  
-   python main.py
-
-   Access the app at http://127.0.0.1:5000
-
-## **Testing with Seed Data**
-
-The seed\_system.py script automatically resets the database and creates the following test accounts (Password: password123):
-
-* **Standard User**: tester@gmail.com  
-* **LGU Admin**: lgu@ecousapan.ph  
-* **DA Admin**: da@ecousapan.ph  
-* **DENR Admin**: denr@ecousapan.ph
-
-## **Project Structure**
-
-* webapp/: Main application package.  
-  * auth.py: Authentication logic (Login/Signup).  
-  * views.py: Main application routes and logic.  
-  * models.py: Database schemas.  
-  * templates/: Jinja2 HTML templates.  
-  * static/: CSS, JS, and UI icons.  
-* main.py: Entry point for the Flask server.  
-* seed\_system.py: Comprehensive database initialization script.
-</file>
-
 <file path="requirements.txt">
 alembic==1.18.3
 blinker==1.9.0
@@ -9513,159 +9449,6 @@ body {
 </html>
 </file>
 
-<file path="webapp/templates/event-view.html">
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Event Details</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
-
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/event-view.css') }}">
-</head>
-<body>
-    <div class="app-container">
-        <div class="scroll-content">
-            
-            <!-- Header -->
-            <div class="event-view-header">
-                <a href="javascript:history.back()" class="close-btn">
-                    <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
-                </a>
-                <h1>About {{ event.event_type }}</h1>
-            </div>
-
-            <div class="event-title-container">
-                <span class="event-username">@{{ event.author.username }}</span>
-                <h2 class="event-main-title">{{ event.title }}</h2>
-            </div>
-
-            <div class="event-tags-container">
-                <span class="event-tag">{{ event.get_time_left() }}</span>
-                <span class="event-tag">{{ event.event_type }}</span>
-                <span class="event-tag">{{ event.org_name }}</span>
-            </div>
-
-            <div class="event-details-bar">
-                <div class="event-date-time">
-                    <div class="event-detail-item">
-                        <img src="{{ url_for('static', filename='icons/calendar.svg') }}" alt="Calendar" class="detail-icon">
-                        <span class="detail-text">{{ event.date }}</span>
-                    </div>
-                    <div class="event-detail-item">
-                        <img src="{{ url_for('static', filename='icons/clock.svg') }}" alt="Clock" class="detail-icon">
-                        <span class="detail-text">{{ event.time }}</span>
-                    </div>
-                </div>
-                <div class="event-location">
-                    <img src="{{ url_for('static', filename='icons/map-pin.svg') }}" alt="Location" class="detail-icon">
-                    <span class="detail-text">{{ event.city }}, {{ event.province }}</span>
-                </div>
-            </div>
-
-            <div class="event-image-container">
-                <img src="{{ event.image_url }}" class="event-image" alt="{{ event.title }}">
-            </div>
-
-            <div class="event-description">
-                <h3 class="description-header">Description</h3>
-                <p class="description-text">{{ event.description }}</p>
-            </div>
-
-            <div class="event-author-section">
-                <div class="author-label">Author</div>
-                
-                <div class="author-card">
-                    <div class="author-info-group">
-                        <div class="author-pfp-container">
-                            <img src="{{ url_for('static', filename='images/user.jpg') }}" alt="Author" class="author-pfp">
-                        </div>
-                        <div class="author-content-stack">
-                            <span class="author-username">@{{ event.author.username }}</span>
-                            <span class="author-name">{{ event.contact_fname }} {{ event.contact_lname }}</span>
-                            <div class="author-chips">
-                                <span class="author-chip">{{ event.contact_role }}</span>
-                                <span class="author-chip">{{ event.org_name }}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="author-action">
-                        <img src="{{ url_for('static', filename='icons/message-circle.svg') }}" alt="Message" class="message-icon">
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <button class="floating-participate-btn" id="participate-btn">PARTICIPATE</button>
-
-    <!-- Participation Form Modal Overlay -->
-    <div class="modal-overlay" id="participation-modal">
-        <div class="modal-content">
-            <div class="launch-header">
-                <div class="close-btn" id="close-modal-btn">
-                    <img src="{{ url_for('static', filename='icons/chevron-left.svg') }}" alt="Back">
-                </div>
-                <h1>Participate</h1>
-            </div>
-
-            <div class="launch-form-container" id="participation-form">
-                <!-- Name -->
-                <div class="form-group">
-                    <label class="form-label">Name</label>
-                    <input type="text" class="form-input" placeholder="Your Name">
-                </div>
-
-                <!-- Address -->
-                <div class="form-group">
-                    <label class="form-label">Address</label>
-                    <input type="text" class="form-input" placeholder="Your Address">
-                </div>
-
-                <!-- Contact Number -->
-                <div class="form-group">
-                    <label class="form-label">Contact Number</label>
-                    <input type="tel" class="form-input" placeholder="09XX XXX XXXX">
-                </div>
-
-                <!-- Email -->
-                <div class="form-group">
-                    <label class="form-label">Email</label>
-                    <input type="email" class="form-input" placeholder="email@example.com">
-                </div>
-
-                <!-- Purpose of Participation -->
-                <div class="form-group">
-                    <label class="form-label">Purpose of Participation</label>
-                    <textarea class="form-textarea" placeholder="Why do you want to join?"></textarea>
-                </div>
-
-                <!-- Submit Button -->
-                <div class="bottom-action-container">
-                    <button class="next-btn" id="submit-participation-btn">SUBMIT</button>
-                </div>
-            </div>
-
-            <!-- Confirmation Message (Hidden by default) -->
-            <div class="confirmation-container" id="confirmation-message" style="display: none;">
-                <div class="confirmation-content">
-                    <img src="{{ url_for('static', filename='icons/users.svg') }}" alt="Success" class="success-icon">
-                    <h2>Participation Received!</h2>
-                    <p>Thank you for signing up. We'll be in touch soon.</p>
-                    <button class="next-btn" id="close-confirmation-btn">DONE</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    </div>
-
-    <script src="{{ url_for('static', filename='js/event-view.js') }}"></script>
-</body>
-</html>
-</file>
-
 <file path="webapp/templates/events.html">
 <!DOCTYPE html>
 <html lang="en">
@@ -9738,106 +9521,6 @@ body {
         
         {% include 'components/navbar.html' %}
     </div>
-</body>
-</html>
-</file>
-
-<file path="webapp/templates/forum-view.html">
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>{{ post.title }} - EcoUsapan</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/forum-view.css') }}">
-    <style>
-        /* Addition to support Up/Down visuals */
-        .vote-item { cursor: pointer; transition: all 0.2s; padding: 4px 8px; border-radius: 8px; display: flex; align-items: center; gap: 4px; }
-        .vote-item.active-up { background: #E8F5E9; color: #49A427; }
-        .vote-item.active-down { background: #FFEBEE; color: #C62828; }
-        .vote-item.active-up img { filter: invert(48%) sepia(79%) saturate(452%) hue-rotate(65deg) brightness(95%) contrast(92%); }
-        .vote-item.active-down img { filter: invert(20%) sepia(85%) saturate(3000%) hue-rotate(345deg) brightness(90%) contrast(100%); }
-        .vote-item img.down-icon { transform: rotate(180deg); }
-    </style>
-</head>
-<body>
-    <div class="app-container">
-        <div class="scroll-content">
-            <!-- Header -->
-            <div class="forum-view-header">
-                <a href="{{ url_for('views.forum') }}" class="close-btn">
-                    <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
-                </a>
-                <h1>Forum</h1>
-            </div>
-
-            <div class="forum-title-container">
-                <span class="forum-username">@{{ post.author.username }}</span>
-                <h2 class="forum-main-title">{{ post.title }}</h2>
-            </div>
-
-            <div class="forum-interaction-bar">
-                <div class="interaction-stats">
-                    <div class="vote-pill" style="display: flex; gap: 10px; background: #f5f5f5; padding: 4px; border-radius: 12px; align-items: center;">
-                        <!-- Upvote Button -->
-                        <div class="vote-item {% if user_vote_type == 'up' %}active-up{% endif %}" id="upvoteBtn" onclick="handleVote('up')">
-                            <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" alt="Up" class="stat-icon">
-                        </div>
-                        
-                        <span class="stat-count" id="totalVotes" style="font-weight: 800; min-width: 20px; text-align: center;">{{ post.votes }}</span>
-                        
-                        <!-- Downvote Button -->
-                        <div class="vote-item {% if user_vote_type == 'down' %}active-down{% endif %}" id="downvoteBtn" onclick="handleVote('down')">
-                            <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" alt="Down" class="stat-icon down-icon">
-                        </div>
-                    </div>
-                    
-                    <div class="comment-pill">
-                        <span class="stat-text">{{ post.comments|length }} comments</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ... (rest of your existing forum-view.html content) ... -->
-
-        </div>
-    </div>
-
-    <script>
-        async function handleVote(type) {
-            const postId = "{{ post.id }}";
-            try {
-                const response = await fetch(`/vote-post/${postId}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 'vote_type': type })
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    
-                    // Update the number
-                    document.getElementById('totalVotes').innerText = data.votes;
-                    
-                    // Update visual states
-                    const upBtn = document.getElementById('upvoteBtn');
-                    const downBtn = document.getElementById('downvoteBtn');
-                    
-                    upBtn.classList.remove('active-up');
-                    downBtn.classList.remove('active-down');
-                    
-                    if (data.status === 'up') {
-                        upBtn.classList.add('active-up');
-                    } else if (data.status === 'down') {
-                        downBtn.classList.add('active-down');
-                    }
-                }
-            } catch (err) {
-                console.error("Vote failed", err);
-            }
-        }
-    </script>
 </body>
 </html>
 </file>
@@ -10047,6 +9730,72 @@ body {
     </script>
 </body>
 </html>
+</file>
+
+<file path="readme.md">
+## **Key Features**
+
+* **Dynamic Forum**: Engage in community discussions with real-time search, category filtering (News, Questions, Suggestions, etc.), and a robust Upvote/Downvote system.  
+* **Environmental Initiatives**: Users can propose cleanup drives or tree-planting events. Admins (LGU) can review, approve, or decline these proposals.  
+* **Service Requests**: Streamlined access to government services such as requesting rice seeds (DA) or mahogany seedlings (DENR).  
+* **Participation Tracking**: A personal dashboard for users to track the status of their service requests and registered events.  
+* **Role-Based Access**: Dedicated administrative dashboards for LGU, DA, and DENR officials to manage approvals and community data.
+
+## **Technology Stack**
+
+* **Backend**: Python, Flask  
+* **Database**: SQLite with SQLAlchemy ORM  
+* **Frontend**: HTML5, CSS3 (Mobile-first design), JavaScript (ES6+)  
+* **Authentication**: Flask-Login
+
+## **Installation & Setup**
+
+Follow these steps to get the project running on your local machine:
+
+1. **Clone the Repository**  
+   git clone \[https://github.com/yourusername/ecoUsapan.git\](https://github.com/yourusername/ecoUsapan.git)  
+   cd ecoUsapan
+
+2. **Create a Virtual Environment**  
+   python \-m venv venv  
+   \# Windows:  
+   venv\\Scripts\\activate  
+   \# Mac/Linux:  
+   source venv/bin/activate
+
+3. **Install Dependencies**  
+   pip install \-r requirements.txt
+
+4. **Initialize the Database**  
+   Instead of manually creating tables, use the provided system seeder to set up the schema and test data:  
+   python seed.py
+
+5. **Run the Application**  
+   python main.py
+
+   Access the app at http://127.0.0.1:5000
+
+## **Testing with Seed Data**
+
+The seed.py script automatically resets the database and creates the following test accounts (Password: password123):
+
+* **Standard User**: tester@gmail.com  
+* **LGU Admin**: lgu@ecousapan.ph  
+* **DA Admin**: da@ecousapan.ph  
+* **DENR Admin**: denr@ecousapan.ph
+
+Shift+L to logout
+
+## **Project Structure**
+
+* webapp/: Main application package.  
+  * auth.py: Authentication logic (Login/Signup).  
+  * views.py: Main application routes and logic.  
+  * models.py: Database schemas.  
+  * templates/: Jinja2 HTML templates.  
+  * static/: CSS, JS, and UI icons.  
+* main.py: Entry point for the Flask server.  
+* seed.py: Comprehensive database initialization script.
 </file>
 
 <file path="webapp/__init__.py">
@@ -10727,242 +10476,379 @@ body {
 </html>
 </file>
 
-<file path="webapp/templates/forum.html">
+<file path="webapp/templates/event-view.html">
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Forum - EcoUsapan</title>
+    <title>Event Details</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/forum.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/event-view.css') }}">
+    <style>
+        /* Helper class for disabled floating buttons to ensure they look inactive */
+        .btn-disabled-forced {
+            background-color: #d1d1d1 !important;
+            background-image: none !important;
+            color: #888 !important;
+            cursor: not-allowed !important;
+            box-shadow: none !important;
+            pointer-events: none !important;
+            border-color: #bcbcbc !important;
+        }
+    </style>
 </head>
 <body>
     <div class="app-container">
         <div class="scroll-content">
+            
             <!-- Header -->
-            <div class="forum-header">
-                <a href="{{ url_for('views.home') }}" class="back-btn">
-                    <img src="{{ url_for('static', filename='icons/chevron-left.svg') }}" alt="Back">
+            <div class="event-view-header">
+                <a href="javascript:history.back()" class="close-btn">
+                    <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
                 </a>
-                <h1 class="header-title">Forum</h1>
+                <h1>About {{ event.event_type }}</h1>
+            </div>
+
+            <div class="event-title-container">
+                <span class="event-username">@{{ event.author.username }}</span>
+                <h2 class="event-main-title">{{ event.title }}</h2>
+            </div>
+
+            <div class="event-tags-container">
+                <span class="event-tag">{{ event.get_time_left() }}</span>
+                <span class="event-tag">{{ event.event_type }}</span>
+                <span class="event-tag">{{ event.org_name }}</span>
+            </div>
+
+            <div class="event-details-bar">
+                <div class="event-date-time">
+                    <div class="event-detail-item">
+                        <img src="{{ url_for('static', filename='icons/calendar.svg') }}" alt="Calendar" class="detail-icon">
+                        <span class="detail-text">{{ event.date }}</span>
+                    </div>
+                    <div class="event-detail-item">
+                        <img src="{{ url_for('static', filename='icons/clock.svg') }}" alt="Clock" class="detail-icon">
+                        <span class="detail-text">{{ event.time }}</span>
+                    </div>
+                </div>
+                <div class="event-location">
+                    <img src="{{ url_for('static', filename='icons/map-pin.svg') }}" alt="Location" class="detail-icon">
+                    <span class="detail-text">{{ event.city }}, {{ event.province }}</span>
+                </div>
+            </div>
+
+            <div class="event-image-container">
+                <img src="{{ event.image_url }}" class="event-image" alt="{{ event.title }}">
+            </div>
+
+            <div class="event-description">
+                <h3 class="description-header">Description</h3>
+                <p class="description-text">{{ event.description }}</p>
+            </div>
+
+            <div class="event-author-section">
+                <div class="author-label">Author</div>
                 
-                <div class="filter-wrapper">
-                    <button class="filter-btn" id="filterBtn">
-                        <img src="{{ url_for('static', filename='icons/list.svg') }}" alt="Filter">
-                    </button>
-                    <div class="filter-dropdown" id="filterDropdown">
-                        <div class="filter-option active" data-category="all">All Topics</div>
-                        <div class="filter-option" data-category="News">News</div>
-                        <div class="filter-option" data-category="Discussion">Discussion</div>
-                        <div class="filter-option" data-category="Question">Question</div>
-                        <div class="filter-option" data-category="Suggestion">Suggestion</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Search and Add -->
-            <div class="search-add-row">
-                <div class="search-container">
-                    <div class="search-icon-container">
-                        <img src="{{ url_for('static', filename='icons/search.svg') }}" alt="Search" class="search-icon">
-                    </div>
-                    <div class="search-text-container">
-                        <input type="text" id="forumSearch" class="search-input" placeholder="Search for topics...">
-                    </div>
-                </div>
-                <div class="add-forum-container" onclick="openNewPostModal()">
-                    <img src="{{ url_for('static', filename='icons/plus.svg') }}" alt="Add Topic" class="add-forum-icon">
-                </div>
-            </div>
-
-            <div class="forum-sections-wrapper" id="forumContent">
-                <!-- Trending Section -->
-                {% if trending %}
-                <div class="forum-section-container" id="trendingSection">
-                    <h2 class="section-title">Trending</h2>
-                    <div class="forum-card-list">
-                        {% for post in trending %}
-                        <a href="{{ url_for('views.forum_view', id=post.id) }}" class="post-link" 
-                           data-category="{{ post.category }}" 
-                           data-title="{{ post.title|lower }}" 
-                           data-content="{{ post.content|lower }}">
-                            <div class="forum-card1">
-                                <div class="forum-info">
-                                    <div class="forum-tag">{{ post.category }}</div>
-                                    <div class="forum-title">{{ post.title }}</div>
-                                    <div class="forum-meta">
-                                        <span class="forum-username">@{{ post.author.username }}</span>
-                                        <span class="forum-comments">{{ post.comments|length }} comments</span>
-                                    </div>
-                                </div>
-                                <div class="forum-action" onclick="handleVote(event, {{ post.id }}, this)">  
-                                    <div class="forum-action" onclick="handleVote(event, {{ post.id }}, this)">  
-                                    <!-- Added 'voted' class dynamically if the user has a record in PostVote -->
-                                    <div class="vote-controls {% if post.has_user_voted(current_user.id) %}voted{% endif %}">
-                                        <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" class="vote-icon">
-                                        <span class="vote-count" data-post-id="{{ post.id }}">{{ post.votes }}</span>
-                                    </div>
-                                </div>
-                                </div>
+                <div class="author-card">
+                    <div class="author-info-group">
+                        <div class="author-pfp-container">
+                            <img src="{{ url_for('static', filename='images/user.jpg') }}" alt="Author" class="author-pfp">
+                        </div>
+                        <div class="author-content-stack">
+                            <span class="author-username">@{{ event.author.username }}</span>
+                            <span class="author-name">{{ event.contact_fname }} {{ event.contact_lname }}</span>
+                            <div class="author-chips">
+                                <span class="author-chip">{{ event.contact_role }}</span>
+                                <span class="author-chip">{{ event.org_name }}</span>
                             </div>
-                        </a>
-                        {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="author-action">
+                        <img src="{{ url_for('static', filename='icons/message-circle.svg') }}" alt="Message" class="message-icon">
                     </div>
                 </div>
+            </div>
+
+        </div>
+
+        <!-- Conditional Participate Button -->
+        {% if current_user.id == event.user_id %}
+            <!-- User is the Creator -->
+            <button class="floating-participate-btn btn-disabled-forced" disabled>
+                ORGANIZER
+            </button>
+        {% else %}
+            <!-- Check if user is already participating -->
+            {% set is_participating = false %}
+            {% for participant in event.participants %}
+                {% if participant.user_id == current_user.id %}
+                    {% set is_participating = true %}
                 {% endif %}
+            {% endfor %}
 
-                <!-- Recent Discussions Section -->
-                <div class="forum-section-container" id="discussionSection">
-                    <h2 class="section-title">Discussions</h2>
-                    <div class="forum-card-list">
-                        {% for post in recent %}
-                        <a href="{{ url_for('views.forum_view', id=post.id) }}" class="post-link" 
-                           data-category="{{ post.category }}" 
-                           data-title="{{ post.title|lower }}" 
-                           data-content="{{ post.content|lower }}">
-                            <div class="forum-card3">
-                                <div class="forum-info">
-                                    <div class="forum-tag">{{ post.category }}</div>
-                                    <div class="forum-title">{{ post.title }}</div>
-                                    <div class="forum-meta">
-                                        <span class="forum-username">@{{ post.author.username }}</span>
-                                        <span class="forum-comments">{{ post.comments|length }} comments</span>
-                                    </div>
-                                </div>
-                                <div class="forum-action" onclick="handleVote(event, {{ post.id }}, this)">  
-                                    <div class="vote-controls">
-                                        <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" class="vote-icon">
-                                        <span class="vote-count" data-post-id="{{ post.id }}">{{ post.votes }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                        {% endfor %}
-                    </div>
+            {% if is_participating %}
+                <button class="floating-participate-btn" style="opacity: 0.7; cursor: default; filter: grayscale(0.5);" disabled>
+                    REGISTERED
+                </button>
+            {% else %}
+                <button class="floating-participate-btn" id="participate-btn">PARTICIPATE</button>
+            {% endif %}
+        {% endif %}
+
+    <!-- Participation Form Modal Overlay -->
+    <div class="modal-overlay" id="participation-modal">
+        <div class="modal-content">
+            <div class="launch-header">
+                <div class="close-btn" id="close-modal-btn">
+                    <img src="{{ url_for('static', filename='icons/chevron-left.svg') }}" alt="Back">
+                </div>
+                <h1>Participate</h1>
+            </div>
+
+            <div class="launch-form-container" id="participation-form">
+                <!-- Name -->
+                <div class="form-group">
+                    <label class="form-label">Name</label>
+                    <input type="text" id="part-name" class="form-input" placeholder="Your Name" value="{{ current_user.first_name }} {{ current_user.last_name }}">
+                </div>
+
+                <!-- Address -->
+                <div class="form-group">
+                    <label class="form-label">Address</label>
+                    <input type="text" id="part-address" class="form-input" placeholder="Your Address">
+                </div>
+
+                <!-- Contact Number -->
+                <div class="form-group">
+                    <label class="form-label">Contact Number</label>
+                    <input type="tel" id="part-phone" class="form-input" placeholder="09XX XXX XXXX">
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" id="part-email" class="form-input" placeholder="email@example.com" value="{{ current_user.email }}">
+                </div>
+
+                <!-- Purpose of Participation -->
+                <div class="form-group">
+                    <label class="form-label">Purpose of Participation</label>
+                    <textarea id="part-purpose" class="form-textarea" placeholder="Why do you want to join?"></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="bottom-action-container">
+                    <button class="next-btn" id="submit-participation-btn">SUBMIT</button>
+                </div>
+            </div>
+
+            <!-- Confirmation Message (Hidden by default) -->
+            <div class="confirmation-container" id="confirmation-message" style="display: none;">
+                <div class="confirmation-content">
+                    <img src="{{ url_for('static', filename='icons/users.svg') }}" alt="Success" class="success-icon">
+                    <h2>Participation Received!</h2>
+                    <p>Thank you for signing up. We'll be in touch soon.</p>
+                    <button class="next-btn" id="close-confirmation-btn">DONE</button>
                 </div>
             </div>
         </div>
+    </div>
+    </div>
 
-        <!-- New Post Modal -->
-        <div class="modal-overlay" id="newPostModal" onclick="closeNewPostModal()">
-            <div class="modal-content" onclick="event.stopPropagation()">
-                <div class="modal-header">
-                    <h2 class="modal-title">New Discussion</h2>
-                    <div class="modal-close" onclick="closeNewPostModal()">
-                        <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
+    <script src="{{ url_for('static', filename='js/event-view.js') }}"></script>
+</body>
+</html>
+</file>
+
+<file path="webapp/templates/forum-view.html">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{{ post.title }} - EcoUsapan</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/forum-view.css') }}">
+    <style>
+        /* Visual feedback for active votes */
+        .vote-item { cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+        .vote-item.active-up { color: #49A427; font-weight: bold; }
+        .vote-item.active-down { color: #C62828; font-weight: bold; }
+        .vote-item.active-up img { filter: invert(48%) sepia(79%) saturate(452%) hue-rotate(65deg) brightness(95%) contrast(92%); }
+        .vote-item.active-down img { filter: invert(20%) sepia(85%) saturate(3000%) hue-rotate(345deg) brightness(90%) contrast(100%); }
+        .down-icon { transform: rotate(180deg); }
+        
+        /* Post Image Styling */
+        .forum-image-container { width: 100%; margin: 15px 0; border-radius: 16px; overflow: hidden; background: #f0f0f0; }
+        .forum-image { width: 100%; height: auto; display: block; object-fit: contain; max-height: 400px; }
+
+        /* Comment Nesting Styles */
+        .replies-container { margin-left: 15px; padding-left: 10px; border-left: 2px solid #f0f0f0; margin-top: 10px; }
+        .comment-card { margin-bottom: 15px; }
+        .reply-btn-text { font-size: 12px; font-weight: 600; color: #666; }
+    </style>
+</head>
+<body>
+    {% macro render_comment(comment, is_reply=False) %}
+    <div class="comment-card {% if is_reply %}reply-card{% endif %}" id="comment-{{ comment.id }}">
+        <div class="comment-header">@{{ comment.author.username }}</div>
+        <div class="comment-body">{{ comment.content }}</div>
+        <div class="comment-footer">
+            <div class="comment-interactions">
+                <button class="comment-reply-btn" onclick="showReplyInput(this)">
+                    <img src="{{ url_for('static', filename='icons/message-circle.svg') }}" alt="Reply" class="interaction-icon">
+                    <span class="reply-btn-text">Reply</span>
+                </button>
+            </div>
+            <span class="comment-time">{{ comment.date_posted.strftime('%I:%M %p') }}</span>
+        </div>
+
+        <!-- Inline Reply Form -->
+        <form action="{{ url_for('views.add_comment', post_id=post.id) }}" method="POST" class="inline-reply-container" style="display: none; margin-top: 10px; padding: 10px; background: #f9f9f9; border-radius: 8px;">
+            <input type="hidden" name="parent_id" value="{{ comment.id }}">
+            <input type="text" name="content" placeholder="Write a reply to @{{ comment.author.username }}..." class="inline-reply-input" required 
+                   style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px;">
+            <div style="display: flex; justify-content: flex-end; margin-top: 8px;">
+                <button type="submit" class="send-reply-btn" style="color: #49A427; background: none; border: none; font-weight: bold; cursor: pointer;">Send</button>
+            </div>
+        </form>
+
+        <!-- Nested Replies -->
+        {% if comment.replies %}
+        <div class="replies-wrapper">
+            <button class="toggle-thread-btn" onclick="toggleThread(this)" style="background: none; border: none; color: #888; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 11px; margin-top: 5px;">
+                <img src="{{ url_for('static', filename='icons/plus.svg') }}" alt="Expand" class="collapse-icon" style="width: 10px;">
+                <span>Show {{ comment.replies|length }} Replies</span>
+            </button>
+            
+            <div class="replies-container" style="display: none;">
+                {% for reply in comment.replies %}
+                    {{ render_comment(reply, is_reply=True) }}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endmacro %}
+
+    <div class="app-container">
+        <div class="scroll-content">
+            
+            <!-- Header -->
+            <div class="forum-view-header">
+                <a href="{{ url_for('views.forum') }}" class="close-btn">
+                    <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
+                </a>
+                <h1>Forum</h1>
+            </div>
+
+            <!-- Title & Author -->
+            <div class="forum-title-container">
+                <span class="forum-username">@{{ post.author.username }}</span>
+                <h2 class="forum-main-title">{{ post.title }}</h2>
+            </div>
+
+            <!-- Tags & Meta -->
+            <div class="forum-tags-container">
+                <span class="forum-tag">{{ post.category }}</span>
+                <span class="forum-tag">{{ post.date_posted.strftime('%b %d, %Y') }}</span>
+            </div>
+
+            <!-- Image Section -->
+            {% if post.image_filename %}
+            <div class="forum-image-container">
+                <img src="{{ url_for('static', filename='uploads/' + post.image_filename) }}" alt="{{ post.title }}" class="forum-image">
+            </div>
+            {% endif %}
+
+            <!-- Post Content -->
+            <div class="forum-description">
+                <p class="forum-description-text">{{ post.content }}</p>
+            </div>
+
+            <!-- Interaction Bar -->
+            <div class="forum-interaction-bar">
+                <div class="interaction-stats">
+                    <div class="vote-pill" style="display: flex; gap: 12px; background: #f0f0f0; padding: 6px 12px; border-radius: 20px;">
+                        <div class="vote-item {% if user_vote_type == 'up' %}active-up{% endif %}" id="upvoteBtn" onclick="handleVote('up')">
+                            <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" alt="Upvote" class="stat-icon">
+                        </div>
+                        
+                        <span class="stat-count" id="totalVotes" style="font-weight: 700;">{{ post.votes }}</span>
+                        
+                        <div class="vote-item {% if user_vote_type == 'down' %}active-down{% endif %}" id="downvoteBtn" onclick="handleVote('down')">
+                            <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" alt="Downvote" class="stat-icon down-icon">
+                        </div>
+                    </div>
+
+                    <div class="comment-pill">
+                        <span class="stat-text">{{ post.comments|length }} comments</span>
                     </div>
                 </div>
-                <form action="{{ url_for('views.create_post') }}" method="POST">
-                    <div class="form-group">
-                        <label class="form-label">Category</label>
-                        <select name="category" class="form-select">
-                            <option value="Discussion">Discussion</option>
-                            <option value="Question">Question</option>
-                            <option value="Suggestion">Suggestion</option>
-                            <option value="News">News</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Title</label>
-                        <input type="text" name="title" class="form-input" placeholder="What's on your mind?" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Content</label>
-                        <textarea name="content" class="form-textarea" placeholder="Provide more details..." required></textarea>
-                    </div>
-                    <button type="submit" class="submit-btn">Post Discussion</button>
+                
+                <form action="{{ url_for('views.add_comment', post_id=post.id) }}" method="POST" class="comment-input-container">
+                    <img src="{{ url_for('static', filename='icons/users.svg') }}" alt="User" class="user-icon">
+                    <input type="text" name="content" placeholder="Add your comment" class="comment-input" required>
+                    <button type="submit" style="border:none; background:none; color:#49A427; font-weight:700; cursor:pointer;">Post</button>
                 </form>
             </div>
-        </div>
 
-        {% include 'components/navbar.html' %}
+            <!-- Comments -->
+            <div class="comments-section-header">
+                <span class="comments-title">Comments</span>
+            </div>
+
+            <div class="comment-list-container">
+                {% for comment in comments %}
+                    {{ render_comment(comment) }}
+                {% else %}
+                    <p style="font-size: 12px; color: #999; padding: 20px; text-align: center;">No comments yet. Be the first to join the conversation!</p>
+                {% endfor %}
+            </div>
+
+        </div>
     </div>
 
     <script>
-        const filterBtn = document.getElementById('filterBtn');
-        const filterDropdown = document.getElementById('filterDropdown');
-        const filterOptions = document.querySelectorAll('.filter-option');
-        const searchInput = document.getElementById('forumSearch');
-        const postLinks = document.querySelectorAll('.post-link');
-
-        let activeCategory = 'all';
-
-        // --- VOTE LOGIC ---
-        async function handleVote(event, postId, element) {
-            event.preventDefault();
-            event.stopPropagation();
-            
+        async function handleVote(type) {
+            const postId = "{{ post.id }}";
             try {
                 const response = await fetch(`/vote-post/${postId}`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' }
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 'vote_type': type })
                 });
                 
                 if (response.ok) {
                     const data = await response.json();
-                    
-                    // Update counts across the UI
-                    const counters = document.querySelectorAll(`.vote-count[data-post-id="${postId}"]`);
-                    counters.forEach(c => c.innerText = data.votes);
-                    
-                    // Toggle the 'voted' class for visual feedback
-                    const controls = element.querySelector('.vote-controls');
-                    if (data.voted) {
-                        controls.classList.add('voted');
-                    } else {
-                        controls.classList.remove('voted');
-                    }
+                    document.getElementById('totalVotes').innerText = data.votes;
+                    const upBtn = document.getElementById('upvoteBtn');
+                    const downBtn = document.getElementById('downvoteBtn');
+                    upBtn.classList.remove('active-up');
+                    downBtn.classList.remove('active-down');
+                    if (data.status === 'up') upBtn.classList.add('active-up');
+                    if (data.status === 'down') downBtn.classList.add('active-down');
                 }
-            } catch (error) {
-                console.error("Voting failed:", error);
-            }
+            } catch (err) { console.error("Vote failed", err); }
         }
 
-        // --- FILTER LOGIC ---
-        filterBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const isVisible = filterDropdown.style.display === 'flex';
-            filterDropdown.style.display = isVisible ? 'none' : 'flex';
-        });
-
-        window.addEventListener('click', () => { filterDropdown.style.display = 'none'; });
-
-        filterOptions.forEach(option => {
-            option.addEventListener('click', () => {
-                filterOptions.forEach(opt => opt.classList.remove('active'));
-                option.classList.add('active');
-                activeCategory = option.getAttribute('data-category');
-                applyFilters();
-            });
-        });
-
-        searchInput.addEventListener('input', applyFilters);
-
-        function applyFilters() {
-            const query = searchInput.value.toLowerCase();
-            postLinks.forEach(link => {
-                const category = link.getAttribute('data-category');
-                const title = link.getAttribute('data-title');
-                const content = link.getAttribute('data-content');
-                const matchesCategory = (activeCategory === 'all' || category === activeCategory);
-                const matchesSearch = (title.includes(query) || content.includes(query));
-                link.style.display = (matchesCategory && matchesSearch) ? 'block' : 'none';
-            });
-            checkSectionVisibility('trendingSection');
-            checkSectionVisibility('discussionSection');
+        function showReplyInput(btn) {
+            const container = btn.closest('.comment-card').querySelector('.inline-reply-container');
+            const isHidden = container.style.display === 'none';
+            container.style.display = isHidden ? 'block' : 'none';
+            if (isHidden) container.querySelector('.inline-reply-input').focus();
         }
 
-        function checkSectionVisibility(sectionId) {
-            const section = document.getElementById(sectionId);
-            if (!section) return;
-            const totalCards = section.querySelectorAll('.post-link').length;
-            const hiddenCards = section.querySelectorAll('.post-link[style="display: none;"]').length;
-            section.style.display = (totalCards === hiddenCards && totalCards !== 0) ? 'none' : 'block';
+        function toggleThread(btn) {
+            const container = btn.nextElementSibling;
+            const isHidden = container.style.display === 'none';
+            container.style.display = isHidden ? 'block' : 'none';
+            const count = container.querySelectorAll(':scope > .comment-card').length;
+            btn.querySelector('span').innerText = isHidden ? 'Hide Replies' : `Show ${count} Replies`;
+            btn.querySelector('.collapse-icon').style.transform = isHidden ? 'rotate(45deg)' : 'rotate(0deg)';
         }
-
-        function openNewPostModal() { document.getElementById('newPostModal').style.display = 'flex'; }
-        function closeNewPostModal() { document.getElementById('newPostModal').style.display = 'none'; }
     </script>
 </body>
 </html>
@@ -11603,6 +11489,260 @@ body {
 </html>
 </file>
 
+<file path="webapp/templates/forum.html">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Forum - EcoUsapan</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/forum.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <div class="scroll-content">
+            <!-- Header -->
+            <div class="forum-header">
+                <a href="{{ url_for('views.home') }}" class="back-btn">
+                    <img src="{{ url_for('static', filename='icons/chevron-left.svg') }}" alt="Back">
+                </a>
+                <h1 class="header-title">Forum</h1>
+                
+                <div class="filter-wrapper">
+                    <button class="filter-btn" id="filterBtn">
+                        <img src="{{ url_for('static', filename='icons/list.svg') }}" alt="Filter">
+                    </button>
+                    <div class="filter-dropdown" id="filterDropdown">
+                        <div class="filter-option active" data-category="all">All Topics</div>
+                        <div class="filter-option" data-category="News">News</div>
+                        <div class="filter-option" data-category="Discussion">Discussion</div>
+                        <div class="filter-option" data-category="Question">Question</div>
+                        <div class="filter-option" data-category="Suggestion">Suggestion</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search and Add -->
+            <div class="search-add-row">
+                <div class="search-container">
+                    <div class="search-icon-container">
+                        <img src="{{ url_for('static', filename='icons/search.svg') }}" alt="Search" class="search-icon">
+                    </div>
+                    <div class="search-text-container">
+                        <input type="text" id="forumSearch" class="search-input" placeholder="Search for topics...">
+                    </div>
+                </div>
+                <div class="add-forum-container" onclick="openNewPostModal()">
+                    <img src="{{ url_for('static', filename='icons/plus.svg') }}" alt="Add Topic" class="add-forum-icon">
+                </div>
+            </div>
+
+            <div class="forum-sections-wrapper" id="forumContent">
+                <!-- Trending Section -->
+                {% if trending %}
+                <div class="forum-section-container" id="trendingSection">
+                    <h2 class="section-title">Trending</h2>
+                    <div class="forum-card-list">
+                        {% for post in trending %}
+                        <a href="{{ url_for('views.forum_view', id=post.id) }}" class="post-link" 
+                           data-category="{{ post.category }}" 
+                           data-title="{{ post.title|lower }}" 
+                           data-content="{{ post.content|lower }}">
+                            <div class="forum-card1">
+                                <div class="forum-info">
+                                    <div class="forum-tag">{{ post.category }}</div>
+                                    <div class="forum-title">{{ post.title }}</div>
+                                    <div class="forum-meta">
+                                        <span class="forum-username">@{{ post.author.username }}</span>
+                                        <span class="forum-comments">{{ post.comments|length }} comments</span>
+                                    </div>
+                                </div>
+                                <div class="forum-action" onclick="handleVote(event, {{ post.id }}, this)">  
+                                <div class="vote-controls {% if post.get_user_vote(current_user.id) == 'up' %}voted{% endif %}">
+                                    <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" class="vote-icon">
+                                    <span class="vote-count" data-post-id="{{ post.id }}">{{ post.votes }}</span>
+                                </div>
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Recent Discussions Section -->
+                <div class="forum-section-container" id="discussionSection">
+                    <h2 class="section-title">Discussions</h2>
+                    <div class="forum-card-list">
+                        {% for post in recent %}
+                        <a href="{{ url_for('views.forum_view', id=post.id) }}" class="post-link" 
+                           data-category="{{ post.category }}" 
+                           data-title="{{ post.title|lower }}" 
+                           data-content="{{ post.content|lower }}">
+                            <div class="forum-card3">
+                                <div class="forum-info">
+                                    <div class="forum-tag">{{ post.category }}</div>
+                                    <div class="forum-title">{{ post.title }}</div>
+                                    <div class="forum-meta">
+                                        <span class="forum-username">@{{ post.author.username }}</span>
+                                        <span class="forum-comments">{{ post.comments|length }} comments</span>
+                                    </div>
+                                </div>
+                                <div class="forum-action" onclick="handleVote(event, {{ post.id }}, this)">  
+                                    <div class="vote-controls {% if post.get_user_vote(current_user.id) == 'up' %}voted{% endif %}">
+                                        <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" class="vote-icon">
+                                        <span class="vote-count" data-post-id="{{ post.id }}">{{ post.votes }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- New Post Modal -->
+        <div class="modal-overlay" id="newPostModal" onclick="closeNewPostModal()">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <div class="modal-header">
+                    <h2 class="modal-title">New Discussion</h2>
+                    <div class="modal-close" onclick="closeNewPostModal()">
+                        <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
+                    </div>
+                </div>
+                <!-- Updated with enctype for file support -->
+                <form action="{{ url_for('views.create_post') }}" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select name="category" class="form-select">
+                            <option value="Discussion">Discussion</option>
+                            <option value="Question">Question</option>
+                            <option value="Suggestion">Suggestion</option>
+                            <option value="News">News</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Title</label>
+                        <input type="text" name="title" class="form-input" placeholder="What's on your mind?" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Content</label>
+                        <textarea name="content" class="form-textarea" placeholder="Provide more details..." required></textarea>
+                    </div>
+
+                    <!-- Image Upload Field -->
+                    <div class="form-group" style="margin-top: 10px;">
+                        <label class="form-label">Attached Image (Optional)</label>
+                        <label for="post_image" style="display: flex; align-items: center; gap: 10px; padding: 12px; border: 2px dashed #ddd; border-radius: 12px; cursor: pointer; justify-content: center; background: #fafafa;">
+                            <img src="{{ url_for('static', filename='icons/image.svg') }}" style="width: 20px; opacity: 0.5;">
+                            <span id="file-name" style="font-size: 13px; color: #666;">Choose an image...</span>
+                            <input type="file" name="image" id="post_image" accept="image/*" style="display: none;" onchange="updateFileName(this)">
+                        </label>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Post Discussion</button>
+                </form>
+            </div>
+        </div>
+
+        {% include 'components/navbar.html' %}
+    </div>
+
+    <script>
+        const filterBtn = document.getElementById('filterBtn');
+        const filterDropdown = document.getElementById('filterDropdown');
+        const filterOptions = document.querySelectorAll('.filter-option');
+        const searchInput = document.getElementById('forumSearch');
+        const postLinks = document.querySelectorAll('.post-link');
+
+        let activeCategory = 'all';
+
+        // Update displayed filename
+        function updateFileName(input) {
+            const fileName = input.files[0] ? input.files[0].name : "Choose an image...";
+            document.getElementById('file-name').textContent = fileName;
+            document.getElementById('file-name').style.color = input.files[0] ? "#49A427" : "#666";
+        }
+
+        // --- VOTE LOGIC ---
+        async function handleVote(event, postId, element) {
+            event.preventDefault();
+            event.stopPropagation();
+            try {
+                const response = await fetch(`/vote-post/${postId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 'vote_type': 'up' }) 
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const counters = document.querySelectorAll(`.vote-count[data-post-id="${postId}"]`);
+                    counters.forEach(c => c.innerText = data.votes);
+
+                    const controls = element.querySelector('.vote-controls');
+                    if (data.status === 'up') {
+                        controls.classList.add('voted');
+                    } else {
+                        controls.classList.remove('voted');
+                    }
+                }
+            } catch (error) {
+                console.error("Voting failed:", error);
+            }
+        }
+
+        // --- FILTER LOGIC ---
+        filterBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isVisible = filterDropdown.style.display === 'flex';
+            filterDropdown.style.display = isVisible ? 'none' : 'flex';
+        });
+
+        window.addEventListener('click', () => { filterDropdown.style.display = 'none'; });
+
+        filterOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                filterOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                activeCategory = option.getAttribute('data-category');
+                applyFilters();
+            });
+        });
+
+        searchInput.addEventListener('input', applyFilters);
+
+        function applyFilters() {
+            const query = searchInput.value.toLowerCase();
+            postLinks.forEach(link => {
+                const category = link.getAttribute('data-category');
+                const title = link.getAttribute('data-title');
+                const content = link.getAttribute('data-content');
+                const matchesCategory = (activeCategory === 'all' || category === activeCategory);
+                const matchesSearch = (title.includes(query) || content.includes(query));
+                link.style.display = (matchesCategory && matchesSearch) ? 'block' : 'none';
+            });
+            checkSectionVisibility('trendingSection');
+            checkSectionVisibility('discussionSection');
+        }
+
+        function checkSectionVisibility(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (!section) return;
+            const totalCards = section.querySelectorAll('.post-link').length;
+            const hiddenCards = section.querySelectorAll('.post-link[style="display: none;"]').length;
+            section.style.display = (totalCards === hiddenCards && totalCards !== 0) ? 'none' : 'block';
+        }
+
+        function openNewPostModal() { document.getElementById('newPostModal').style.display = 'flex'; }
+        function closeNewPostModal() { document.getElementById('newPostModal').style.display = 'none'; }
+    </script>
+</body>
+</html>
+</file>
+
 <file path="webapp/models.py">
 from . import db
 from flask_login import UserMixin
@@ -11739,10 +11879,18 @@ class ForumPost(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     votes = db.Column(db.Integer, default=0)
     
-    # Helper to check vote status in templates
+    # ADD THESE TWO LINES:
+    image_filename = db.Column(db.String(150))
+    author = db.relationship('User', backref='posts')
+
     def get_user_vote(self, user_id):
         vote = PostVote.query.filter_by(user_id=user_id, post_id=self.id).first()
         return vote.vote_type if vote else None
+
+    # Added this earlier for the vote visual logic
+    def has_user_voted(self, user_id):
+        vote = PostVote.query.filter_by(user_id=user_id, post_id=self.id).first()
+        return vote is not None
 
 
 class Comment(db.Model):
@@ -11766,6 +11914,7 @@ from . import db
 from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
+import uuid
 
 views = Blueprint('views', __name__)
 
@@ -12333,19 +12482,48 @@ def create_post():
     content = request.form.get('content')
     category = request.form.get('category')
     
+    # 1. Get the image file from the request
+    image = request.files.get('image')
+    
     if not title or not content:
-        flash('All fields are required!', category='error')
-    else:
-        new_post = ForumPost(
-            title=title,
-            content=content,
-            category=category,
-            user_id=current_user.id
-        )
+        flash('Title and content are required!', category='error')
+        return redirect(url_for('views.forum'))
+
+    image_filename = None
+
+    # 2. Process the image if it exists
+    if image and image.filename != '':
+        # Define and ensure the upload path exists
+        upload_path = os.path.join(current_app.root_path, 'static', 'uploads')
+        if not os.path.exists(upload_path):
+            os.makedirs(upload_path)
+
+        # Generate a unique filename to avoid collisions
+        original_filename = secure_filename(image.filename)
+        extension = os.path.splitext(original_filename)[1]
+        image_filename = f"{uuid.uuid4().hex}{extension}"
+        
+        # Save the file to the disk
+        image.save(os.path.join(upload_path, image_filename))
+
+    # 3. Save to Database
+    new_post = ForumPost(
+        title=title, 
+        content=content, 
+        category=category, 
+        user_id=current_user.id,
+        image_filename=image_filename # This column must exist in your ForumPost model
+    )
+    
+    try:
         db.session.add(new_post)
         db.session.commit()
-        flash('New discussion created!', category='success')
-        
+        flash('Post created successfully!', category='success')
+    except Exception as e:
+        db.session.rollback()
+        flash('An error occurred while creating the post.', category='error')
+        print(f"Error: {e}")
+
     return redirect(url_for('views.forum'))
 
 @views.route('/vote-post/<int:post_id>', methods=['POST'])

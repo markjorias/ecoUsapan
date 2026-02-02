@@ -196,17 +196,15 @@
             <div class="status-list">
                 {% if requests %}
                     {% for req in requests %}
-                    <div class="status-card {% if current_user.is_admin %}clickable-card{% endif %}" 
-                         {% if current_user.is_admin %}
+                    <div class="status-card clickable-card" 
                          onclick="openRequestModal(
                             '{{ req.id }}', 
                             '{{ req.item_name }}', 
                             '{{ req.planting_site_desc|replace('\n', '\\n')|replace('\'', '\\\'') }}', 
-                            '{% if req.image_filename %}{{ url_for('static', filename='images/userupload/' + req.image_filename) }}{% endif %}',
+                            '{% if req.image_filename %}{{ url_for('static', filename='uploads/' + req.image_filename) }}{% endif %}',
                             '{{ req.status }}',
                             '{{ req.service_type }}'
-                         )"
-                         {% endif %}>
+                         )">
                         
                         <div class="card-header">
                             <div class="card-title">{{ req.item_name }}</div>
@@ -220,9 +218,7 @@
                                 <div class="card-subtitle" style="font-weight: 800;">Qty: {{ req.quantity_requested }} Units</div>
                                 <div class="card-meta">Submitted: {{ req.date_submitted.strftime('%b %d, %Y') }}</div>
                                 
-                                {% if current_user.is_admin %}
-                                <div class="click-hint">Tap to Review Details</div>
-                                {% endif %}
+                                <div class="click-hint">Tap to View Details</div>
                             </div>
                         </div>
                     </div>
@@ -260,7 +256,7 @@
                 
                 {% if current_user.role == 'Admin_LGU' %}
                 <div id="initAdminActionContainer" class="admin-action-row">
-                    <!-- Approval button shown by JS if pending -->
+                    <!-- Approval buttons injected by JS -->
                 </div>
                 {% endif %}
 
@@ -280,9 +276,6 @@
 
                 <span class="modal-section-label">Requester & Site Information</span>
                 <div class="modal-text" id="modalDetails">Loading details...</div>
-
-                <span class="modal-section-label" id="participantLabel" style="display: none;">Registered Participants</span>
-                <div class="modal-text" id="participantList" style="display: none; background: #E8F5E9; border: 1px solid #C8E6C9; max-height: 150px; overflow-y: auto;"></div>
 
                 <span class="modal-section-label">Site Photo</span>
                 <div class="site-photo-container">
@@ -306,7 +299,7 @@
                 <p style="font-size: 13px; color: #666; margin-bottom: 24px;" id="confirmMessage">Are you sure you want to perform this action?</p>
                 
                 <div id="confirmationFormContainer">
-                    <!-- Dynamic form based on type (GET for initiatives, POST for requests) -->
+                    <!-- Dynamic form based on type -->
                 </div>
             </div>
         </div>
@@ -325,7 +318,6 @@
             activeId = id;
             activeType = 'initiative';
             
-            // Set text content
             document.getElementById('initModalTitle').innerText = title;
             document.getElementById('initModalOrg').innerText = org;
             document.getElementById('initModalDescription').innerText = desc;
@@ -333,11 +325,9 @@
                 `Location: ${city}, ${province}\nContact: ${contact} (${role})\nEmail: ${email}`;
             document.getElementById('initModalStatusDisplay').innerText = status + " INITIATIVE";
             
-            // Set photo
             const photoImg = document.getElementById('initModalPhoto');
             photoImg.src = (photoUrl && !photoUrl.includes('default_event.png')) ? photoUrl : "https://placehold.co/400x200?text=No+Photo+Uploaded";
 
-            // --- REGISTRANTS LOGIC ---
             const regLabel = document.getElementById('registrantsLabel');
             const regList = document.getElementById('registrantsList');
 
@@ -355,7 +345,7 @@
                             regList.innerHTML = data.map(p => `• ${p.name} (${p.email})`).join('<br>');
                         }
                     })
-                    .catch(err => {
+                    .catch(() => {
                         regList.innerHTML = "Error loading participant list.";
                     });
             } else {
@@ -363,7 +353,6 @@
                 regList.style.display = 'none';
             }
 
-            // Admin Action buttons logic (unchanged)
             const container = document.getElementById('initAdminActionContainer');
             if (container) {
                 container.innerHTML = '';
@@ -383,11 +372,12 @@
             document.getElementById('initiativeModal').style.display = 'none';
         }
 
-        function askInitiativeConfirmation() {
+        function askInitiativeConfirmation(targetStatus) {
             const container = document.getElementById('confirmationFormContainer');
-            document.getElementById('confirmTitle').innerText = "Confirm Approval";
-            document.getElementById('confirmMessage').innerText = "Are you sure you want to approve and publish this initiative to the community feed?";
+            document.getElementById('confirmTitle').innerText = `Confirm ${targetStatus}`;
+            document.getElementById('confirmMessage').innerText = `Are you sure you want to mark this initiative as ${targetStatus}?`;
             
+            // Note: Since Initiative Approval uses a GET route in your views
             container.innerHTML = `
                 <div style="display: flex; gap: 10px;">
                     <button type="button" class="action-btn-full btn-cancel" style="padding: 10px;" onclick="closeConfirmModal()">Cancel</button>
@@ -444,7 +434,7 @@
         function askRequestConfirmation(targetStatus) {
             const container = document.getElementById('confirmationFormContainer');
             document.getElementById('confirmTitle').innerText = `Confirm ${targetStatus}`;
-            document.getElementById('confirmMessage').innerText = `Are you sure you want to change this request status to ${targetStatus}? This will finalize the record and update stock levels.`;
+            document.getElementById('confirmMessage').innerText = `Change status to ${targetStatus}? This will finalize the record and update stock levels.`;
 
             container.innerHTML = `
                 <form method="POST" action="/update-request-status/${activeId}">
