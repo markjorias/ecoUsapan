@@ -128,7 +128,7 @@
                             </td>
                             <td>
                                 <div style="display: flex; gap: 8px;">
-                                    {% if current_user.role == 'Superadmin' %}
+                                    {% if current_user.role in ['Superadmin', 'Admin_LGU'] %}
                                     <form action="{{ url_for('views.delete_initiative', id=item.id) }}" method="POST" onsubmit="return confirm('Are you sure?');" style="display:inline;">
                                         <button type="submit" class="action-btn btn-danger">Delete</button>
                                     </form>
@@ -143,7 +143,7 @@
                                             data-status="{{ item.status }}"
                                             data-desc="{{ item.description }}"
                                             data-approve-url="{{ url_for('views.approve_initiative', id=item.id) }}"
-                                            data-can-approve="{% if current_user.role in ['Admin_LGU', 'Superadmin'] and item.status == 'Pending' %}true{% else %}false{% endif %}"
+                                            data-can-approve="{% if (current_user.role == 'Superadmin' or current_user.role == 'Admin_LGU') and item.status == 'Pending' %}true{% else %}false{% endif %}"
                                             data-image="{% if item.image_filename %}{{ url_for('static', filename='uploads/' + item.image_filename) }}{% endif %}">
                                         View
                                     </button>

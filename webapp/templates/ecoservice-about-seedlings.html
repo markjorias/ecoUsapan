@@ -3,18 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>About EcoService Tree Seedlings</title>
+    <title>About EcoService Seedlings</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/ecoservice-about.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/about-ecoservice.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/page-transitions.css') }}">
     <script src="{{ url_for('static', filename='js/page-transitions.js') }}" defer></script>
+    <style>
+        .disabled-action {
+            background-color: #e0e0e0 !important;
+            color: #999 !important;
+            pointer-events: none !important;
+            border: 1px dashed #ccc !important;
+            opacity: 0.7;
+        }
+        .lock-note {
+            font-size: 10px;
+            color: #ff5252;
+            font-weight: 700;
+            margin-top: 4px;
+            text-align: center;
+            display: block;
+        }
+    </style>
 </head>
 <body>
     <div class="app-container">
-        <div class="scroll-content">
+        <div class="scroll-content" style="{% if not current_user.is_admin %}padding-bottom: 100px;{% endif %}">
             
             <div class="about-header">
-                <a href="{{ url_for('views.home') }}" class="close-btn">
+                <a href="{{ url_for('views.ecoservices') }}" class="close-btn">
                     <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
                 </a>
                 <h1>About EcoService</h1>
@@ -32,27 +49,19 @@
                 <div class="da-details">
                     <div class="da-detail-row">
                         <img src="{{ url_for('static', filename='icons/map-pin.svg') }}" class="da-icon" alt="Location">
-                        <div class="da-text">
-                            <!-- Placeholder address -->
-                            <span>Panganiban Dr, Naga, 4400 Camarines Sur</span>
-                        </div>
+                        <div class="da-text"><span>Panganiban Dr, Naga, 4400 Camarines Sur</span></div>
                     </div>
                     <div class="da-detail-row">
                         <img src="{{ url_for('static', filename='icons/message-circle.svg') }}" class="da-icon" alt="Email">
-                        <div class="da-text">
-                            <a href="mailto:denr_r5@denr.gov.ph">denr_r5@denr.gov.ph</a>
-                        </div>
+                        <div class="da-text"><a href="mailto:denr_r5@denr.gov.ph">denr_r5@denr.gov.ph</a></div>
                     </div>
                     <div class="da-detail-row">
                         <img src="{{ url_for('static', filename='icons/plus.svg') }}" class="da-icon" alt="Phone">
-                        <div class="da-text">
-                            <a href="tel:0544721111">(054) 472 1111</a>
-                        </div>
+                        <div class="da-text"><a href="tel:0544721111">(054) 472 1111</a></div>
                     </div>
                 </div>
              </div>
 
-             <!-- About the Service -->
              <div class="content-section">
                 <h2 class="section-title">About the Service</h2>
                 <div class="section-text">
@@ -62,12 +71,10 @@
                 </div>
              </div>
 
-             <!-- Who may request -->
              <div class="content-section">
                 <h2 class="section-title">Who may request</h2>
                 <div class="section-text">
-                    <p>This service is open to individuals and community groups who wish to contribute to environmental protection and greening initiatives.</p>
-                    <p>Eligible requestors include:</p>
+                    <p>This service is open to individuals and community groups who wish to contribute to environmental protection and greening initiatives. Eligible requestors include:</p>
                     <ul>
                         <li>Individual environmentalists and volunteers engaged in tree growing or habitat restoration</li>
                         <li>Community members organizing small-scale greening or reforestation activities</li>
@@ -79,28 +86,40 @@
                 </div>
              </div>
 
-             <!-- Available Services -->
+             <!-- Available Services Section -->
              <div class="content-section">
                 <h2 class="section-title">Available Services</h2>
                 
-                <!-- Seedlings Inventory Card -->
-                <a href="{{ url_for('views.tree_seedlings_inventory') }}" class="service-card">
-                    <div class="service-logo-container">
-                        <img src="{{ url_for('static', filename='icons/inventory.svg') }}" alt="Inventory Icon" class="service-logo">
+                {% if current_user.role == 'Admin_DA' %}
+                    <div class="service-card disabled-action">
+                        <div class="service-logo-container">
+                            <img src="{{ url_for('static', filename='icons/inventory.svg') }}" alt="Inventory" class="service-logo">
+                        </div>
+                        <div class="service-info">
+                            <div class="service-title">Tree Seedlings Inventory</div>
+                            <div class="service-dept">Department of Environment and Natural Resources</div>
+                        </div>
                     </div>
-                    <div class="service-info">
-                        <div class="service-title">Tree Seedlings Inventory</div>
-                        <div class="service-dept">Department of Environment and Natural Resources</div>
-                    </div>
-                </a>
+                    <span class="lock-note">Only DENR Admins can manage seedlings.</span>
+                {% else %}
+                    <a href="{{ url_for('views.tree_seedlings_inventory') }}" class="service-card">
+                        <div class="service-logo-container">
+                            <img src="{{ url_for('static', filename='icons/inventory.svg') }}" alt="Inventory Icon" class="service-logo">
+                        </div>
+                        <div class="service-info">
+                            <div class="service-title">Tree Seedlings Inventory</div>
+                            <div class="service-dept">Department of Environment and Natural Resources</div>
+                        </div>
+                    </a>
+                {% endif %}
              </div>
 
-             <!-- Request Button -->
+             <!-- Bottom Request Button - REMOVED FOR ALL ADMINS -->
+             {% if not current_user.is_admin %}
              <div class="bottom-action-container">
-                <a href="{{ url_for('views.request_seedlings_form') }}" class="request-btn">
-                    Request
-                </a>
+                <a href="{{ url_for('views.request_seedlings_form') }}" class="request-btn">Request</a>
              </div>
+             {% endif %}
         </div>
     </div>
 </body>

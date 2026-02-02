@@ -3,38 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Amount EcoService Seeds</title>
+    <title>About EcoService Seeds</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/ecoservice-about.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/about-ecoservice.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/page-transitions.css') }}">
     <script src="{{ url_for('static', filename='js/page-transitions.js') }}" defer></script>
+    <style>
+        /* CSS for disabled/grayed-out state */
+        .disabled-action {
+            background-color: #e0e0e0 !important;
+            color: #999 !important;
+            pointer-events: none !important;
+            border: 1px dashed #ccc !important;
+            opacity: 0.7;
+        }
+        .lock-note {
+            font-size: 10px;
+            color: #ff5252;
+            font-weight: 700;
+            margin-top: 4px;
+            text-align: center;
+            display: block;
+        }
+    </style>
 </head>
 <body>
     <div class="app-container">
-        <div class="scroll-content">
-            
+        <!-- Add padding at the bottom only if the request button is visible -->
+        <div class="scroll-content" style="{% if not current_user.is_admin %}padding-bottom: 100px;{% endif %}">
+
             <div class="about-header">
-                <a href="{{ url_for('views.home') }}" class="close-btn">
+                <a href="{{ url_for('views.ecoservices') }}" class="close-btn">
                     <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Close">
                 </a>
-                <h1>Senior Citizen ID</h1> <!-- Maintaining placeholder or context? User said "copy the header style... then follow content". The Header text usually reflects the current page. User didn't specify Title. "Senior Citizen ID" is in the image. I should probably use "About EcoService" or "Seeds Distribution" or similar based on content. I'll use "About EcoService" for now. Wait, user said "create the about-ecoservice-seeds.html copy the header style...". I'll use "About EcoService". Actually, looking at image, header says "Senior Citizen ID". I will use "About EcoService" as it fits the filename. -->
+                <h1>About EcoService</h1>
             </div>
 
-            <!-- Header override: The image shows "Senior Citizen ID" in the nav bar. But the content is "About EcoService Seeds". I will name it "About EcoService". -->
-             
-             <!-- Wait, correction. The prompt says: "create the @[app/templates/about-ecoservice-seeds.html] copy the header style in @[app/templates/request_seeds.html] , then follow the content in the attached image." 
-             The attached image is likely a reference from another app (Senior Citizen ID). 
-             So I should match the *content* structure of the image but with the *text* provided in the prompt.
-             The prompt text starts with "About the Service".
-             I will use "About EcoService" as the header title.
-             -->
-
-             <!-- DA Card (Mimicking the visual style of the Senior Citizen ID card in image) -->
-             <div class="da-card">
+            <!-- DA Card with original details -->
+            <div class="da-card">
                 <div class="da-header">
                     <div class="da-logo-container">
-                        <!-- Using a placeholder or generic logo -->
-                        <img src="{{ url_for('static', filename='images/Department-of-Agriculture.svg') }}" alt="DA Logo" class="da-logo">
+                        <img src="{{ url_for('static', filename='images/Department-of-Agriculture.png') }}" alt="DA Logo" class="da-logo">
                     </div>
                     <div class="da-title">Department of Agriculture<br>Naga City Office</div>
                 </div>
@@ -47,22 +56,22 @@
                         </div>
                     </div>
                     <div class="da-detail-row">
-                        <img src="{{ url_for('static', filename='icons/message-circle.svg') }}" class="da-icon" alt="Email"> <!-- Using message-circle as placeholder for email icon if mail not avail -->
+                        <img src="{{ url_for('static', filename='icons/message-circle.svg') }}" class="da-icon" alt="Email"> 
                         <div class="da-text">
                             <a href="mailto:da@naga.gov.ph">da@naga.gov.ph</a>
                         </div>
                     </div>
                     <div class="da-detail-row">
-                        <img src="{{ url_for('static', filename='icons/plus.svg') }}" class="da-icon" alt="Phone"> <!-- Placeholder icon -->
+                        <img src="{{ url_for('static', filename='icons/plus.svg') }}" class="da-icon" alt="Phone"> 
                         <div class="da-text">
                             <a href="tel:0544732315">(054) 473-2315</a>
                         </div>
                     </div>
                 </div>
-             </div>
+            </div>
 
-             <!-- About the Service -->
-             <div class="content-section">
+            <!-- About the Service Section -->
+            <div class="content-section">
                 <h2 class="section-title">About the Service</h2>
                 <div class="section-text">
                     <p>This service enables community growers and small-scale farmers to browse available seeds and seedlings and submit requests online for food production and sustainable gardening.</p>
@@ -70,14 +79,13 @@
                     <p>Once approved, seeds or seedlings must be claimed in person at a designated DA office, partner nursery, seed center, or barangay distribution site, as indicated in the approval notice.</p>
                     <p>This approach supports proper distribution, basic orientation on planting practices, and strengthens community-led food security efforts.</p>
                 </div>
-             </div>
+            </div>
 
-             <!-- Who may request -->
-             <div class="content-section">
+            <!-- Eligibility Section -->
+            <div class="content-section">
                 <h2 class="section-title">Who may request</h2>
                 <div class="section-text">
-                    <p>This service is intended for community growers and small-scale agricultural contributors who aim to support local food production and sustainability.</p>
-                    <p>Eligible requestors include:</p>
+                    <p>This service is intended for community growers and small-scale agricultural contributors who aim to support local food production and sustainability. Eligible requestors include:</p>
                     <ul>
                         <li>Individual small-scale farmers and backyard growers</li>
                         <li>Community gardeners and urban farming advocates</li>
@@ -88,36 +96,46 @@
                     </ul>
                     <p>Requests must support food security, sustainable agriculture, or community livelihood, and may not be used for large-scale commercial resale.</p>
                 </div>
-             </div>
+            </div>
 
-             <!-- Available Services -->
-             <div class="content-section">
+            <!-- Available Services Section -->
+            <div class="content-section">
                 <h2 class="section-title">Available Services</h2>
                 
-                <!-- Seed Inventory Card -->
-                <a href="{{ url_for('views.seed_inventory') }}" class="service-card">
-                    <div class="service-logo-container">
-                        <img src="{{ url_for('static', filename='icons/inventory.svg') }}" alt="Inventory Icon" class="service-logo">
+                {% if current_user.role == 'Admin_DENR' %}
+                    <!-- Grayed out version for DENR Admin -->
+                    <div class="service-card disabled-action">
+                        <div class="service-logo-container">
+                            <img src="{{ url_for('static', filename='icons/inventory.svg') }}" alt="Inventory" class="service-logo">
+                        </div>
+                        <div class="service-info">
+                            <div class="service-title">Seeds Inventory</div>
+                            <div class="service-dept">Department of Agriculture</div>
+                        </div>
                     </div>
-                    <div class="service-info">
-                        <div class="service-title">Seeds Inventory</div>
-                        <div class="service-dept">Department of Agriculture</div>
-                    </div>
-                </a>
-             </div>
+                    <span class="lock-note">Only DA Admins can manage seeds.</span>
+                {% else %}
+                    <!-- Active version for Users and DA/LGU Admin -->
+                    <a href="{{ url_for('views.seed_inventory') }}" class="service-card">
+                        <div class="service-logo-container">
+                            <img src="{{ url_for('static', filename='icons/inventory.svg') }}" alt="Inventory Icon" class="service-logo">
+                        </div>
+                        <div class="service-info">
+                            <div class="service-title">Seeds Inventory</div>
+                            <div class="service-dept">Department of Agriculture</div>
+                        </div>
+                    </a>
+                {% endif %}
+            </div>
 
-             <!-- Request Button -->
-             <div class="bottom-action-container">
-                <a href="{{ url_for('views.request_seeds_form') }}" class="request-btn">
-                    Request
-                </a>
-             </div>
-        </div>
-    </div>
-    
-    <script>
-        // Update header title if needed via JS or keep static
-        document.querySelector('.about-header h1').textContent = "About EcoService";
-    </script>
+            <!-- Bottom Request Button - Shown only to standard users -->
+            {% if not current_user.is_admin %}
+            <div class="bottom-action-container">
+                <a href="{{ url_for('views.request_seeds_form') }}" class="request-btn">Request</a>
+            </div>
+            {% endif %}
+
+        </div> <!-- End scroll-content -->
+    </div> <!-- End app-container -->
 </body>
 </html>

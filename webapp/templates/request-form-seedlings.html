@@ -5,14 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Request Seedlings</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/request-form-seeds.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/request-seeds-form.css') }}">
+    <style>
+        .error-message {
+            color: #ff5252;
+            font-size: 11px;
+            font-weight: 700;
+            margin-top: 4px;
+            display: none;
+        }
+        .form-group.invalid .form-input {
+            border-color: #ff5252;
+        }
+        .form-group.invalid .error-message {
+            display: block;
+        }
+    </style>
 </head>
 <body>
     <div class="app-container">
         
-        <form id="seedlingRequestForm" class="scroll-content" onsubmit="event.preventDefault();">
+        <form id="seedlingRequestForm" method="POST" action="{{ url_for('views.request_seedlings_form') }}" class="scroll-content" enctype="multipart/form-data">
             
-            <!-- Header (Inside scroll content) -->
+            <!-- Header -->
             <div class="form-header">
                 <a href="{{ url_for('views.about_ecoservice_seedlings') }}" class="close-btn">
                     <img src="{{ url_for('static', filename='icons/x.svg') }}" alt="Back">
@@ -20,111 +35,40 @@
                 <h1 id="header-title">Request Form</h1>
             </div>
 
-            <!-- Step 1: Seeds / Seedlings Requested -->
+            <!-- Step 1: Select Seedlings -->
             <div class="form-step active" id="step1">
                 <div class="form-container">
                     <h2 class="section-title">Step 1: Select Seedlings</h2>
-                    
-                    <p style="font-size: 13px; color: #666; margin-bottom: 16px;">Select the seedlings you need and specify the quantity.</p>
+                    <p style="font-size: 13px; color: #666; margin-bottom: 16px;">Select the tree seedlings you need and specify the quantity.</p>
 
                     <div class="crop-list">
-                        
-                        <!-- Narra -->
-                        <div class="crop-item" id="crop-narra">
+                        {% for seedling in seedlings %}
+                        <div class="crop-item" id="item-{{ seedling.id }}">
                             <label class="crop-header">
                                 <div class="crop-title">
-                                    <input type="checkbox" name="crops" value="Narra" onchange="toggleCropDetails(this, 'narra-details', 'crop-narra')">
-                                    Narra
+                                    <input type="checkbox" name="seedlings" value="{{ seedling.id }}" onchange="toggleItemDetails(this, 'details-{{ seedling.id }}', 'item-{{ seedling.id }}')">
+                                    {{ seedling.name }}
                                 </div>
                             </label>
-                            <div class="crop-details" id="narra-details">
+                            <div class="crop-details" id="details-{{ seedling.id }}">
                                 <div class="form-group" style="margin-bottom: 12px;">
-                                    <label class="form-label" style="font-size: 12px;">Quantity (Pots)</label>
-                                    <input type="number" class="form-input" name="qty_narra" placeholder="0" min="1" style="height: 40px;">
+                                    <label class="form-label" style="font-size: 12px;">Quantity (In stock: {{ seedling.stock_quantity }} pots)</label>
+                                    <input type="number" class="form-input" name="qty_{{ seedling.id }}" placeholder="0" min="1" max="{{ seedling.stock_quantity }}" style="height: 40px;">
+                                    <span class="error-message">Please enter a valid quantity.</span>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label class="form-label" style="font-size: 12px;">Unit</label>
+                                    <div class="flex-row">
+                                        <label style="font-size: 13px; display: flex; align-items: center; gap: 6px;">
+                                            <input type="radio" name="unit_{{ seedling.id }}" value="pots" checked> Pot
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Acacia -->
-                        <div class="crop-item" id="crop-acacia">
-                            <label class="crop-header">
-                                <div class="crop-title">
-                                    <input type="checkbox" name="crops" value="Acacia" onchange="toggleCropDetails(this, 'acacia-details', 'crop-acacia')">
-                                    Acacia
-                                </div>
-                            </label>
-                            <div class="crop-details" id="acacia-details">
-                                <div class="form-group" style="margin-bottom: 12px;">
-                                    <label class="form-label" style="font-size: 12px;">Quantity (Pots)</label>
-                                    <input type="number" class="form-input" name="qty_acacia" placeholder="0" min="1" style="height: 40px;">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Molave -->
-                        <div class="crop-item" id="crop-molave">
-                            <label class="crop-header">
-                                <div class="crop-title">
-                                    <input type="checkbox" name="crops" value="Molave" onchange="toggleCropDetails(this, 'molave-details', 'crop-molave')">
-                                    Molave
-                                </div>
-                            </label>
-                            <div class="crop-details" id="molave-details">
-                                <div class="form-group" style="margin-bottom: 12px;">
-                                    <label class="form-label" style="font-size: 12px;">Quantity (Pots)</label>
-                                    <input type="number" class="form-input" name="qty_molave" placeholder="0" min="1" style="height: 40px;">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Kamagong -->
-                        <div class="crop-item" id="crop-kamagong">
-                            <label class="crop-header">
-                                <div class="crop-title">
-                                    <input type="checkbox" name="crops" value="Kamagong" onchange="toggleCropDetails(this, 'kamagong-details', 'crop-kamagong')">
-                                    Kamagong
-                                </div>
-                            </label>
-                            <div class="crop-details" id="kamagong-details">
-                                <div class="form-group" style="margin-bottom: 12px;">
-                                    <label class="form-label" style="font-size: 12px;">Quantity (Pots)</label>
-                                    <input type="number" class="form-input" name="qty_kamagong" placeholder="0" min="1" style="height: 40px;">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Ilang-ilang -->
-                        <div class="crop-item" id="crop-ilangilang">
-                            <label class="crop-header">
-                                <div class="crop-title">
-                                    <input type="checkbox" name="crops" value="Ilang-ilang" onchange="toggleCropDetails(this, 'ilangilang-details', 'crop-ilangilang')">
-                                    Ilang-ilang
-                                </div>
-                            </label>
-                            <div class="crop-details" id="ilangilang-details">
-                                <div class="form-group" style="margin-bottom: 12px;">
-                                    <label class="form-label" style="font-size: 12px;">Quantity (Pots)</label>
-                                    <input type="number" class="form-input" name="qty_ilangilang" placeholder="0" min="1" style="height: 40px;">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Guyabano -->
-                        <div class="crop-item" id="crop-guyabano">
-                            <label class="crop-header">
-                                <div class="crop-title">
-                                    <input type="checkbox" name="crops" value="Guyabano" onchange="toggleCropDetails(this, 'guyabano-details', 'crop-guyabano')">
-                                    Guyabano
-                                </div>
-                            </label>
-                            <div class="crop-details" id="guyabano-details">
-                                <div class="form-group" style="margin-bottom: 12px;">
-                                    <label class="form-label" style="font-size: 12px;">Quantity (Pots)</label>
-                                    <input type="number" class="form-input" name="qty_guyabano" placeholder="0" min="1" style="height: 40px;">
-                                </div>
-                            </div>
-                        </div>
-
+                        {% else %}
+                        <p style="text-align: center; color: #999; padding: 20px;">No seedlings currently available in the nursery stock.</p>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
@@ -137,43 +81,45 @@
                     <div class="form-group">
                         <label class="form-label">Full Name of Requester</label>
                         <div class="flex-row gap-12">
-                            <input type="text" class="form-input" placeholder="First Name">
-                            <input type="text" class="form-input" placeholder="Last Name">
+                            <input type="text" name="first_name" class="form-input" placeholder="First Name">
+                            <input type="text" name="last_name" class="form-input" placeholder="Last Name">
                         </div>
+                        <span class="error-message">Both first and last names are required.</span>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Group Name (if applicable)</label>
-                        <input type="text" class="form-input" placeholder="Organization or Group Name">
-                        <p style="font-size: 11px; color: #888; margin-top: 4px;">Leave blank if applying as an individual.</p>
+                        <label class="form-label">Group Name (optional)</label>
+                        <input type="text" name="group_name" class="form-input" placeholder="Organization or Group Name">
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Requester Type</label>
                         <div class="chips-container">
                             <label>
-                                <input type="radio" name="requesterType" value="Individual environmentalist" class="chip-option">
-                                <span class="chip">Individual environmentalist</span>
+                                <input type="radio" name="requesterType" value="Individual grower" class="chip-option">
+                                <span class="chip">Individual grower</span>
                             </label>
                             <label>
-                                <input type="radio" name="requesterType" value="Community group / volunteers" class="chip-option">
-                                <span class="chip">Community group / volunteers</span>
+                                <input type="radio" name="requesterType" value="Volunteer group member" class="chip-option">
+                                <span class="chip">Volunteer group</span>
                             </label>
                             <label>
-                                <input type="radio" name="requesterType" value="Youth or school eco-group" class="chip-option">
-                                <span class="chip">Youth or school eco-group</span>
+                                <input type="radio" name="requesterType" value="Community member" class="chip-option">
+                                <span class="chip">Community member</span>
                             </label>
                             <label>
-                                <input type="radio" name="requesterType" value="Indigenous community member" class="chip-option">
-                                <span class="chip">Indigenous community member</span>
+                                <input type="radio" name="requesterType" value="Student or youth group" class="chip-option">
+                                <span class="chip">Student/Youth group</span>
                             </label>
                         </div>
+                        <span class="error-message">Please select a requester type.</span>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Contact Information</label>
-                        <input type="tel" class="form-input" placeholder="Mobile Number" style="margin-bottom: 12px;">
-                        <input type="email" class="form-input" placeholder="Email Address (optional)">
+                        <input type="tel" name="phone" class="form-input" placeholder="Mobile Number" style="margin-bottom: 12px;">
+                        <input type="email" name="email" class="form-input" placeholder="Email Address (optional)">
+                        <span class="error-message">A valid mobile number is required.</span>
                     </div>
                 </div>
             </div>
@@ -183,139 +129,108 @@
                  <div class="form-container">
                     <h2 class="section-title">Step 3: Details & Plan</h2>
 
-                    <!-- Location -->
                     <div class="form-group">
                         <label class="form-label">Location of Planting Site</label>
-                        <input type="text" class="form-input" placeholder="Province" style="margin-bottom: 8px;">
-                        <input type="text" class="form-input" placeholder="Municipality / City" style="margin-bottom: 8px;">
-                        <input type="text" class="form-input" placeholder="Barangay">
+                        <input type="text" name="province" class="form-input" placeholder="Province" style="margin-bottom: 8px;">
+                        <input type="text" name="city" class="form-input" placeholder="Municipality / City" style="margin-bottom: 8px;">
+                        <input type="text" name="barangay" class="form-input" placeholder="Barangay">
+                        <span class="error-message">Please provide complete location details.</span>
                     </div>
 
-                    <!-- Environmental Activity -->
                     <div class="form-group">
-                        <label class="form-label">Type of Environmental Activity</label>
+                        <label class="form-label">Type of Planting Area</label>
                          <div class="chips-container">
                             <label>
-                                <input type="radio" name="activityType" value="Tree planting / reforestation" class="chip-option">
-                                <span class="chip">Tree planting / reforestation</span>
+                                <input type="radio" name="areaType" value="Backyard" class="chip-option">
+                                <span class="chip">Backyard</span>
                             </label>
                             <label>
-                                <input type="radio" name="activityType" value="Mangrove planting" class="chip-option">
-                                <span class="chip">Mangrove planting</span>
+                                <input type="radio" name="areaType" value="Community Space" class="chip-option">
+                                <span class="chip">Community Space</span>
                             </label>
                             <label>
-                                <input type="radio" name="activityType" value="Community greening / roadside planting" class="chip-option">
-                                <span class="chip">Community greening / roadside planting</span>
+                                <input type="radio" name="areaType" value="School grounds" class="chip-option">
+                                <span class="chip">School grounds</span>
                             </label>
                             <label>
-                                <input type="radio" name="activityType" value="Watershed or riverbank restoration" class="chip-option">
-                                <span class="chip">Watershed or riverbank restoration</span>
-                            </label>
-                            <label>
-                                <input type="radio" name="activityType" value="Home or neighborhood tree growing" class="chip-option">
-                                <span class="chip">Home or neighborhood tree growing</span>
+                                <input type="radio" name="areaType" value="Reforestation plot" class="chip-option">
+                                <span class="chip">Reforestation plot</span>
                             </label>
                         </div>
-                    </div>
-
-                    <!-- Intended Planting Area -->
-                    <div class="form-group">
-                        <label class="form-label">Intended Planting Area</label>
-                        <div class="chips-container">
-                            <label>
-                                <input type="radio" name="plantingArea" value="Backyard / home area" class="chip-option">
-                                <span class="chip">Backyard / home area</span>
-                            </label>
-                            <label>
-                                <input type="radio" name="plantingArea" value="Community space / open land" class="chip-option">
-                                <span class="chip">Community space / open land</span>
-                            </label>
-                            <label>
-                                <input type="radio" name="plantingArea" value="Coastal area" class="chip-option">
-                                <span class="chip">Coastal area</span>
-                            </label>
-                            <label>
-                                <input type="radio" name="plantingArea" value="Roadside / public space" class="chip-option">
-                                <span class="chip">Roadside / public space</span>
-                            </label>
-                        </div>
+                        <span class="error-message">Please select the type of planting area.</span>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Planned Planting Date</label>
-                        <input type="date" class="form-input">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Short Description of Your Activity</label>
-                        <p style="font-size: 11px; color: #888; margin-bottom: 8px; margin-top: 0;">Briefly explain why and how you will plant the seedlings. No formal proposal needed.</p>
-                        <textarea class="form-textarea" placeholder="Enter description..."></textarea>
-                    </div>
-
-                    <!-- Care Commitment (Moved here) -->
-                    <div class="form-group">
-                        <label class="form-label">Care & Maintenance Commitment*</label>
+                        <label class="form-label">Intended Purpose*</label>
                         <div class="checkbox-group">
-                           <label class="checkbox-label">
-                               <input type="checkbox" required>
-                               I commit to planting and taking care of the seedlings
-                           </label>
-                           <label class="checkbox-label">
-                               <input type="checkbox" required>
-                               I understand that seedlings should not be sold
-                           </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="intendedUse" value="Reforestation">
+                                Reforestation
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="intendedUse" value="Community greening">
+                                Community greening
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="intendedUse" value="Watershed protection">
+                                Watershed protection
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="intendedUse" value="Urban gardening">
+                                Urban gardening
+                            </label>
                         </div>
-                   </div>
+                        <span class="error-message">Select at least one intended purpose.</span>
+                    </div>
 
+                    <div class="form-group">
+                        <label class="form-label" style="margin-bottom: 12px; display: block;">Brief Description of Your Greening Plan*</label>
+                        <textarea name="plan_desc" class="form-textarea" placeholder="Describe how these seedlings will contribute to your local environment..." style="height: 100px;"></textarea>
+                        <span class="error-message">Please provide a description of your plan.</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Step 4: Uploads and Confirmation -->
+            <!-- Step 4: Uploads & Confirm -->
             <div class="form-step" id="step4">
                  <div class="form-container">
                     <h2 class="section-title">Step 4: Uploads & Confirm</h2>
                     
-                    <div class="form-group" style="margin-bottom: 24px;">
-                        <label class="form-label" style="font-size: 16px; margin-bottom: 8px;">Required Uploads</label>
-                        <p style="font-size: 13px; color: #666; margin-bottom: 4px;">Please upload at least one clear photo to help verify and support your request.</p>
-                        
-                        <div style="font-size: 12px; color: #444; margin-bottom: 12px; line-height: 1.5;">
-                            <strong>Required files:</strong><br>
-                            • Photo of the planting site (land, backyard, roadside, coastal area, etc.)<br>
-                            • Photo of requester or group at the site (optional if uncomfortable, but recommended)
-                        </div>
+                    <p style="font-size: 13px; color: #666; margin-bottom: 16px;">Please upload a photo of the planting area.</p>
 
-                        <div class="upload-container" onclick="document.getElementById('fileUpload').click()">
+                    <div class="form-group" style="margin-bottom: 24px;">
+                        <div class="upload-container" id="uploadBox" onclick="document.getElementById('fileUpload').click()">
                             <img src="{{ url_for('static', filename='icons/image.svg') }}" class="upload-icon" alt="Upload">
-                            <div class="upload-text">Tap to upload JPG / PNG</div>
-                            <input type="file" id="fileUpload" hidden accept="image/png, image/jpeg">
+                            <div class="upload-text" id="uploadText">Tap to upload JPG / PNG</div>
+                            <input type="file" id="fileUpload" name="site_photo" hidden accept="image/png, image/jpeg" onchange="updateUploadText(this)">
                         </div>
-                         <p style="font-size: 11px; color: #888; margin-top: 8px;">Note: These photos will only be used to confirm suitability of the request and will not be shared publicly.</p>
-                    </div>
-
-                    <div class="disclaimer-text" style="background: #f9f9f9; padding: 16px; border-radius: 8px; font-size: 12px; color: #555; line-height: 1.5; margin-bottom: 24px;">
-                        <p>All requests submitted through this app are subject to a due process and verification.</p>
-                        <p>Submission of this digital form does not guarantee automatic approval.</p>
-                        <p>To ensure fair and proper distribution, additional endorsement or proof (such as a barangay note, community confirmation, or site verification) may be required before a request is approved.</p>
-                        <p>You will be notified through the app if additional documents or validation steps are needed.</p>
-                        <p style="margin-bottom: 0;">Thank you for helping us keep this program transparent, accountable, and community-focused.</p>
+                        <span class="error-message">A photo of the planting site is required.</span>
                     </div>
 
                     <div class="form-group" style="margin-bottom: 24px;">
+                         <label class="form-label">Commitment Statement*</label>
                          <div class="checkbox-group">
-                             <label class="checkbox-label" style="align-items: flex-start;">
-                                <input type="checkbox" id="verifyCheck" style="margin-top: 2px;">
-                                <span style="line-height: 1.4;">I understand that my request will go through verification and may require endorsement or additional proof.</span>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="commitment-check">
+                                I will ensure the survival of the seedlings
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="commitment-check">
+                                I understand seedlings are not for resale
+                            </label>
+                             <label class="checkbox-label">
+                                <input type="checkbox" id="verifyCheck" class="commitment-check">
+                                I verify that this request is accurate.
                             </label>
                          </div>
+                         <span class="error-message">All commitment boxes must be checked.</span>
                     </div>
-
                 </div>
             </div>
 
-            <!-- Bottom Action moved inside scroll content (at the end of form) -->
+            <!-- Bottom Action -->
             <div class="bottom-action-container">
-                <button type="button" class="action-btn" id="nextBtn" onclick="nextStep()">NEXT</button>
+                <button type="button" class="action-btn" id="nextBtn" style="background: #004D40;" onclick="nextStep()">NEXT</button>
             </div>
 
         </form>
@@ -326,50 +241,119 @@
         const totalSteps = 4;
 
         function updateView() {
-            // Hide all steps
             document.querySelectorAll('.form-step').forEach(step => {
                 step.classList.remove('active');
             });
-            
-            // Show current step
             document.getElementById('step' + currentStep).classList.add('active');
 
-            // Update Header Icon and Link
             const closeBtn = document.querySelector('.close-btn');
             const icon = closeBtn.querySelector('img');
 
             if (currentStep === 1) {
-                // Initial State: X icon, Link to About page
                 icon.src = "{{ url_for('static', filename='icons/x.svg') }}";
                 closeBtn.href = "{{ url_for('views.about_ecoservice_seedlings') }}";
-                closeBtn.onclick = null; // Default link behavior
+                closeBtn.onclick = null;
             } else {
-                // Secondary State: Chevron Left, Back logic
                 icon.src = "{{ url_for('static', filename='icons/chevron-left.svg') }}";
-                closeBtn.removeAttribute('href'); // Prevent link navigation
+                closeBtn.removeAttribute('href');
                 closeBtn.onclick = function(e) {
                     e.preventDefault();
                     prevStep();
                 };
             }
 
-            // Update Button Text
             const btn = document.getElementById('nextBtn');
-            if (currentStep === totalSteps) {
-                btn.textContent = "FINISH";
-                btn.onclick = finishForm;
-            } else {
-                btn.textContent = "NEXT";
-                btn.onclick = nextStep;
+            btn.textContent = (currentStep === totalSteps) ? "FINISH" : "NEXT";
+            btn.onclick = (currentStep === totalSteps) ? finishForm : nextStep;
+        }
+
+        function validateStep() {
+            // Remove previous error states
+            document.querySelectorAll('.form-group').forEach(el => el.classList.remove('invalid'));
+
+            if (currentStep === 1) {
+                const checked = document.querySelectorAll('input[name="seedlings"]:checked');
+                if (checked.length === 0) {
+                    alert("Please select at least one seedling type.");
+                    return false;
+                }
+                let qtyValid = true;
+                checked.forEach(cb => {
+                    const qtyInput = document.querySelector(`input[name="qty_${cb.value}"]`);
+                    const val = parseInt(qtyInput.value);
+                    const max = parseInt(qtyInput.max);
+                    const errorMsg = qtyInput.closest('.form-group').querySelector('.error-message');
+
+                    if (!qtyInput.value || val <= 0) {
+                        errorMsg.textContent = "Please enter a valid quantity.";
+                        qtyInput.closest('.form-group').classList.add('invalid');
+                        qtyValid = false;
+                    } else if (val > max) {
+                        errorMsg.textContent = `Quantity exceeds available stock (${max}).`;
+                        qtyInput.closest('.form-group').classList.add('invalid');
+                        qtyValid = false;
+                    }
+                });
+                return qtyValid;
             }
+
+            if (currentStep === 2) {
+                const fname = document.querySelector('input[name="first_name"]').value;
+                const lname = document.querySelector('input[name="last_name"]').value;
+                const type = document.querySelector('input[name="requesterType"]:checked');
+                const phone = document.querySelector('input[name="phone"]').value;
+
+                let isValid = true;
+                if (!fname || !lname) {
+                    document.querySelector('input[name="first_name"]').closest('.form-group').classList.add('invalid');
+                    isValid = false;
+                }
+                if (!type) {
+                    document.querySelector('.chips-container').closest('.form-group').classList.add('invalid');
+                    isValid = false;
+                }
+                if (!phone) {
+                    document.querySelector('input[name="phone"]').closest('.form-group').classList.add('invalid');
+                    isValid = false;
+                }
+                return isValid;
+            }
+
+            if (currentStep === 3) {
+                const prov = document.querySelector('input[name="province"]').value;
+                const city = document.querySelector('input[name="city"]').value;
+                const brgy = document.querySelector('input[name="barangay"]').value;
+                const area = document.querySelector('input[name="areaType"]:checked');
+                const use = document.querySelectorAll('input[name="intendedUse"]:checked');
+                const plan = document.querySelector('textarea[name="plan_desc"]').value;
+
+                let isValid = true;
+                if (!prov || !city || !brgy) {
+                    document.querySelector('input[name="province"]').closest('.form-group').classList.add('invalid');
+                    isValid = false;
+                }
+                if (!area) {
+                    document.querySelector('input[name="areaType"]').closest('.form-group').classList.add('invalid');
+                    isValid = false;
+                }
+                if (use.length === 0) {
+                    document.querySelector('.checkbox-group').closest('.form-group').classList.add('invalid');
+                    isValid = false;
+                }
+                if (!plan || plan.trim().length < 10) {
+                    document.querySelector('textarea[name="plan_desc"]').closest('.form-group').classList.add('invalid');
+                    isValid = false;
+                }
+                return isValid;
+            }
+
+            return true;
         }
 
         function nextStep() {
-            if (currentStep < totalSteps) {
-                // Here validation would happen
+            if (validateStep()) {
                 currentStep++;
                 updateView();
-                // Ensure scroll content goes to top
                 document.querySelector('.scroll-content').scrollTo(0, 0);
             }
         }
@@ -382,29 +366,47 @@
             }
         }
 
-        function finishForm() {
-            if (document.getElementById('verifyCheck').checked) {
-                alert("Request Submitted! (This is a demo)");
-                window.location.href = "{{ url_for('views.about_ecoservice_seedlings') }}";
-            } else {
-                alert("Please confirm verification statement.");
+        function updateUploadText(input) {
+            const text = document.getElementById('uploadText');
+            if (input.files && input.files[0]) {
+                text.textContent = input.files[0].name;
+                text.style.color = "#004D40";
             }
         }
 
-        function toggleCropDetails(checkbox, detailsId, itemId) {
+        function finishForm() {
+            const photo = document.getElementById('fileUpload').files.length > 0;
+            const commitments = document.querySelectorAll('.commitment-check:not(:checked)').length === 0;
+
+            let isValid = true;
+            if (!photo) {
+                document.getElementById('uploadBox').closest('.form-group').classList.add('invalid');
+                isValid = false;
+            }
+            if (!commitments) {
+                document.querySelector('.commitment-check').closest('.form-group').classList.add('invalid');
+                isValid = false;
+            }
+
+            if (isValid) {
+                document.getElementById('seedlingRequestForm').submit();
+            }
+        }
+
+        function toggleItemDetails(checkbox, detailsId, itemId) {
             const details = document.getElementById(detailsId);
             const item = document.getElementById(itemId);
             if (checkbox.checked) {
-                // Show details, add selected style
                 item.classList.add('selected');
-                // Optional: Auto focus quantity
-                details.querySelector('input').focus();
+                const input = details.querySelector('input[type="number"]');
+                if(input) input.focus();
             } else {
-                // Hide details, remove selected style
                 item.classList.remove('selected');
-                // Cleanup values if needed, or leave them
+                item.classList.remove('invalid');
             }
         }
+
+        document.addEventListener('DOMContentLoaded', updateView);
     </script>
 </body>
 </html>

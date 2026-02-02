@@ -135,7 +135,7 @@ def update_request_status(id):
 @views.route('/delete-initiative/<int:id>', methods=['POST'])
 @login_required
 def delete_initiative(id):
-    if current_user.role != 'Superadmin':
+    if current_user.role not in ['Superadmin', 'Admin_LGU']:
         flash('Unauthorized action.', category='error')
         return redirect(url_for('views.admin_dashboard'))
         
@@ -181,12 +181,12 @@ def ecoservices():
 @views.route('/about-seeds')
 @login_required
 def about_ecoservice_seeds():
-    return render_template('about-ecoservice-seeds.html')
+    return render_template('ecoservice-about-seeds.html')
 
 @views.route('/about-seedlings')
 @login_required
 def about_ecoservice_seedlings():
-    return render_template('about-ecoservice-seedlings.html')
+    return render_template('ecoservice-about-seedlings.html')
 
 @views.route('/seed-inventory')
 @login_required
@@ -203,7 +203,7 @@ def seed_inventory():
     else:
         items = InventoryItem.query.filter_by(category='Seed').all()
         
-    return render_template('seed_inventory.html', items=items, user=current_user, search_query=q)
+    return render_template('inventory-seeds.html', items=items, user=current_user, search_query=q)
 
 @views.route('/seedling-inventory')
 @login_required
@@ -219,7 +219,7 @@ def tree_seedlings_inventory():
     else:
         items = InventoryItem.query.filter_by(category='Seedling').all()
         
-    return render_template('tree_seedlings_inventory.html', items=items, user=current_user, search_query=q)
+    return render_template('inventory-tree-seedlings.html', items=items, user=current_user, search_query=q)
 
 @views.route('/edit-item/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -373,7 +373,7 @@ def request_seeds_form():
         return redirect(url_for('views.status'))
     
     seeds = InventoryItem.query.filter(InventoryItem.category == 'Seed', InventoryItem.stock_quantity > 0).all()
-    return render_template('request-seeds-form.html', user=current_user, seeds=seeds)
+    return render_template('request-form-seeds.html', user=current_user, seeds=seeds)
 
 @views.route('/request-seedlings-form', methods=['GET', 'POST'])
 @login_required
@@ -449,7 +449,7 @@ def request_seedlings_form():
         return redirect(url_for('views.status'))
     
     seedlings = InventoryItem.query.filter(InventoryItem.category == 'Seedling', InventoryItem.stock_quantity > 0).all()
-    return render_template('request-seedlings-form.html', user=current_user, seedlings=seedlings)
+    return render_template('request-form-seedlings.html', user=current_user, seedlings=seedlings)
 
 
 # --- Initiative Launch Routes (Multi-step) ---
@@ -796,15 +796,6 @@ def vote_post(post_id):
         'status': new_status
     })
 
-@views.route('/seeds-view')
-@login_required
-def seeds_view():
-    return render_template('seeds-view.html')
-
-@views.route('/seedlings-view')
-@login_required
-def seedlings_view():
-    return render_template('seedlings-view.html')
 
 @views.route('/event-map')
 @login_required

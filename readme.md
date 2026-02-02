@@ -49,7 +49,9 @@ The seed.py script automatically resets the database and creates the following t
 * **DA Admin**: da@ecousapan.ph  
 * **DENR Admin**: denr@ecousapan.ph
 
-Shift+L to logout
+### **Controls**
+* **View Login Page**: Navigate to `http://127.0.0.1:5000`. If you are not authenticated, you will be redirected to the login page.
+* **Logout**: Press **Shift + L** on your keyboard to logout instantly.
 
 ## **Project Structure**
 
