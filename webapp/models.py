@@ -133,10 +133,18 @@ class ForumPost(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     votes = db.Column(db.Integer, default=0)
     
-    # Helper to check vote status in templates
+    # ADD THESE TWO LINES:
+    image_filename = db.Column(db.String(150))
+    author = db.relationship('User', backref='posts')
+
     def get_user_vote(self, user_id):
         vote = PostVote.query.filter_by(user_id=user_id, post_id=self.id).first()
         return vote.vote_type if vote else None
+
+    # Added this earlier for the vote visual logic
+    def has_user_voted(self, user_id):
+        vote = PostVote.query.filter_by(user_id=user_id, post_id=self.id).first()
+        return vote is not None
 
 
 class Comment(db.Model):

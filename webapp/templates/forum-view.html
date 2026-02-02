@@ -7,18 +7,70 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/forum-view.css') }}">
     <style>
-        /* Addition to support Up/Down visuals */
-        .vote-item { cursor: pointer; transition: all 0.2s; padding: 4px 8px; border-radius: 8px; display: flex; align-items: center; gap: 4px; }
-        .vote-item.active-up { background: #E8F5E9; color: #49A427; }
-        .vote-item.active-down { background: #FFEBEE; color: #C62828; }
+        /* Visual feedback for active votes */
+        .vote-item { cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+        .vote-item.active-up { color: #49A427; font-weight: bold; }
+        .vote-item.active-down { color: #C62828; font-weight: bold; }
         .vote-item.active-up img { filter: invert(48%) sepia(79%) saturate(452%) hue-rotate(65deg) brightness(95%) contrast(92%); }
         .vote-item.active-down img { filter: invert(20%) sepia(85%) saturate(3000%) hue-rotate(345deg) brightness(90%) contrast(100%); }
-        .vote-item img.down-icon { transform: rotate(180deg); }
+        .down-icon { transform: rotate(180deg); }
+        
+        /* Post Image Styling */
+        .forum-image-container { width: 100%; margin: 15px 0; border-radius: 16px; overflow: hidden; background: #f0f0f0; }
+        .forum-image { width: 100%; height: auto; display: block; object-fit: contain; max-height: 400px; }
+
+        /* Comment Nesting Styles */
+        .replies-container { margin-left: 15px; padding-left: 10px; border-left: 2px solid #f0f0f0; margin-top: 10px; }
+        .comment-card { margin-bottom: 15px; }
+        .reply-btn-text { font-size: 12px; font-weight: 600; color: #666; }
     </style>
 </head>
 <body>
+    {% macro render_comment(comment, is_reply=False) %}
+    <div class="comment-card {% if is_reply %}reply-card{% endif %}" id="comment-{{ comment.id }}">
+        <div class="comment-header">@{{ comment.author.username }}</div>
+        <div class="comment-body">{{ comment.content }}</div>
+        <div class="comment-footer">
+            <div class="comment-interactions">
+                <button class="comment-reply-btn" onclick="showReplyInput(this)">
+                    <img src="{{ url_for('static', filename='icons/message-circle.svg') }}" alt="Reply" class="interaction-icon">
+                    <span class="reply-btn-text">Reply</span>
+                </button>
+            </div>
+            <span class="comment-time">{{ comment.date_posted.strftime('%I:%M %p') }}</span>
+        </div>
+
+        <!-- Inline Reply Form -->
+        <form action="{{ url_for('views.add_comment', post_id=post.id) }}" method="POST" class="inline-reply-container" style="display: none; margin-top: 10px; padding: 10px; background: #f9f9f9; border-radius: 8px;">
+            <input type="hidden" name="parent_id" value="{{ comment.id }}">
+            <input type="text" name="content" placeholder="Write a reply to @{{ comment.author.username }}..." class="inline-reply-input" required 
+                   style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px;">
+            <div style="display: flex; justify-content: flex-end; margin-top: 8px;">
+                <button type="submit" class="send-reply-btn" style="color: #49A427; background: none; border: none; font-weight: bold; cursor: pointer;">Send</button>
+            </div>
+        </form>
+
+        <!-- Nested Replies -->
+        {% if comment.replies %}
+        <div class="replies-wrapper">
+            <button class="toggle-thread-btn" onclick="toggleThread(this)" style="background: none; border: none; color: #888; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 11px; margin-top: 5px;">
+                <img src="{{ url_for('static', filename='icons/plus.svg') }}" alt="Expand" class="collapse-icon" style="width: 10px;">
+                <span>Show {{ comment.replies|length }} Replies</span>
+            </button>
+            
+            <div class="replies-container" style="display: none;">
+                {% for reply in comment.replies %}
+                    {{ render_comment(reply, is_reply=True) }}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endmacro %}
+
     <div class="app-container">
         <div class="scroll-content">
+            
             <!-- Header -->
             <div class="forum-view-header">
                 <a href="{{ url_for('views.forum') }}" class="close-btn">
@@ -27,34 +79,69 @@
                 <h1>Forum</h1>
             </div>
 
+            <!-- Title & Author -->
             <div class="forum-title-container">
                 <span class="forum-username">@{{ post.author.username }}</span>
                 <h2 class="forum-main-title">{{ post.title }}</h2>
             </div>
 
+            <!-- Tags & Meta -->
+            <div class="forum-tags-container">
+                <span class="forum-tag">{{ post.category }}</span>
+                <span class="forum-tag">{{ post.date_posted.strftime('%b %d, %Y') }}</span>
+            </div>
+
+            <!-- Image Section -->
+            {% if post.image_filename %}
+            <div class="forum-image-container">
+                <img src="{{ url_for('static', filename='uploads/' + post.image_filename) }}" alt="{{ post.title }}" class="forum-image">
+            </div>
+            {% endif %}
+
+            <!-- Post Content -->
+            <div class="forum-description">
+                <p class="forum-description-text">{{ post.content }}</p>
+            </div>
+
+            <!-- Interaction Bar -->
             <div class="forum-interaction-bar">
                 <div class="interaction-stats">
-                    <div class="vote-pill" style="display: flex; gap: 10px; background: #f5f5f5; padding: 4px; border-radius: 12px; align-items: center;">
-                        <!-- Upvote Button -->
+                    <div class="vote-pill" style="display: flex; gap: 12px; background: #f0f0f0; padding: 6px 12px; border-radius: 20px;">
                         <div class="vote-item {% if user_vote_type == 'up' %}active-up{% endif %}" id="upvoteBtn" onclick="handleVote('up')">
-                            <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" alt="Up" class="stat-icon">
+                            <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" alt="Upvote" class="stat-icon">
                         </div>
                         
-                        <span class="stat-count" id="totalVotes" style="font-weight: 800; min-width: 20px; text-align: center;">{{ post.votes }}</span>
+                        <span class="stat-count" id="totalVotes" style="font-weight: 700;">{{ post.votes }}</span>
                         
-                        <!-- Downvote Button -->
                         <div class="vote-item {% if user_vote_type == 'down' %}active-down{% endif %}" id="downvoteBtn" onclick="handleVote('down')">
-                            <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" alt="Down" class="stat-icon down-icon">
+                            <img src="{{ url_for('static', filename='icons/arrow-up.svg') }}" alt="Downvote" class="stat-icon down-icon">
                         </div>
                     </div>
-                    
+
                     <div class="comment-pill">
                         <span class="stat-text">{{ post.comments|length }} comments</span>
                     </div>
                 </div>
+                
+                <form action="{{ url_for('views.add_comment', post_id=post.id) }}" method="POST" class="comment-input-container">
+                    <img src="{{ url_for('static', filename='icons/users.svg') }}" alt="User" class="user-icon">
+                    <input type="text" name="content" placeholder="Add your comment" class="comment-input" required>
+                    <button type="submit" style="border:none; background:none; color:#49A427; font-weight:700; cursor:pointer;">Post</button>
+                </form>
             </div>
 
-            <!-- ... (rest of your existing forum-view.html content) ... -->
+            <!-- Comments -->
+            <div class="comments-section-header">
+                <span class="comments-title">Comments</span>
+            </div>
+
+            <div class="comment-list-container">
+                {% for comment in comments %}
+                    {{ render_comment(comment) }}
+                {% else %}
+                    <p style="font-size: 12px; color: #999; padding: 20px; text-align: center;">No comments yet. Be the first to join the conversation!</p>
+                {% endfor %}
+            </div>
 
         </div>
     </div>
@@ -71,26 +158,31 @@
                 
                 if (response.ok) {
                     const data = await response.json();
-                    
-                    // Update the number
                     document.getElementById('totalVotes').innerText = data.votes;
-                    
-                    // Update visual states
                     const upBtn = document.getElementById('upvoteBtn');
                     const downBtn = document.getElementById('downvoteBtn');
-                    
                     upBtn.classList.remove('active-up');
                     downBtn.classList.remove('active-down');
-                    
-                    if (data.status === 'up') {
-                        upBtn.classList.add('active-up');
-                    } else if (data.status === 'down') {
-                        downBtn.classList.add('active-down');
-                    }
+                    if (data.status === 'up') upBtn.classList.add('active-up');
+                    if (data.status === 'down') downBtn.classList.add('active-down');
                 }
-            } catch (err) {
-                console.error("Vote failed", err);
-            }
+            } catch (err) { console.error("Vote failed", err); }
+        }
+
+        function showReplyInput(btn) {
+            const container = btn.closest('.comment-card').querySelector('.inline-reply-container');
+            const isHidden = container.style.display === 'none';
+            container.style.display = isHidden ? 'block' : 'none';
+            if (isHidden) container.querySelector('.inline-reply-input').focus();
+        }
+
+        function toggleThread(btn) {
+            const container = btn.nextElementSibling;
+            const isHidden = container.style.display === 'none';
+            container.style.display = isHidden ? 'block' : 'none';
+            const count = container.querySelectorAll(':scope > .comment-card').length;
+            btn.querySelector('span').innerText = isHidden ? 'Hide Replies' : `Show ${count} Replies`;
+            btn.querySelector('.collapse-icon').style.transform = isHidden ? 'rotate(45deg)' : 'rotate(0deg)';
         }
     </script>
 </body>

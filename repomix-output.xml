@@ -1,10 +1,10 @@
-This file is a merged representation of a subset of the codebase, containing files not matching ignore patterns, combined into a single document by Repomix.
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
 
 <file_summary>
 This section contains a summary of this file.
 
 <purpose>
-This file contains a packed representation of a subset of the repository's contents that is considered the most important context.
+This file contains a packed representation of the entire repository's contents.
 It is designed to be easily consumable by AI systems for analysis, code review,
 or other automated processes.
 </purpose>
@@ -32,7 +32,6 @@ The content is organized as follows:
 <notes>
 - Some files may have been excluded based on .gitignore rules and Repomix's configuration
 - Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
-- Files matching these patterns are excluded: venv/**
 - Files matching patterns in .gitignore are excluded
 - Files matching default ignore patterns are excluded
 - Files are sorted by Git change count (files with more changes are at the bottom)
@@ -43,16 +42,9 @@ The content is organized as follows:
 <directory_structure>
 .gitignore
 main.py
-migrations/alembic.ini
-migrations/env.py
-migrations/README
-migrations/script.py.mako
-migrations/versions/7e25620d5c42_added_vote_type_to_postvote.py
-migrations/versions/f5163fdca19c_added_participation_fields.py
 readme.md
 requirements.txt
 seed.py
-seed2.py
 webapp/__init__.py
 webapp/auth.py
 webapp/models.py
@@ -115,24 +107,10 @@ webapp/static/images/sample-image1.png
 webapp/static/images/sample-image2.png
 webapp/static/images/sample-image3.png
 webapp/static/images/user.jpg
-webapp/static/images/userupload/JPCS_COVER.png
 webapp/static/js/carousel.js
 webapp/static/js/event-map.js
 webapp/static/js/event-view.js
 webapp/static/js/forum.js
-webapp/static/uploads/3D_DATA.png
-webapp/static/uploads/CENTER.png
-webapp/static/uploads/COMPROG_2nd.png
-webapp/static/uploads/Kamagong.png
-webapp/static/uploads/LogoType.png
-webapp/static/uploads/Molave.png
-webapp/static/uploads/Narra.png
-webapp/static/uploads/Picsart_24-08-11_22-18-11-699.jpg
-webapp/static/uploads/user_1_1769944712_Screenshot_2025-06-06_151848.png
-webapp/static/uploads/user_1_1769948911_scared_cat.png
-webapp/static/uploads/user_4_seeds_rise_lab.jpg
-webapp/static/uploads/user_4_trees_baloy_nira_tischia.jpg
-webapp/static/uploads/user_7_1769957810_rise_lab.jpg
 webapp/templates/about-ecoservice-seedlings.html
 webapp/templates/about-ecoservice-seeds.html
 webapp/templates/components/navbar.html
@@ -169,445 +147,6 @@ webapp/views.py
 
 <files>
 This section contains the contents of the repository's files.
-
-<file path="migrations/alembic.ini">
-# A generic, single database configuration.
-
-[alembic]
-# template used to generate migration files
-# file_template = %%(rev)s_%%(slug)s
-
-# set to 'true' to run the environment during
-# the 'revision' command, regardless of autogenerate
-# revision_environment = false
-
-
-# Logging configuration
-[loggers]
-keys = root,sqlalchemy,alembic,flask_migrate
-
-[handlers]
-keys = console
-
-[formatters]
-keys = generic
-
-[logger_root]
-level = WARN
-handlers = console
-qualname =
-
-[logger_sqlalchemy]
-level = WARN
-handlers =
-qualname = sqlalchemy.engine
-
-[logger_alembic]
-level = INFO
-handlers =
-qualname = alembic
-
-[logger_flask_migrate]
-level = INFO
-handlers =
-qualname = flask_migrate
-
-[handler_console]
-class = StreamHandler
-args = (sys.stderr,)
-level = NOTSET
-formatter = generic
-
-[formatter_generic]
-format = %(levelname)-5.5s [%(name)s] %(message)s
-datefmt = %H:%M:%S
-</file>
-
-<file path="migrations/env.py">
-import logging
-from logging.config import fileConfig
-
-from flask import current_app
-
-from alembic import context
-
-# this is the Alembic Config object, which provides
-# access to the values within the .ini file in use.
-config = context.config
-
-# Interpret the config file for Python logging.
-# This line sets up loggers basically.
-fileConfig(config.config_file_name)
-logger = logging.getLogger('alembic.env')
-
-
-def get_engine():
-    try:
-        # this works with Flask-SQLAlchemy<3 and Alchemical
-        return current_app.extensions['migrate'].db.get_engine()
-    except (TypeError, AttributeError):
-        # this works with Flask-SQLAlchemy>=3
-        return current_app.extensions['migrate'].db.engine
-
-
-def get_engine_url():
-    try:
-        return get_engine().url.render_as_string(hide_password=False).replace(
-            '%', '%%')
-    except AttributeError:
-        return str(get_engine().url).replace('%', '%%')
-
-
-# add your model's MetaData object here
-# for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-config.set_main_option('sqlalchemy.url', get_engine_url())
-target_db = current_app.extensions['migrate'].db
-
-# other values from the config, defined by the needs of env.py,
-# can be acquired:
-# my_important_option = config.get_main_option("my_important_option")
-# ... etc.
-
-
-def get_metadata():
-    if hasattr(target_db, 'metadatas'):
-        return target_db.metadatas[None]
-    return target_db.metadata
-
-
-def run_migrations_offline():
-    """Run migrations in 'offline' mode.
-
-    This configures the context with just a URL
-    and not an Engine, though an Engine is acceptable
-    here as well.  By skipping the Engine creation
-    we don't even need a DBAPI to be available.
-
-    Calls to context.execute() here emit the given string to the
-    script output.
-
-    """
-    url = config.get_main_option("sqlalchemy.url")
-    context.configure(
-        url=url, target_metadata=get_metadata(), literal_binds=True
-    )
-
-    with context.begin_transaction():
-        context.run_migrations()
-
-
-def run_migrations_online():
-    """Run migrations in 'online' mode.
-
-    In this scenario we need to create an Engine
-    and associate a connection with the context.
-
-    """
-
-    # this callback is used to prevent an auto-migration from being generated
-    # when there are no changes to the schema
-    # reference: http://alembic.zzzcomputing.com/en/latest/cookbook.html
-    def process_revision_directives(context, revision, directives):
-        if getattr(config.cmd_opts, 'autogenerate', False):
-            script = directives[0]
-            if script.upgrade_ops.is_empty():
-                directives[:] = []
-                logger.info('No changes in schema detected.')
-
-    conf_args = current_app.extensions['migrate'].configure_args
-    if conf_args.get("process_revision_directives") is None:
-        conf_args["process_revision_directives"] = process_revision_directives
-
-    connectable = get_engine()
-
-    with connectable.connect() as connection:
-        context.configure(
-            connection=connection,
-            target_metadata=get_metadata(),
-            **conf_args
-        )
-
-        with context.begin_transaction():
-            context.run_migrations()
-
-
-if context.is_offline_mode():
-    run_migrations_offline()
-else:
-    run_migrations_online()
-</file>
-
-<file path="migrations/README">
-Single-database configuration for Flask.
-</file>
-
-<file path="migrations/script.py.mako">
-"""${message}
-
-Revision ID: ${up_revision}
-Revises: ${down_revision | comma,n}
-Create Date: ${create_date}
-
-"""
-from alembic import op
-import sqlalchemy as sa
-${imports if imports else ""}
-
-# revision identifiers, used by Alembic.
-revision = ${repr(up_revision)}
-down_revision = ${repr(down_revision)}
-branch_labels = ${repr(branch_labels)}
-depends_on = ${repr(depends_on)}
-
-
-def upgrade():
-    ${upgrades if upgrades else "pass"}
-
-
-def downgrade():
-    ${downgrades if downgrades else "pass"}
-</file>
-
-<file path="migrations/versions/7e25620d5c42_added_vote_type_to_postvote.py">
-"""added vote_type to PostVote
-
-Revision ID: 7e25620d5c42
-Revises: f5163fdca19c
-Create Date: 2026-02-02 06:42:25.234070
-
-"""
-from alembic import op
-import sqlalchemy as sa
-
-
-# revision identifiers, used by Alembic.
-revision = '7e25620d5c42'
-down_revision = 'f5163fdca19c'
-branch_labels = None
-depends_on = None
-
-
-def upgrade():
-    # ### commands auto generated by Alembic - please adjust! ###
-    with op.batch_alter_table('forum_post', schema=None) as batch_op:
-        batch_op.drop_column('image_filename')
-
-    with op.batch_alter_table('post_vote', schema=None) as batch_op:
-        batch_op.add_column(sa.Column('vote_type', sa.String(length=10), nullable=False))
-
-    # ### end Alembic commands ###
-
-
-def downgrade():
-    # ### commands auto generated by Alembic - please adjust! ###
-    with op.batch_alter_table('post_vote', schema=None) as batch_op:
-        batch_op.drop_column('vote_type')
-
-    with op.batch_alter_table('forum_post', schema=None) as batch_op:
-        batch_op.add_column(sa.Column('image_filename', sa.VARCHAR(length=100), nullable=True))
-
-    # ### end Alembic commands ###
-</file>
-
-<file path="migrations/versions/f5163fdca19c_added_participation_fields.py">
-"""added participation fields
-
-Revision ID: f5163fdca19c
-Revises: 
-Create Date: 2026-02-02 04:20:01.086231
-
-"""
-from alembic import op
-import sqlalchemy as sa
-
-
-# revision identifiers, used by Alembic.
-revision = 'f5163fdca19c'
-down_revision = None
-branch_labels = None
-depends_on = None
-
-
-def upgrade():
-    # ### commands auto generated by Alembic - please adjust! ###
-    with op.batch_alter_table('participation', schema=None) as batch_op:
-        batch_op.add_column(sa.Column('full_name', sa.String(length=150), nullable=False))
-        batch_op.add_column(sa.Column('address', sa.String(length=255), nullable=False))
-        batch_op.add_column(sa.Column('contact_number', sa.String(length=20), nullable=False))
-        batch_op.add_column(sa.Column('email', sa.String(length=150), nullable=False))
-        batch_op.add_column(sa.Column('purpose', sa.Text(), nullable=False))
-
-    # ### end Alembic commands ###
-
-
-def downgrade():
-    # ### commands auto generated by Alembic - please adjust! ###
-    with op.batch_alter_table('participation', schema=None) as batch_op:
-        batch_op.drop_column('purpose')
-        batch_op.drop_column('email')
-        batch_op.drop_column('contact_number')
-        batch_op.drop_column('address')
-        batch_op.drop_column('full_name')
-
-    # ### end Alembic commands ###
-</file>
-
-<file path="seed2.py">
-from webapp import db, create_app
-from webapp.models import User, Initiative, ServiceRequest, Participation, ForumPost, Comment, PostVote
-from werkzeug.security import generate_password_hash
-from datetime import datetime, timedelta
-
-def seed_all():
-    app = create_app()
-    with app.app_context():
-        # 1. Reset Database (Warning: This deletes existing data for a clean test)
-        print("Resetting database...")
-        db.drop_all()
-        db.create_all()
-
-        # 2. Create Users (One for each role)
-        print("Creating users...")
-        users_data = [
-            {'email': 'lgu@ecousapan.ph', 'username': 'aaLGU', 'role': 'Admin_LGU'},
-            {'email': 'da@ecousapan.ph', 'username': 'AgricultureDept', 'role': 'Admin_DA'},
-            {'email': 'denr@ecousapan.ph', 'username': 'EnvironmentDept', 'role': 'Admin_DENR'},
-            {'email': 'tester@gmail.com', 'username': 'EcoTester', 'role': 'Standard'}
-        ]
-        
-        users = {}
-        for u in users_data:
-            user = User(
-                email=u['email'],
-                username=u['username'],
-                password=generate_password_hash('password123'),
-                role=u['role']
-            )
-            db.session.add(user)
-            users[u['role']] = user
-        
-        db.session.commit()
-
-        # 3. Create Initiatives
-        print("Creating initiatives...")
-        initiatives = [
-            Initiative(
-                title="Nabua River Cleanup 2026",
-                org_name="LGU Nabua Youth",
-                description="A massive cleanup drive to protect our local waterways. Volunteers will be provided with gloves and refreshments.",
-                city="Nabua",
-                province="Camarines Sur",
-                contact_fname="John",
-                contact_lname="Doe",
-                contact_role="Youth Leader",
-                email="john@nabua.gov.ph",
-                status="Pending", # Ready for LGU Admin to Approve
-                user_id=users['Standard'].id,
-                image_filename="default_event.png"
-            ),
-            Initiative(
-                title="Iriga Tree Planting",
-                org_name="Green Iriga",
-                description="Planting 500 narra seedlings at the foot of Mt. Iriga.",
-                city="Iriga",
-                province="Camarines Sur",
-                contact_fname="Maria",
-                contact_lname="Santos",
-                contact_role="Coordinator",
-                email="maria@iriga.ph",
-                status="Approved", # Already published
-                user_id=users['Standard'].id,
-                image_filename="default_event.png"
-            )
-        ]
-        db.session.add_all(initiatives)
-        db.session.commit()
-
-        # 4. Create Service Requests
-        print("Creating service requests...")
-        requests = [
-            ServiceRequest(
-                item_name="Hybrid Rice Seeds",
-                quantity_requested=50,
-                planting_site_desc="Barangay San Roque Farm Area",
-                service_type="Seed",
-                status="Pending", # For Admin_DA
-                user_id=users['Standard'].id
-            ),
-            ServiceRequest(
-                item_name="Mahogany Seedlings",
-                quantity_requested=100,
-                planting_site_desc="Private Lot, Nabua",
-                service_type="Seedling",
-                status="Pending", # For Admin_DENR
-                user_id=users['Standard'].id
-            )
-        ]
-        db.session.add_all(requests)
-        db.session.commit()
-
-        # 5. Create Forum Posts
-        print("Creating forum content...")
-        posts = [
-            ForumPost(
-                title="Welcome to EcoUsapan!",
-                content="This is the official discussion board for eco-conscious citizens in Bicol.",
-                category="News",
-                votes=10,
-                user_id=users['Admin_LGU'].id
-            ),
-            ForumPost(
-                title="How to dispose of electronics?",
-                content="I have an old laptop. Is there an e-waste facility in CamSur?",
-                category="Question",
-                votes=5,
-                user_id=users['Standard'].id
-            )
-        ]
-        db.session.add_all(posts)
-        db.session.commit()
-
-        # 6. Create Interactions (Votes, Comments, Participation)
-        print("Creating interactions...")
-        
-        # User registers for the approved initiative with required NOT NULL fields
-        reg = Participation(
-            user_id=users['Standard'].id, 
-            initiative_id=initiatives[1].id,
-            full_name="Eco Tester",
-            address="123 Eco Street, Nabua, Camarines Sur",
-            contact_number="09123456789",
-            email="tester@gmail.com",
-            purpose="I want to contribute to the reforestation of Mt. Iriga."
-        )
-        db.session.add(reg)
-
-        # User upvotes the news post
-        vote = PostVote(user_id=users['Standard'].id, post_id=posts[0].id, vote_type='up')
-        db.session.add(vote)
-
-        # User comments on the news post
-        comm = Comment(
-            content="Great to see this platform live!",
-            user_id=users['Standard'].id,
-            post_id=posts[0].id
-        )
-        db.session.add(comm)
-
-        db.session.commit()
-        print("\nSUCCESS: System seeded successfully!")
-        print("-" * 30)
-        print("Standard User: tester@gmail.com / password123")
-        print("LGU Admin: lgu@ecousapan.ph / password123")
-        print("DA Admin: da@ecousapan.ph / password123")
-        print("DENR Admin: denr@ecousapan.ph / password123")
-        print("-" * 30)
-
-if __name__ == "__main__":
-    seed_all()
-</file>
 
 <file path="webapp/static/css/ecoservice-about.css">
 :root {
@@ -6648,247 +6187,6 @@ body {
 </html>
 </file>
 
-<file path=".gitignore">
-# ===========================
-# Python
-# ===========================
-
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
-repomix-output.xml
-# C extensions
-*.so
-
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-
-# PyInstaller
-*.manifest
-*.spec
-
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
-.pytest_cache/
-cover/
-
-# Translations
-*.mo
-*.pot
-
-# ===========================
-# Flask
-# ===========================
-
-# Flask instance folder
-instance/
-
-# Flask cache
-.webassets-cache
-
-# Flask session files
-flask_session/
-
-# Database files
-*.db
-*.sqlite
-*.sqlite3
-db.sqlite3
-db.sqlite3-journal
-
-# Log files
-*.log
-logs/
-
-# ===========================
-# Virtual Environments
-# ===========================
-
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# Project-specific virtual environment
-.env-ecousapan/
-eco-env/
-
-# ===========================
-# IDEs and Editors
-# ===========================
-
-# VSCode
-.vscode/
-*.code-workspace
-
-# PyCharm
-.idea/
-*.iml
-*.iws
-*.ipr
-
-# Sublime Text
-*.sublime-project
-*.sublime-workspace
-
-# Vim
-*.swp
-*.swo
-*~
-
-# Emacs
-*~
-\#*\#
-.\#*
-
-# Spyder
-.spyderproject
-.spyproject
-
-# Rope
-.ropeproject
-
-# ===========================
-# OS Specific
-# ===========================
-
-# macOS
-.DS_Store
-.AppleDouble
-.LSOverride
-._*
-
-# Windows
-Thumbs.db
-Thumbs.db:encryptable
-ehthumbs.db
-ehthumbs_vista.db
-Desktop.ini
-$RECYCLE.BIN/
-
-# Linux
-.directory
-.Trash-*
-
-# ===========================
-# Project Specific
-# ===========================
-
-# Uploaded files (if any)
-app/static/uploads/
-
-# Temporary files
-*.tmp
-*.temp
-*.bak
-
-# Configuration files with sensitive data
-config.py
-local_settings.py
-
-# ===========================
-# Documentation
-# ===========================
-
-# Sphinx documentation
-docs/_build/
-docs/_static/
-docs/_templates/
-
-# mkdocs
-/site
-
-# ===========================
-# Type Checkers & Linters
-# ===========================
-
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Pyre
-.pyre/
-
-# pytype
-.pytype/
-
-# Cython
-cython_debug/
-
-# Ruff
-.ruff_cache/
-
-# ===========================
-# Other
-# ===========================
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# IPython
-profile_default/
-ipython_config.py
-
-# pyenv
-.python-version
-
-# pipenv
-#Pipfile.lock
-
-# PEP 582
-__pypackages__/
-
-# Celery
-celerybeat-schedule
-celerybeat.pid
-
-# SageMath
-*.sage.py
-
-# Node modules (if using any frontend build tools)
-node_modules/
-npm-debug.log
-yarn-error.log
-package-lock.json
-yarn.lock
-</file>
-
 <file path="main.py">
 from webapp import create_app
 
@@ -6896,66 +6194,6 @@ app = create_app()
 
 if __name__ == '__main__':
     app.run(debug=True)
-</file>
-
-<file path="readme.md">
-lagay lang ako file need kasi para maka fork
-
-i used:
-1) flask - framework
-2) flask-login - baka magamit natin to
-3) flask-sqlalchemy - for database (wrapper for sql)
-</file>
-
-<file path="requirements.txt">
-blinker==1.9.0
-click==8.3.1
-colorama==0.4.6
-Flask==3.1.2
-itsdangerous==2.2.0
-Jinja2==3.1.6
-MarkupSafe==3.0.3
-Werkzeug==3.1.5
-</file>
-
-<file path="seed.py">
-from webapp import create_app, db
-from webapp.models import User, Initiative, ServiceRequest, InventoryItem
-from werkzeug.security import generate_password_hash
-from datetime import datetime
-
-def seed_database():
-    app = create_app()
-    with app.app_context():
-        db.drop_all()
-        db.create_all()
-        
-        print("Seeding Users...")
-        # Admins
-        lgu = User(email='admin@ecousapan.com', username='admin', password=generate_password_hash('admin', method='pbkdf2:sha256'), role='Admin_LGU')
-        da = User(email='da@ecousapan.com', username='da_seeds', password=generate_password_hash('admin123', method='pbkdf2:sha256'), role='Admin_DA')
-        denr = User(email='denr@ecousapan.com', username='denr_seedlings', password=generate_password_hash('admin123', method='pbkdf2:sha256'), role='Admin_DENR')
-        
-        # User
-        user = User(email='user@ecousapan.com', username='tester', password=generate_password_hash('user', method='pbkdf2:sha256'), role='User')
-        
-        db.session.add_all([lgu, da, denr, user])
-        
-        print("Seeding Inventory...")
-        # Seeds for DA
-        s1 = InventoryItem(name="Pechay Seeds", category="Seed", stock_quantity=500, description="Easy to grow leafy vegetable.")
-        s2 = InventoryItem(name="Tomato Seeds", category="Seed", stock_quantity=300, description="Cherry tomato variety.")
-        
-        # Seedlings for DENR
-        t1 = InventoryItem(name="Narra Seedling", category="Seedling", stock_quantity=50, description="National tree of the Philippines.")
-        t2 = InventoryItem(name="Mahogany Seedling", category="Seedling", stock_quantity=100, description="Fast-growing timber tree.")
-        
-        db.session.add_all([s1, s2, t1, t2])
-        db.session.commit()
-        print("Database populated successfully!")
-
-if __name__ == "__main__":
-    seed_database()
 </file>
 
 <file path="webapp/static/css/forum-view.css">
@@ -8253,6 +7491,486 @@ function showReplyInput(btn) {
         <div class="nav-bar-label">Analytics</div>
     </a>
 </div>
+</file>
+
+<file path=".gitignore">
+# ===========================
+# Python
+# ===========================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+repomix-output.xml
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+webapp/static/uploads/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# ===========================
+# Flask
+# ===========================
+
+# Flask instance folder
+instance/
+
+# Flask cache
+.webassets-cache
+
+# Flask session files
+flask_session/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+db.sqlite3
+db.sqlite3-journal
+
+# Log files
+*.log
+logs/
+
+# ===========================
+# Virtual Environments
+# ===========================
+
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Project-specific virtual environment
+.env-ecousapan/
+eco-env/
+
+# ===========================
+# IDEs and Editors
+# ===========================
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# Spyder
+.spyderproject
+.spyproject
+
+# Rope
+.ropeproject
+
+# ===========================
+# OS Specific
+# ===========================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+.directory
+.Trash-*
+
+# ===========================
+# Project Specific
+# ===========================
+
+# Uploaded files (if any)
+app/static/uploads/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# Configuration files with sensitive data
+config.py
+local_settings.py
+
+# ===========================
+# Documentation
+# ===========================
+
+# Sphinx documentation
+docs/_build/
+docs/_static/
+docs/_templates/
+
+# mkdocs
+/site
+
+# ===========================
+# Type Checkers & Linters
+# ===========================
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre
+.pyre/
+
+# pytype
+.pytype/
+
+# Cython
+cython_debug/
+
+# Ruff
+.ruff_cache/
+
+# ===========================
+# Other
+# ===========================
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+#Pipfile.lock
+
+# PEP 582
+__pypackages__/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath
+*.sage.py
+
+# Node modules (if using any frontend build tools)
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+</file>
+
+<file path="readme.md">
+## **Key Features**
+
+* **Dynamic Forum**: Engage in community discussions with real-time search, category filtering (News, Questions, Suggestions, etc.), and a robust Upvote/Downvote system.  
+* **Environmental Initiatives**: Users can propose cleanup drives or tree-planting events. Admins (LGU) can review, approve, or decline these proposals.  
+* **Service Requests**: Streamlined access to government services such as requesting rice seeds (DA) or mahogany seedlings (DENR).  
+* **Participation Tracking**: A personal dashboard for users to track the status of their service requests and registered events.  
+* **Role-Based Access**: Dedicated administrative dashboards for LGU, DA, and DENR officials to manage approvals and community data.
+
+## **Technology Stack**
+
+* **Backend**: Python, Flask  
+* **Database**: SQLite with SQLAlchemy ORM  
+* **Frontend**: HTML5, CSS3 (Mobile-first design), JavaScript (ES6+)  
+* **Authentication**: Flask-Login
+
+## **Installation & Setup**
+
+Follow these steps to get the project running on your local machine:
+
+1. **Clone the Repository**  
+   git clone \[https://github.com/yourusername/ecoUsapan.git\](https://github.com/yourusername/ecoUsapan.git)  
+   cd ecoUsapan
+
+2. **Create a Virtual Environment**  
+   python \-m venv venv  
+   \# Windows:  
+   venv\\Scripts\\activate  
+   \# Mac/Linux:  
+   source venv/bin/activate
+
+3. **Install Dependencies**  
+   pip install \-r requirements.txt
+
+4. **Initialize the Database**  
+   Instead of manually creating tables, use the provided system seeder to set up the schema and test data:  
+   python seed\_system.py
+
+5. **Run the Application**  
+   python main.py
+
+   Access the app at http://127.0.0.1:5000
+
+## **Testing with Seed Data**
+
+The seed\_system.py script automatically resets the database and creates the following test accounts (Password: password123):
+
+* **Standard User**: tester@gmail.com  
+* **LGU Admin**: lgu@ecousapan.ph  
+* **DA Admin**: da@ecousapan.ph  
+* **DENR Admin**: denr@ecousapan.ph
+
+## **Project Structure**
+
+* webapp/: Main application package.  
+  * auth.py: Authentication logic (Login/Signup).  
+  * views.py: Main application routes and logic.  
+  * models.py: Database schemas.  
+  * templates/: Jinja2 HTML templates.  
+  * static/: CSS, JS, and UI icons.  
+* main.py: Entry point for the Flask server.  
+* seed\_system.py: Comprehensive database initialization script.
+</file>
+
+<file path="requirements.txt">
+alembic==1.18.3
+blinker==1.9.0
+click==8.3.1
+colorama==0.4.6
+Flask==3.1.2
+Flask-Login==0.6.3
+Flask-Migrate==4.1.0
+Flask-SQLAlchemy==3.1.1
+greenlet==3.3.1
+itsdangerous==2.2.0
+Jinja2==3.1.6
+Mako==1.3.10
+MarkupSafe==3.0.3
+SQLAlchemy==2.0.46
+typing_extensions==4.15.0
+Werkzeug==3.1.5
+</file>
+
+<file path="seed.py">
+from webapp import db, create_app
+from webapp.models import User, Initiative, ServiceRequest, Participation, ForumPost, Comment, PostVote
+from werkzeug.security import generate_password_hash
+from datetime import datetime, timedelta
+
+def seed_all():
+    app = create_app()
+    with app.app_context():
+        # 1. Reset Database (Warning: This deletes existing data for a clean test)
+        print("Resetting database...")
+        db.drop_all()
+        db.create_all()
+
+        # 2. Create Users (One for each role)
+        print("Creating users...")
+        users_data = [
+            {'email': 'lgu@ecousapan.ph', 'username': 'aaLGU', 'role': 'Admin_LGU'},
+            {'email': 'da@ecousapan.ph', 'username': 'AgricultureDept', 'role': 'Admin_DA'},
+            {'email': 'denr@ecousapan.ph', 'username': 'EnvironmentDept', 'role': 'Admin_DENR'},
+            {'email': 'tester@gmail.com', 'username': 'EcoTester', 'role': 'Standard'}
+        ]
+        
+        users = {}
+        for u in users_data:
+            user = User(
+                email=u['email'],
+                username=u['username'],
+                password=generate_password_hash('password123'),
+                role=u['role']
+            )
+            db.session.add(user)
+            users[u['role']] = user
+        
+        db.session.commit()
+
+        # 3. Create Initiatives
+        print("Creating initiatives...")
+        initiatives = [
+            Initiative(
+                title="Nabua River Cleanup 2026",
+                org_name="LGU Nabua Youth",
+                description="A massive cleanup drive to protect our local waterways. Volunteers will be provided with gloves and refreshments.",
+                city="Nabua",
+                province="Camarines Sur",
+                contact_fname="John",
+                contact_lname="Doe",
+                contact_role="Youth Leader",
+                email="john@nabua.gov.ph",
+                status="Pending", # Ready for LGU Admin to Approve
+                user_id=users['Standard'].id,
+                image_filename="default_event.png"
+            ),
+            Initiative(
+                title="Iriga Tree Planting",
+                org_name="Green Iriga",
+                description="Planting 500 narra seedlings at the foot of Mt. Iriga.",
+                city="Iriga",
+                province="Camarines Sur",
+                contact_fname="Maria",
+                contact_lname="Santos",
+                contact_role="Coordinator",
+                email="maria@iriga.ph",
+                status="Approved", # Already published
+                user_id=users['Standard'].id,
+                image_filename="default_event.png"
+            )
+        ]
+        db.session.add_all(initiatives)
+        db.session.commit()
+
+        # 4. Create Service Requests
+        print("Creating service requests...")
+        requests = [
+            ServiceRequest(
+                item_name="Hybrid Rice Seeds",
+                quantity_requested=50,
+                planting_site_desc="Barangay San Roque Farm Area",
+                service_type="Seed",
+                status="Pending", # For Admin_DA
+                user_id=users['Standard'].id
+            ),
+            ServiceRequest(
+                item_name="Mahogany Seedlings",
+                quantity_requested=100,
+                planting_site_desc="Private Lot, Nabua",
+                service_type="Seedling",
+                status="Pending", # For Admin_DENR
+                user_id=users['Standard'].id
+            )
+        ]
+        db.session.add_all(requests)
+        db.session.commit()
+
+        # 5. Create Forum Posts
+        print("Creating forum content...")
+        posts = [
+            ForumPost(
+                title="Welcome to EcoUsapan!",
+                content="This is the official discussion board for eco-conscious citizens in Bicol.",
+                category="News",
+                votes=10,
+                user_id=users['Admin_LGU'].id
+            ),
+            ForumPost(
+                title="How to dispose of electronics?",
+                content="I have an old laptop. Is there an e-waste facility in CamSur?",
+                category="Question",
+                votes=5,
+                user_id=users['Standard'].id
+            )
+        ]
+        db.session.add_all(posts)
+        db.session.commit()
+
+        # 6. Create Interactions (Votes, Comments, Participation)
+        print("Creating interactions...")
+        
+        # User registers for the approved initiative with required NOT NULL fields
+        reg = Participation(
+            user_id=users['Standard'].id, 
+            initiative_id=initiatives[1].id,
+            full_name="Eco Tester",
+            address="123 Eco Street, Nabua, Camarines Sur",
+            contact_number="09123456789",
+            email="tester@gmail.com",
+            purpose="I want to contribute to the reforestation of Mt. Iriga."
+        )
+        db.session.add(reg)
+
+        # User upvotes the news post
+        vote = PostVote(user_id=users['Standard'].id, post_id=posts[0].id, vote_type='up')
+        db.session.add(vote)
+
+        # User comments on the news post
+        comm = Comment(
+            content="Great to see this platform live!",
+            user_id=users['Standard'].id,
+            post_id=posts[0].id
+        )
+        db.session.add(comm)
+
+        db.session.commit()
+        print("\nSUCCESS: System seeded successfully!")
+        print("-" * 30)
+        print("Standard User: tester@gmail.com / password123")
+        print("LGU Admin: lgu@ecousapan.ph / password123")
+        print("DA Admin: da@ecousapan.ph / password123")
+        print("DENR Admin: denr@ecousapan.ph / password123")
+        print("-" * 30)
+
+if __name__ == "__main__":
+    seed_all()
 </file>
 
 <file path="webapp/static/css/event-map.css">

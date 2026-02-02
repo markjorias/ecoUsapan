@@ -5,8 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Event Details</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
-
     <link rel="stylesheet" href="{{ url_for('static', filename='css/event-view.css') }}">
+    <style>
+        /* Helper class for disabled floating buttons to ensure they look inactive */
+        .btn-disabled-forced {
+            background-color: #d1d1d1 !important;
+            background-image: none !important;
+            color: #888 !important;
+            cursor: not-allowed !important;
+            box-shadow: none !important;
+            pointer-events: none !important;
+            border-color: #bcbcbc !important;
+        }
+    </style>
 </head>
 <body>
     <div class="app-container">
@@ -83,7 +94,29 @@
 
         </div>
 
-        <button class="floating-participate-btn" id="participate-btn">PARTICIPATE</button>
+        <!-- Conditional Participate Button -->
+        {% if current_user.id == event.user_id %}
+            <!-- User is the Creator -->
+            <button class="floating-participate-btn btn-disabled-forced" disabled>
+                ORGANIZER
+            </button>
+        {% else %}
+            <!-- Check if user is already participating -->
+            {% set is_participating = false %}
+            {% for participant in event.participants %}
+                {% if participant.user_id == current_user.id %}
+                    {% set is_participating = true %}
+                {% endif %}
+            {% endfor %}
+
+            {% if is_participating %}
+                <button class="floating-participate-btn" style="opacity: 0.7; cursor: default; filter: grayscale(0.5);" disabled>
+                    REGISTERED
+                </button>
+            {% else %}
+                <button class="floating-participate-btn" id="participate-btn">PARTICIPATE</button>
+            {% endif %}
+        {% endif %}
 
     <!-- Participation Form Modal Overlay -->
     <div class="modal-overlay" id="participation-modal">
@@ -99,31 +132,31 @@
                 <!-- Name -->
                 <div class="form-group">
                     <label class="form-label">Name</label>
-                    <input type="text" class="form-input" placeholder="Your Name">
+                    <input type="text" id="part-name" class="form-input" placeholder="Your Name" value="{{ current_user.first_name }} {{ current_user.last_name }}">
                 </div>
 
                 <!-- Address -->
                 <div class="form-group">
                     <label class="form-label">Address</label>
-                    <input type="text" class="form-input" placeholder="Your Address">
+                    <input type="text" id="part-address" class="form-input" placeholder="Your Address">
                 </div>
 
                 <!-- Contact Number -->
                 <div class="form-group">
                     <label class="form-label">Contact Number</label>
-                    <input type="tel" class="form-input" placeholder="09XX XXX XXXX">
+                    <input type="tel" id="part-phone" class="form-input" placeholder="09XX XXX XXXX">
                 </div>
 
                 <!-- Email -->
                 <div class="form-group">
                     <label class="form-label">Email</label>
-                    <input type="email" class="form-input" placeholder="email@example.com">
+                    <input type="email" id="part-email" class="form-input" placeholder="email@example.com" value="{{ current_user.email }}">
                 </div>
 
                 <!-- Purpose of Participation -->
                 <div class="form-group">
                     <label class="form-label">Purpose of Participation</label>
-                    <textarea class="form-textarea" placeholder="Why do you want to join?"></textarea>
+                    <textarea id="part-purpose" class="form-textarea" placeholder="Why do you want to join?"></textarea>
                 </div>
 
                 <!-- Submit Button -->

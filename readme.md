@@ -33,7 +33,7 @@ Follow these steps to get the project running on your local machine:
 
 4. **Initialize the Database**  
    Instead of manually creating tables, use the provided system seeder to set up the schema and test data:  
-   python seed\_system.py
+   python seed.py
 
 5. **Run the Application**  
    python main.py
@@ -42,12 +42,14 @@ Follow these steps to get the project running on your local machine:
 
 ## **Testing with Seed Data**
 
-The seed\_system.py script automatically resets the database and creates the following test accounts (Password: password123):
+The seed.py script automatically resets the database and creates the following test accounts (Password: password123):
 
 * **Standard User**: tester@gmail.com  
 * **LGU Admin**: lgu@ecousapan.ph  
 * **DA Admin**: da@ecousapan.ph  
 * **DENR Admin**: denr@ecousapan.ph
+
+Shift+L to logout
 
 ## **Project Structure**
 
@@ -58,4 +60,4 @@ The seed\_system.py script automatically resets the database and creates the fol
   * templates/: Jinja2 HTML templates.  
   * static/: CSS, JS, and UI icons.  
 * main.py: Entry point for the Flask server.  
-* seed\_system.py: Comprehensive database initialization script.
+* seed.py: Comprehensive database initialization script.
