@@ -11,13 +11,16 @@ def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'secretngani'
     
-    root_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-    instance_path = os.path.join(root_path, 'instance')
-    
-    if not os.path.exists(instance_path):
-        os.makedirs(instance_path)
-    
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(instance_path, 'site.db')
+    if os.environ.get('VERCEL') == '1':
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/site.db'
+    else:
+        root_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+        instance_path = os.path.join(root_path, 'instance')
+        
+        if not os.path.exists(instance_path):
+            os.makedirs(instance_path)
+        
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(instance_path, 'site.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)

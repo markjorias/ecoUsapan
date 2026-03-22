@@ -236,7 +236,10 @@ def edit_item(id):
         image_file = request.files.get('image')
         if image_file and allowed_file(image_file.filename):
             filename = secure_filename(image_file.filename)
-            upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
+            if os.environ.get('VERCEL') == '1':
+                upload_folder = '/tmp/uploads'
+            else:
+                upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
             if not os.path.exists(upload_folder):
                 os.makedirs(upload_folder)
             image_file.save(os.path.join(upload_folder, filename))
@@ -273,7 +276,10 @@ def manage_inventory():
         
         if image_file and allowed_file(image_file.filename):
             filename = secure_filename(image_file.filename)
-            upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
+            if os.environ.get('VERCEL') == '1':
+                upload_folder = '/tmp/uploads'
+            else:
+                upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
             if not os.path.exists(upload_folder):
                 os.makedirs(upload_folder)
             image_file.save(os.path.join(upload_folder, filename))
@@ -309,7 +315,10 @@ def request_seeds_form():
             filename = secure_filename(image_file.filename)
             # Create a unique filename to prevent overwriting
             unique_filename = f"user_{current_user.id}_seeds_{filename}"
-            upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
+            if os.environ.get('VERCEL') == '1':
+                upload_folder = '/tmp/uploads'
+            else:
+                upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
             if not os.path.exists(upload_folder):
                 os.makedirs(upload_folder)
             image_file.save(os.path.join(upload_folder, unique_filename))
@@ -386,7 +395,10 @@ def request_seedlings_form():
         if image_file and allowed_file(image_file.filename):
             filename = secure_filename(image_file.filename)
             unique_filename = f"user_{current_user.id}_trees_{filename}"
-            upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
+            if os.environ.get('VERCEL') == '1':
+                upload_folder = '/tmp/uploads'
+            else:
+                upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
             if not os.path.exists(upload_folder):
                 os.makedirs(upload_folder)
             image_file.save(os.path.join(upload_folder, unique_filename))
@@ -490,7 +502,10 @@ def launch_initiative2():
             # Create a unique name to avoid conflicts
             filename = f"user_{current_user.id}_{int(datetime.utcnow().timestamp())}_{original_filename}"
             
-            upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
+            if os.environ.get('VERCEL') == '1':
+                upload_folder = '/tmp/uploads'
+            else:
+                upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
             if not os.path.exists(upload_folder):
                 os.makedirs(upload_folder)
             
@@ -569,7 +584,10 @@ def add_initiative():
     if image_file and image_file.filename and allowed_file(image_file.filename):
         original_filename = secure_filename(image_file.filename)
         filename = f"init_{current_user.id}_{int(datetime.utcnow().timestamp())}_{original_filename}"
-        upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
+        if os.environ.get('VERCEL') == '1':
+            upload_folder = '/tmp/uploads'
+        else:
+            upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
         if not os.path.exists(upload_folder):
             os.makedirs(upload_folder)
         image_file.save(os.path.join(upload_folder, filename))
@@ -624,7 +642,10 @@ def edit_initiative(id):
     if image_file and image_file.filename and allowed_file(image_file.filename):
         original_filename = secure_filename(image_file.filename)
         filename = f"init_{current_user.id}_{int(datetime.utcnow().timestamp())}_{original_filename}"
-        upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
+        if os.environ.get('VERCEL') == '1':
+            upload_folder = '/tmp/uploads'
+        else:
+            upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
         if not os.path.exists(upload_folder):
             os.makedirs(upload_folder)
         image_file.save(os.path.join(upload_folder, filename))
@@ -802,7 +823,10 @@ def create_post():
     # 2. Process the image if it exists
     if image and image.filename != '':
         # Define and ensure the upload path exists
-        upload_path = os.path.join(current_app.root_path, 'static', 'uploads')
+        if os.environ.get('VERCEL') == '1':
+            upload_path = '/tmp/uploads'
+        else:
+            upload_path = os.path.join(current_app.root_path, 'static', 'uploads')
         if not os.path.exists(upload_path):
             os.makedirs(upload_path)
 

@@ -21,7 +21,10 @@ def seed_all():
         # Define paths
         base_dir = os.path.abspath(os.path.dirname(__file__))
         static_dir = os.path.join(base_dir, 'webapp', 'static')
-        uploads_dir = os.path.join(static_dir, 'uploads')
+        if os.environ.get('VERCEL') == '1':
+            uploads_dir = '/tmp/uploads'
+        else:
+            uploads_dir = os.path.join(static_dir, 'uploads')
         images_dir = os.path.join(static_dir, 'images')
         
         # Create uploads directory if it doesn't exist
