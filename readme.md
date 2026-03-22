@@ -15,7 +15,7 @@
 
 ## **Live Deployment**
 
-The application is deployed and accessible at: **[maorias.pythonanywhere.com](http://maorias.pythonanywhere.com)**
+The application is deployed and accessible at: **[ecousapan.vercel.app](https://ecousapan.vercel.app)**
 
 > **Note**: For the best experience with this prototype, please access the application on a desktop or laptop device.
 

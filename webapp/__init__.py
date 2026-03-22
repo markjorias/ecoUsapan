@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
@@ -13,6 +13,10 @@ def create_app():
     
     if os.environ.get('VERCEL') == '1':
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/site.db'
+        
+        @app.route('/static/uploads/<path:filename>')
+        def serve_vercel_uploads(filename):
+            return send_from_directory('/tmp/uploads', filename)
     else:
         root_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
         instance_path = os.path.join(root_path, 'instance')
